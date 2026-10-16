@@ -3,185 +3,355 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Chitchat Nepal 🇳🇵</title>
+  <title>Chitchat Nepal · modern social</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    html, body { height: 100%; height: 100dvh; overflow: hidden; background-color: #f0f2f5; color: #111b21; font-family: system-ui, -apple-system, sans-serif; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-thumb { background: #d1d7db; border-radius: 4px; }
-    .chat-bg { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.75px, transparent 0.75px); background-size: 24px 24px; }
+    /* ----- base & scroll ----- */
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background: #f7f9fc;
+      color: #0b1a2b;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 20px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* ----- chat background — subtle Nepali inspired texture ----- */
+    .chat-bg {
+      background-color: #f0f5fa;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(0,168,132,0.02) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(255,193,7,0.02) 0%, transparent 40%),
+        repeating-linear-gradient(45deg, rgba(0,168,132,0.015) 0px, rgba(0,168,132,0.015) 2px, transparent 2px, transparent 10px);
+    }
+
+    /* ----- soft shadows & depth ----- */
+    .card-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 4px 16px rgba(0,0,0,0.03); }
+    .card-shadow-lg { box-shadow: 0 8px 40px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.02); }
+
+    /* ----- message bubbles (social style) ----- */
+    .bubble-me {
+      background: linear-gradient(135deg, #d9fdd3 0%, #c3f0b8 100%);
+      border-radius: 22px 22px 4px 22px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .bubble-other {
+      background: #ffffff;
+      border-radius: 22px 22px 22px 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      border: 1px solid #eef2f6;
+    }
+
+    /* ----- transitions & micro interactions ----- */
+    .transition-soft { transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .active-scale:active { transform: scale(0.96); }
+
+    /* ----- drawer ----- */
+    .drawer-transition { transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.4, 1); }
+
+    /* ----- glass effect ----- */
+    .glass-panel { background: rgba(255,255,255,0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+    /* ----- modern input focus ----- */
+    input:focus { outline: none; box-shadow: 0 0 0 4px rgba(0,168,132,0.08); border-color: #00a884; }
+
+    /* ----- avatar ring ----- */
+    .avatar-ring { box-shadow: 0 0 0 2px #ffffff, 0 0 0 5px rgba(0,168,132,0.12); }
+
+    /* ----- lounge selector pill ----- */
+    .lounge-pill {
+      background: rgba(255,255,255,0.85);
+      border: 1px solid #e2e8f0;
+      border-radius: 40px;
+      padding: 6px 14px 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #0b1a2b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      white-space: nowrap;
+    }
+    .lounge-pill:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .lounge-pill .emoji { font-size: 16px; line-height: 1; }
+
+    /* ----- dropdown menu (lounge selector) ----- */
+    .lounge-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 220px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(226,232,240,0.8);
+      border-radius: 20px;
+      padding: 6px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
+      z-index: 50;
+      display: none;
+      transform-origin: top left;
+      animation: dropdownFade 0.18s ease-out;
+    }
+    .lounge-dropdown.show { display: block; }
+    @keyframes dropdownFade {
+      from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .lounge-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1e2b3c;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+    }
+    .lounge-option:hover { background: #f1f5f9; }
+    .lounge-option.active { background: #ecfdf5; color: #00a884; font-weight: 600; }
+    .lounge-option .emoji { font-size: 18px; }
+    .lounge-option .desc { font-size: 10px; color: #64748b; font-weight: 400; margin-top: 1px; }
+
+    /* ----- pop animation for messages ----- */
+    @keyframes messageIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .message-in { animation: messageIn 0.25s ease-out; }
+
+    /* ----- pulse for online dot ----- */
+    @keyframes pulseSoft {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .pulse-dot { animation: pulseSoft 2s infinite; }
+
+    /* ----- gradient border for premium feel ----- */
+    .gradient-border {
+      background: linear-gradient(135deg, #00a884, #018f70, #f59e0b);
+      padding: 2px;
+      border-radius: 50%;
+    }
   </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 </head>
 <body class="h-[100dvh] w-screen flex flex-col overflow-hidden select-none">
 
-  <!-- Auth Screen -->
-  <div id="auth-screen" class="fixed inset-0 bg-[#f0f2f5] z-50 flex items-center justify-center p-4">
-    <div class="bg-white border border-[#e9edef] p-6 sm:p-8 rounded-2xl max-w-md w-full shadow-xl space-y-5">
-      <div class="flex items-center gap-3">
-        <div class="bg-[#00a884] text-white font-bold p-3 rounded-2xl text-xl shadow-md">🇳🇵</div>
+  <!-- ========== AUTH SCREEN ========== -->
+  <div id="auth-screen" class="fixed inset-0 bg-gradient-to-br from-[#f7f9fc] via-[#eef3f9] to-[#e6edf6] z-50 flex items-center justify-center p-4">
+    <div class="bg-white/80 backdrop-blur-xl border border-white/60 p-8 sm:p-10 rounded-[36px] max-w-md w-full card-shadow-lg space-y-7">
+      <!-- branding -->
+      <div class="flex items-center gap-4">
+        <div class="bg-gradient-to-br from-[#00a884] to-[#018f70] text-white font-bold p-4 rounded-[20px] text-3xl shadow-lg shadow-[#00a884]/25">🇳🇵</div>
         <div>
-          <h2 class="text-xl sm:text-2xl font-bold text-[#111b21]">Chitchat Nepal</h2>
-          <p class="text-xs text-[#667781]">Secure & professional messaging</p>
+          <h2 class="text-2xl font-extrabold tracking-tight text-[#0b1a2b]">Chitchat Nepal</h2>
+          <p class="text-xs font-medium text-[#5e6f82] tracking-wide">Connect · Chat · Belong</p>
         </div>
       </div>
-      <div class="space-y-3">
-        <div>
-          <label class="text-xs font-semibold text-[#667781] uppercase tracking-wider block mb-1">Username or Email</label>
-          <input id="auth-email" type="text" placeholder="e.g. ayushacharya" class="w-full bg-[#f0f2f5] border border-[#e9edef] rounded-xl px-4 py-3 text-sm text-[#111b21] focus:outline-none focus:border-[#00a884]">
+
+      <div class="space-y-4">
+        <div class="space-y-1.5">
+          <label class="text-[11px] font-semibold text-[#5e6f82] uppercase tracking-wider block ml-1">Username or Email</label>
+          <input id="auth-email" type="text" placeholder="e.g. ayushacharya" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 text-sm text-[#0b1a2b] placeholder:text-[#94a3b8] transition-soft focus:bg-white">
         </div>
-        <div>
-          <label class="text-xs font-semibold text-[#667781] uppercase tracking-wider block mb-1">Password</label>
-          <input id="auth-password" type="password" placeholder="••••••••" class="w-full bg-[#f0f2f5] border border-[#e9edef] rounded-xl px-4 py-3 text-sm text-[#111b21] focus:outline-none focus:border-[#00a884]">
+        <div class="space-y-1.5">
+          <label class="text-[11px] font-semibold text-[#5e6f82] uppercase tracking-wider block ml-1">Password</label>
+          <input id="auth-password" type="password" placeholder="••••••••" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 text-sm text-[#0b1a2b] placeholder:text-[#94a3b8] transition-soft focus:bg-white">
         </div>
       </div>
+
       <div class="flex gap-3 pt-1">
-        <button onclick="handleLogin()" class="flex-1 bg-[#00a884] hover:bg-[#01755c] active:scale-95 text-white font-medium py-3 rounded-xl transition shadow-md text-sm">Log In</button>
-        <button onclick="handleSignup()" class="flex-1 bg-[#e9edef] hover:bg-[#d1d7db] active:scale-95 text-[#111b21] font-medium py-3 rounded-xl transition text-sm">Sign Up</button>
+        <button onclick="handleLogin()" class="flex-1 bg-gradient-to-r from-[#00a884] to-[#018f70] hover:brightness-105 active:scale-[0.97] text-white font-semibold py-4 rounded-2xl transition-soft shadow-lg shadow-[#00a884]/20 text-sm">Log In</button>
+        <button onclick="handleSignup()" class="flex-1 bg-white hover:bg-[#f1f5f9] active:scale-[0.97] text-[#0b1a2b] font-semibold py-4 rounded-2xl transition-soft border border-[#e2e8f0] text-sm">Sign Up</button>
       </div>
+
       <div class="relative flex py-1 items-center">
-        <div class="flex-grow border-t border-[#e9edef]"></div>
-        <span class="flex-shrink mx-3 text-xs text-[#667781]">OR</span>
-        <div class="flex-grow border-t border-[#e9edef]"></div>
+        <div class="flex-grow border-t border-[#e2e8f0]"></div>
+        <span class="flex-shrink mx-4 text-[11px] font-medium text-[#94a3b8] uppercase tracking-wider">or</span>
+        <div class="flex-grow border-t border-[#e2e8f0]"></div>
       </div>
-      <button onclick="openGuestModal()" class="w-full bg-[#f0f2f5] hover:bg-[#e9edef] active:scale-95 text-[#00a884] border border-[#00a884]/30 font-medium py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
-        <span>⚡</span> Quick Chat as Guest
+
+      <button onclick="openGuestModal()" class="w-full bg-[#f1f5f9] hover:bg-[#e9f0f5] active:scale-[0.97] text-[#00a884] border border-[#00a884]/15 font-semibold py-4 rounded-2xl transition-soft text-sm flex items-center justify-center gap-3">
+        <span class="text-lg">⚡</span> Quick Chat as Guest
       </button>
-      <p id="auth-error" class="text-xs text-red-500 text-center hidden"></p>
+      <p id="auth-error" class="text-xs text-red-500 text-center hidden font-medium"></p>
     </div>
   </div>
 
-  <!-- Custom Guest Username Modal Popup -->
-  <div id="guest-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
-    <div class="bg-white border border-[#e9edef] p-6 rounded-2xl max-w-sm w-full shadow-2xl space-y-4">
-      <div class="space-y-1">
-        <h3 class="text-lg font-bold text-[#111b21]">Choose Guest Username</h3>
-        <p class="text-xs text-[#667781]">Enter a display name to join the chat instantly.</p>
+  <!-- ========== GUEST MODAL ========== -->
+  <div id="guest-modal" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
+    <div class="bg-white/95 backdrop-blur-xl border border-white/60 p-8 rounded-[32px] max-w-sm w-full card-shadow-lg space-y-6">
+      <div class="space-y-1.5">
+        <h3 class="text-xl font-bold text-[#0b1a2b]">Choose guest username</h3>
+        <p class="text-xs text-[#5e6f82]">Enter a display name to join instantly.</p>
       </div>
       <div>
-        <input id="guest-username-input" type="text" placeholder="e.g. KathmanduExplorer" onkeydown="if(event.key==='Enter') confirmGuestLogin()" class="w-full bg-[#f0f2f5] border border-[#e9edef] rounded-xl px-4 py-3 text-sm text-[#111b21] focus:outline-none focus:border-[#00a884]">
+        <input id="guest-username-input" type="text" placeholder="e.g. KathmanduExplorer" onkeydown="if(event.key==='Enter') confirmGuestLogin()" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 text-sm text-[#0b1a2b] focus:bg-white transition-soft">
       </div>
-      <div class="flex gap-2 pt-2">
-        <button onclick="closeGuestModal()" class="flex-1 bg-[#e9edef] hover:bg-[#d1d7db] text-[#111b21] font-medium py-2.5 rounded-xl transition text-xs">Cancel</button>
-        <button onclick="confirmGuestLogin()" class="flex-1 bg-[#00a884] hover:bg-[#01755c] text-white font-medium py-2.5 rounded-xl transition text-xs shadow-md">Join Chat</button>
+      <div class="flex gap-3 pt-1">
+        <button onclick="closeGuestModal()" class="flex-1 bg-white hover:bg-[#f1f5f9] text-[#5e6f82] font-semibold py-3.5 rounded-2xl transition-soft border border-[#e2e8f0] text-xs">Cancel</button>
+        <button onclick="confirmGuestLogin()" class="flex-1 bg-gradient-to-r from-[#00a884] to-[#018f70] text-white font-semibold py-3.5 rounded-2xl transition-soft shadow-lg shadow-[#00a884]/20 text-xs">Join Chat</button>
       </div>
     </div>
   </div>
 
-  <!-- Main Chat App Area -->
+  <!-- ========== MAIN CHAT APP ========== -->
   <div id="chat-screen" class="hidden flex-1 flex h-[100dvh] w-full overflow-hidden">
-    
-    <!-- Left Sidebar (Lounges & DMs) -->
-    <aside id="sidebar-panel" class="w-full md:w-80 bg-white border-r border-[#e9edef] flex flex-col h-full shrink-0">
-      <!-- Profile Header -->
-      <div class="bg-[#f0f2f5] p-3.5 border-b border-[#e9edef] flex justify-between items-center shrink-0">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-full bg-[#00a884] text-white font-bold flex items-center justify-center text-xs shadow" id="user-avatar-initial">A</div>
-          <div>
-            <h4 class="text-sm font-semibold text-[#111b21]" id="user-display">Ayush</h4>
-            <p class="text-[10px] text-[#00a884] font-medium flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#00a884]"></span> Online</p>
+
+    <!-- ===== LEFT SIDEBAR (social-style) ===== -->
+    <aside id="sidebar-panel" class="w-full md:w-[320px] bg-white/80 backdrop-blur-xl border-r border-[#e9eef3] flex flex-col h-full shrink-0 shadow-sm z-10">
+      <!-- Profile header — social style with gradient accent -->
+      <div class="relative p-4 pb-3 border-b border-[#e9eef3]">
+        <div class="absolute inset-0 bg-gradient-to-b from-[#00a884]/5 to-transparent pointer-events-none"></div>
+        <div class="relative flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-[#00a884] to-[#018f70] text-white font-bold flex items-center justify-center text-sm shadow-md avatar-ring" id="user-avatar-initial">A</div>
+            <div>
+              <h4 class="text-sm font-bold text-[#0b1a2b]" id="user-display">Ayush</h4>
+              <p class="text-[10px] font-medium text-[#00a884] flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-[#00a884] pulse-dot"></span> Online
+              </p>
+            </div>
           </div>
+          <button onclick="handleLogout()" class="text-[11px] bg-white/80 hover:bg-[#f1f5f9] text-[#5e6f82] px-3.5 py-2 rounded-xl border border-[#e2e8f0] transition-soft font-semibold shadow-sm">Logout</button>
         </div>
-        <button onclick="handleLogout()" class="text-xs bg-white hover:bg-[#e9edef] text-[#667781] px-3 py-1.5 rounded-lg border border-[#e9edef] transition font-medium">Logout</button>
       </div>
 
-      <!-- Navigation Lists -->
-      <div class="flex-1 overflow-y-auto divide-y divide-[#f0f2f5]">
-        <!-- Public Lounges -->
-        <div class="p-2 space-y-1">
-          <p class="text-[10px] font-bold text-[#667781] uppercase tracking-wider px-3 py-1">Public Lounges</p>
-          <button onclick="switchChannel('Chautari-Lounge')" class="channel-btn w-full text-left px-3 py-3 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3 bg-[#f0f2f5]" data-id="Chautari-Lounge">
-            <span class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs shrink-0">💬</span>
-            <div class="flex-1 truncate"><p class="font-medium text-xs">#Chautari-Lounge</p><p class="text-[10px] text-[#667781]">General public square</p></div>
-          </button>
-          <button onclick="switchChannel('Tech-Nepal')" class="channel-btn w-full text-left px-3 py-3 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3" data-id="Tech-Nepal">
-            <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs shrink-0">💻</span>
-            <div class="flex-1 truncate"><p class="font-medium text-xs">#Tech-Nepal</p><p class="text-[10px] text-[#667781]">Coding & tech discussions</p></div>
-          </button>
-          <button onclick="switchChannel('Gaff-Saff')" class="channel-btn w-full text-left px-3 py-3 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3" data-id="Gaff-Saff">
-            <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs shrink-0">☕</span>
-            <div class="flex-1 truncate"><p class="font-medium text-xs">#Gaff-Saff</p><p class="text-[10px] text-[#667781]">Casual conversations</p></div>
-          </button>
+      <!-- Lounge Selector + Navigation -->
+      <div class="flex-1 overflow-y-auto">
+        <!-- Lounge selector — international style -->
+        <div class="p-3 pb-1 relative" id="lounge-selector-wrapper">
+          <p class="text-[10px] font-bold text-[#94a3b8] uppercase tracking-[1px] px-2 mb-1.5">Your lounge</p>
+          <div class="relative">
+            <button id="lounge-pill" class="lounge-pill w-full justify-between" onclick="toggleLoungeDropdown(event)">
+              <span class="flex items-center gap-2">
+                <span class="emoji">💬</span>
+                <span id="lounge-pill-label">#Chautari-Lounge</span>
+              </span>
+              <svg class="w-3.5 h-3.5 text-[#94a3b8] transition-soft" id="lounge-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <!-- Dropdown -->
+            <div id="lounge-dropdown" class="lounge-dropdown">
+              <button class="lounge-option active" data-channel="Chautari-Lounge" onclick="selectLounge('Chautari-Lounge', '💬', 'Chautari-Lounge')">
+                <span class="emoji">💬</span>
+                <div><div>#Chautari-Lounge</div><div class="desc">General public square</div></div>
+              </button>
+              <button class="lounge-option" data-channel="Tech-Nepal" onclick="selectLounge('Tech-Nepal', '💻', 'Tech-Nepal')">
+                <span class="emoji">💻</span>
+                <div><div>#Tech-Nepal</div><div class="desc">Coding & tech discussions</div></div>
+              </button>
+              <button class="lounge-option" data-channel="Gaff-Saff" onclick="selectLounge('Gaff-Saff', '☕', 'Gaff-Saff')">
+                <span class="emoji">☕</span>
+                <div><div>#Gaff-Saff</div><div class="desc">Casual conversations</div></div>
+              </button>
+            </div>
+          </div>
         </div>
 
-        <!-- Direct Messages -->
-        <div class="p-2 space-y-1">
-          <p class="text-[10px] font-bold text-[#667781] uppercase tracking-wider px-3 py-1">Direct Messages (Online Now)</p>
-          <div id="users-sidebar-list" class="space-y-1"></div>
+        <!-- Direct Messages (online users) -->
+        <div class="p-3 pt-1 space-y-1">
+          <div class="flex items-center justify-between px-2 mb-1">
+            <p class="text-[10px] font-bold text-[#94a3b8] uppercase tracking-[1px]">Direct messages · online</p>
+            <span class="text-[10px] font-medium text-[#00a884] bg-[#00a884]/8 px-2 py-0.5 rounded-full" id="online-pill-count">0</span>
+          </div>
+          <div id="users-sidebar-list" class="space-y-0.5"></div>
         </div>
+      </div>
+
+      <!-- subtle footer -->
+      <div class="p-3 border-t border-[#e9eef3] bg-white/50">
+        <p class="text-[10px] text-center text-[#94a3b8] font-medium">Chitchat Nepal · since 2024</p>
       </div>
     </aside>
 
-    <!-- Main Chat Window -->
+    <!-- ===== MAIN CHAT AREA ===== -->
     <main id="chat-panel" class="hidden md:flex flex-1 flex-col justify-between chat-bg h-full w-full relative overflow-hidden">
-      <!-- Chat Header -->
-      <div class="bg-[#f0f2f5] border-b border-[#e9edef] px-3.5 py-2.5 flex justify-between items-center shadow-sm shrink-0 z-20">
-        <div class="flex items-center gap-2.5">
-          <!-- Back button on mobile -->
-          <button onclick="showSidebarOnMobile()" class="md:hidden text-[#00a884] p-1 rounded-lg hover:bg-[#e9edef] font-bold text-sm flex items-center gap-1">
-            <span>←</span> <span class="text-xs">Chats</span>
+      <!-- Chat header — social style with lounge context -->
+      <div class="bg-white/70 backdrop-blur-xl border-b border-[#e9eef3] px-4 py-3 flex justify-between items-center shrink-0 z-20 shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
+        <div class="flex items-center gap-3">
+          <button onclick="showSidebarOnMobile()" class="md:hidden text-[#00a884] p-2 -ml-1 rounded-xl hover:bg-[#f1f5f9] font-bold text-sm flex items-center gap-1 transition-soft">
+            <span class="text-base">←</span> <span class="text-xs font-semibold">Chats</span>
           </button>
-          <div class="w-8 h-8 rounded-full bg-[#00a884]/20 text-[#00a884] font-bold flex items-center justify-center text-xs shrink-0">💬</div>
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#00a884]/15 to-[#00a884]/5 text-[#00a884] font-bold flex items-center justify-center text-base shrink-0" id="channel-icon">💬</div>
           <div>
-            <h3 class="text-xs sm:text-sm font-bold text-[#111b21] truncate max-w-[140px] sm:max-w-none" id="channel-name">#Chautari-Lounge</h3>
-            <p class="text-[10px] text-[#667781]" id="channel-status">Public community chat</p>
+            <h3 class="text-sm font-bold text-[#0b1a2b] truncate max-w-[140px] sm:max-w-none" id="channel-name">#Chautari-Lounge</h3>
+            <p class="text-[10px] font-medium text-[#5e6f82]" id="channel-status">Public community chat</p>
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="toggleMobileDirectory()" class="text-xs bg-white border border-[#e9edef] px-2.5 py-1 rounded-full text-[#667781] font-medium shadow-sm flex items-center gap-1">
-            <span>Online:</span> <strong id="active-count" class="text-[#00a884]">1</strong>
+          <button onclick="toggleMobileDirectory()" class="text-xs bg-white/80 border border-[#e2e8f0] px-4 py-2 rounded-full text-[#5e6f82] font-medium shadow-sm flex items-center gap-1.5 transition-soft hover:bg-white">
+            <span>Online:</span> <strong id="active-count" class="text-[#00a884] font-bold">1</strong>
           </button>
         </div>
       </div>
 
-      <!-- Messages Stream -->
-      <div id="messages-container" class="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-3 pb-24 md:pb-6"></div>
+      <!-- Messages stream -->
+      <div id="messages-container" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 pb-24 md:pb-6"></div>
 
-      <!-- Fixed Input & Quick Phrases Container -->
-      <div class="shrink-0 bg-[#f0f2f5] border-t border-[#e9edef] z-20">
-        <!-- Quick Chat Phrases Bar -->
-        <div class="px-3 py-1.5 flex items-center gap-2 overflow-x-auto border-b border-[#e9edef]/50">
-          <span class="text-[10px] text-[#667781] font-semibold mr-1 shrink-0">Quick Chat:</span>
-          <button onclick="sendQuickMessage('Namaste 🙏')" class="px-3 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium text-[#111b21] shrink-0">Namaste 🙏</button>
-          <button onclick="sendQuickMessage('Hello')" class="px-3 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium text-[#111b21] shrink-0">Hello</button>
-          <button onclick="sendQuickMessage('Hi')" class="px-3 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium text-[#111b21] shrink-0">Hi</button>
-          <button onclick="sendQuickMessage('How are you?')" class="px-3 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium text-[#111b21] shrink-0">How are you?</button>
+      <!-- Input area — modern social style -->
+      <div class="shrink-0 bg-white/70 backdrop-blur-xl border-t border-[#e9eef3] z-20">
+        <!-- Quick phrases — pill style -->
+        <div class="px-4 pt-3 pb-1 flex items-center gap-2 overflow-x-auto">
+          <span class="text-[10px] font-bold text-[#94a3b8] uppercase tracking-wider mr-1 shrink-0">Quick</span>
+          <button onclick="sendQuickMessage('Namaste 🙏')" class="px-4 py-2 bg-white hover:bg-[#f1f5f9] active:scale-[0.96] rounded-full text-xs border border-[#e2e8f0] shadow-sm font-medium text-[#0b1a2b] shrink-0 transition-soft">Namaste 🙏</button>
+          <button onclick="sendQuickMessage('Hello')" class="px-4 py-2 bg-white hover:bg-[#f1f5f9] active:scale-[0.96] rounded-full text-xs border border-[#e2e8f0] shadow-sm font-medium text-[#0b1a2b] shrink-0 transition-soft">Hello</button>
+          <button onclick="sendQuickMessage('Hi')" class="px-4 py-2 bg-white hover:bg-[#f1f5f9] active:scale-[0.96] rounded-full text-xs border border-[#e2e8f0] shadow-sm font-medium text-[#0b1a2b] shrink-0 transition-soft">Hi</button>
+          <button onclick="sendQuickMessage('How are you?')" class="px-4 py-2 bg-white hover:bg-[#f1f5f9] active:scale-[0.96] rounded-full text-xs border border-[#e2e8f0] shadow-sm font-medium text-[#0b1a2b] shrink-0 transition-soft">How are you?</button>
         </div>
 
-        <!-- Message Input Bar -->
-        <form onsubmit="handleSendMessage(event)" class="p-2.5 sm:p-3 flex items-center gap-2">
-          <input id="message-input" type="text" placeholder="Type a message..." class="flex-1 bg-white border border-[#e9edef] rounded-xl px-3.5 py-2.5 sm:py-3 text-xs sm:text-sm text-[#111b21] focus:outline-none focus:border-[#00a884] shadow-sm">
-          <button type="submit" class="bg-[#00a884] hover:bg-[#01755c] active:scale-95 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl transition shadow-md font-medium text-xs sm:text-sm shrink-0 flex items-center gap-1">
+        <!-- Message input -->
+        <form onsubmit="handleSendMessage(event)" class="p-3.5 sm:p-4 flex items-center gap-2.5">
+          <input id="message-input" type="text" placeholder="Type a message..." class="flex-1 bg-white border border-[#e2e8f0] rounded-full px-5 py-3.5 text-sm text-[#0b1a2b] placeholder:text-[#94a3b8] shadow-sm transition-soft focus:bg-white">
+          <button type="submit" class="bg-gradient-to-r from-[#00a884] to-[#018f70] hover:brightness-105 active:scale-[0.96] text-white px-6 sm:px-8 py-3.5 rounded-full transition-soft shadow-lg shadow-[#00a884]/20 font-semibold text-xs sm:text-sm shrink-0 flex items-center gap-1.5">
             <span>Send</span>
           </button>
         </form>
       </div>
     </main>
 
-    <!-- Right Active Members Professional Sidebar / Mobile Slide Drawer -->
-    <aside id="directory-drawer" class="fixed xl:static inset-y-0 right-0 w-64 bg-white border-l border-[#e9edef] flex flex-col z-40 transform translate-x-full xl:translate-x-0 transition-transform duration-200 ease-in-out shadow-2xl xl:shadow-none">
-      <div class="p-3.5 border-b border-[#e9edef] bg-[#f0f2f5] flex justify-between items-center">
-        <h4 class="text-xs font-bold uppercase tracking-wider text-[#667781]">Online Directory</h4>
-        <button onclick="toggleMobileDirectory()" class="xl:hidden text-[#667781] hover:text-[#111b21] font-bold text-xs p-1">✕</button>
+    <!-- ===== RIGHT DRAWER — online directory ===== -->
+    <aside id="directory-drawer" class="fixed xl:static inset-y-0 right-0 w-72 bg-white/95 backdrop-blur-xl border-l border-[#e9eef3] flex flex-col z-40 transform translate-x-full xl:translate-x-0 drawer-transition shadow-2xl xl:shadow-none">
+      <div class="p-4 border-b border-[#e9eef3] bg-white/60 flex justify-between items-center">
+        <h4 class="text-[11px] font-bold uppercase tracking-[1px] text-[#5e6f82]">Online directory</h4>
+        <button onclick="toggleMobileDirectory()" class="xl:hidden text-[#5e6f82] hover:text-[#0b1a2b] font-bold text-sm p-1.5 rounded-xl hover:bg-[#f1f5f9] transition-soft">✕</button>
       </div>
       <div class="p-3 flex-1 overflow-y-auto space-y-1.5" id="active-members-list"></div>
     </aside>
   </div>
 
   <script>
+    // ---------- supabase init ----------
     const SUPABASE_URL = 'https://bmhjltwabzmtyvrfaoeq.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_toqaL-nV0vmTlb27Sh6_xA_3fb5Mebb';
-
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentUser = null;
     let currentDisplayName = 'User';
-    let currentChannel = 'Chautari-Lounge';
+    let currentChannel = 'Chautari-Lounge';   // ✅ default
     let realtimeMessagesSub = null;
     let presenceChannel = null;
     let onlineUsersMap = new Map();
 
+    // ---------- helpers ----------
     function formatEmail(input) {
       return input.includes('@') ? input : `${input.trim().toLowerCase()}@chitchat.np`;
     }
@@ -190,7 +360,6 @@
       if (!user) return;
       const username = customName || (user.email ? user.email.split('@')[0] : 'Guest');
       currentDisplayName = username;
-      
       await db.from('profiles').upsert({
         id: user.id,
         username: username,
@@ -199,81 +368,94 @@
       }, { onConflict: 'id' });
     }
 
+    // ---------- lounge dropdown ----------
+    function toggleLoungeDropdown(e) {
+      e.stopPropagation();
+      const dropdown = document.getElementById('lounge-dropdown');
+      const chevron = document.getElementById('lounge-chevron');
+      dropdown.classList.toggle('show');
+      chevron.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    // close dropdown on outside click
+    document.addEventListener('click', (e) => {
+      const wrapper = document.getElementById('lounge-selector-wrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        document.getElementById('lounge-dropdown')?.classList.remove('show');
+        const chev = document.getElementById('lounge-chevron');
+        if (chev) chev.style.transform = 'rotate(0deg)';
+      }
+    });
+
+    function selectLounge(channel, emoji, label) {
+      // update pill
+      document.getElementById('lounge-pill-label').textContent = `#${label}`;
+      document.querySelector('#lounge-pill .emoji').textContent = emoji;
+      // update active option
+      document.querySelectorAll('.lounge-option').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.channel === channel);
+      });
+      // close dropdown
+      document.getElementById('lounge-dropdown').classList.remove('show');
+      document.getElementById('lounge-chevron').style.transform = 'rotate(0deg)';
+      // switch channel
+      switchChannel(channel, emoji);
+    }
+
+    // ---------- guest modal ----------
     function openGuestModal() {
-      document.getElementById('guest-modal').classList.remove('hidden');
+      const modal = document.getElementById('guest-modal');
+      modal.classList.remove('hidden');
       const input = document.getElementById('guest-username-input');
       input.value = "NepaliUser_" + Math.floor(100 + Math.random() * 900);
       input.focus();
       input.select();
     }
-
     function closeGuestModal() {
       document.getElementById('guest-modal').classList.add('hidden');
     }
-
     async function confirmGuestLogin() {
       const guestInput = document.getElementById('guest-username-input').value;
       if (!guestInput) return;
-      
       closeGuestModal();
       const guestName = guestInput.trim().replace(/\s+/g, '_');
       const email = `${guestName.toLowerCase()}@chitchat.np`;
       const password = 'guestpassword123';
-
       let { data, error } = await db.auth.signInWithPassword({ email, password });
       if (error) {
         const signUpRes = await db.auth.signUp({ email, password });
         data = signUpRes.data;
       }
-
       if (data?.user) {
         await ensureProfileExists(data.user, guestName);
         initSession(data.user, guestName);
       }
     }
 
+    // ---------- signup / login ----------
     async function handleSignup() {
       const rawInput = document.getElementById('auth-email').value;
       const password = document.getElementById('auth-password').value;
       const errorEl = document.getElementById('auth-error');
-
       if (!rawInput || !password) return;
       const email = formatEmail(rawInput);
       const username = rawInput.split('@')[0];
-
       errorEl.classList.add('hidden');
       const { data, error } = await db.auth.signUp({ email, password });
-
-      if (error) {
-        errorEl.textContent = error.message;
-        errorEl.classList.remove('hidden');
-        return;
-      }
-
-      if (data?.user) {
-        await ensureProfileExists(data.user, username);
-        initSession(data.user, username);
-      }
+      if (error) { errorEl.textContent = error.message; errorEl.classList.remove('hidden'); return; }
+      if (data?.user) { await ensureProfileExists(data.user, username); initSession(data.user, username); }
     }
 
     async function handleLogin() {
       const rawInput = document.getElementById('auth-email').value;
       const password = document.getElementById('auth-password').value;
       const errorEl = document.getElementById('auth-error');
-
       if (!rawInput || !password) return;
       const email = formatEmail(rawInput);
       const username = rawInput.split('@')[0];
-
       errorEl.classList.add('hidden');
       const { data, error } = await db.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        errorEl.textContent = error.message;
-        errorEl.classList.remove('hidden');
-        return;
-      }
-
+      if (error) { errorEl.textContent = error.message; errorEl.classList.remove('hidden'); return; }
       await ensureProfileExists(data.user, username);
       initSession(data.user, username);
     }
@@ -285,23 +467,35 @@
       if (realtimeMessagesSub) db.removeChannel(realtimeMessagesSub);
       document.getElementById('auth-screen').classList.remove('hidden');
       document.getElementById('chat-screen').classList.add('hidden');
+      document.getElementById('chat-screen').classList.remove('flex');
     }
 
+    // ---------- session init ----------
     async function initSession(user, fallbackName) {
       currentUser = user;
       const name = fallbackName || (user.email ? user.email.split('@')[0] : 'User');
       currentDisplayName = name;
       await ensureProfileExists(user, name);
-
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('chat-screen').classList.remove('hidden');
       document.getElementById('chat-screen').classList.add('flex');
       document.getElementById('user-display').textContent = name;
       document.getElementById('user-avatar-initial').textContent = name.charAt(0).toUpperCase();
 
+      // set default lounge
+      document.getElementById('channel-name').textContent = '#Chautari-Lounge';
+      document.getElementById('channel-icon').textContent = '💬';
+      document.getElementById('channel-status').textContent = 'Public community chat';
+      document.getElementById('lounge-pill-label').textContent = '#Chautari-Lounge';
+      document.querySelector('#lounge-pill .emoji').textContent = '💬';
+      document.querySelectorAll('.lounge-option').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.channel === 'Chautari-Lounge');
+      });
+
       loadMessages();
       subscribeToMessages();
       setupPresence();
+      if (window.innerWidth >= 768) showChatOnMobile();
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
@@ -312,7 +506,7 @@
       }
     });
 
-    // Mobile Navigation Switchers
+    // ---------- mobile nav ----------
     function showChatOnMobile() {
       if (window.innerWidth < 768) {
         document.getElementById('sidebar-panel').classList.add('hidden');
@@ -320,7 +514,6 @@
         document.getElementById('chat-panel').classList.add('flex');
       }
     }
-
     function showSidebarOnMobile() {
       if (window.innerWidth < 768) {
         document.getElementById('chat-panel').classList.add('hidden');
@@ -328,25 +521,19 @@
         document.getElementById('sidebar-panel').classList.remove('hidden');
       }
     }
-
     function toggleMobileDirectory() {
       const drawer = document.getElementById('directory-drawer');
       drawer.classList.toggle('translate-x-full');
     }
 
-    // Presence
+    // ---------- presence ----------
     function setupPresence() {
       if (presenceChannel) db.removeChannel(presenceChannel);
-
-      presenceChannel = db.channel('online-presence', {
-        config: { presence: { key: currentUser.id } }
-      });
-
+      presenceChannel = db.channel('online-presence', { config: { presence: { key: currentUser.id } } });
       presenceChannel
         .on('presence', { event: 'sync' }, () => {
           const state = presenceChannel.presenceState();
           onlineUsersMap.clear();
-
           Object.keys(state).forEach(key => {
             const presences = state[key];
             if (presences && presences.length > 0) {
@@ -354,7 +541,6 @@
               onlineUsersMap.set(u.id, u.username);
             }
           });
-
           renderOnlineUsers();
         })
         .subscribe(async (status) => {
@@ -372,53 +558,48 @@
       const userListEl = document.getElementById('users-sidebar-list');
       const activeMembersEl = document.getElementById('active-members-list');
       const activeCountEl = document.getElementById('active-count');
-
+      const onlinePill = document.getElementById('online-pill-count');
       userListEl.innerHTML = '';
       activeMembersEl.innerHTML = '';
-      activeCountEl.textContent = onlineUsersMap.size;
-
+      const count = onlineUsersMap.size;
+      activeCountEl.textContent = count;
+      if (onlinePill) onlinePill.textContent = count;
       let otherCount = 0;
       onlineUsersMap.forEach((username, id) => {
         if (id !== currentUser.id) {
           otherCount++;
+          // sidebar DM — social style with gradient accent
           userListEl.insertAdjacentHTML('beforeend', `
-            <button onclick="switchDM('${id}', '${username}')" class="channel-btn w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center justify-between" data-id="dm-${id}">
-              <div class="flex items-center gap-2.5 truncate">
-                <div class="w-7 h-7 rounded-full bg-[#00a884]/20 text-[#00a884] font-bold flex items-center justify-center text-[11px] shrink-0">${username.charAt(0).toUpperCase()}</div>
-                <div class="truncate"><p class="font-medium text-xs">@${username}</p><p class="text-[10px] text-[#00a884]">Online now</p></div>
+            <button onclick="switchDM('${id}', '${username}')" class="channel-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-soft text-[#0b1a2b] hover:bg-[#f1f5f9] flex items-center justify-between" data-id="dm-${id}">
+              <div class="flex items-center gap-3 truncate">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#00a884]/15 to-[#00a884]/5 text-[#00a884] font-bold flex items-center justify-center text-xs shrink-0">${username.charAt(0).toUpperCase()}</div>
+                <div class="truncate"><p class="font-semibold text-xs">@${username}</p><p class="text-[10px] text-[#00a884]">Online now</p></div>
               </div>
-              <span class="w-2 h-2 rounded-full bg-[#00a884] shrink-0"></span>
+              <span class="w-2 h-2 rounded-full bg-[#00a884] shrink-0 shadow-[0_0_0_2px_rgba(0,168,132,0.2)]"></span>
             </button>
           `);
-
+          // directory item
           activeMembersEl.insertAdjacentHTML('beforeend', `
-            <div onclick="switchDM('${id}', '${username}')" class="flex items-center justify-between px-3 py-2 bg-[#f0f2f5]/60 hover:bg-[#f0f2f5] rounded-xl cursor-pointer transition text-xs text-[#111b21] group">
-              <div class="flex items-center gap-2 truncate">
-                <span class="w-2 h-2 rounded-full bg-[#00a884] shrink-0"></span>
+            <div onclick="switchDM('${id}', '${username}')" class="flex items-center justify-between px-3.5 py-2.5 bg-white hover:bg-[#f8fafc] rounded-2xl cursor-pointer transition-soft text-xs text-[#0b1a2b] group border border-[#f1f5f9] shadow-sm">
+              <div class="flex items-center gap-2.5 truncate">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#00a884] shrink-0 shadow-[0_0_0_2px_rgba(0,168,132,0.2)]"></span>
                 <span class="truncate font-medium group-hover:text-[#00a884] transition">@${username}</span>
               </div>
-              <span class="text-[10px] text-[#667781] bg-white px-2 py-0.5 rounded shadow-sm opacity-0 group-hover:opacity-100 transition">Chat</span>
+              <span class="text-[10px] text-[#5e6f82] bg-[#f1f5f9] px-2.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition font-medium">Chat</span>
             </div>
           `);
         }
       });
-
       if (otherCount === 0) {
-        userListEl.innerHTML = `<p class="text-xs text-[#667781] p-3 text-center">No other users online right now</p>`;
-        activeMembersEl.innerHTML = `<p class="text-xs text-[#667781] p-2 text-center">You are the only one online</p>`;
+        userListEl.innerHTML = `<p class="text-xs text-[#94a3b8] p-3 text-center font-medium">No other users online</p>`;
+        activeMembersEl.innerHTML = `<p class="text-xs text-[#94a3b8] p-2 text-center font-medium">You are the only one online</p>`;
       }
     }
 
-    // Messages
+    // ---------- messages ----------
     async function loadMessages() {
-      const { data, error } = await db
-        .from('messages')
-        .select('*')
-        .eq('channel_id', currentChannel)
-        .order('created_at', { ascending: true });
-
+      const { data, error } = await db.from('messages').select('*').eq('channel_id', currentChannel).order('created_at', { ascending: true });
       if (error) return;
-
       const container = document.getElementById('messages-container');
       container.innerHTML = '';
       (data || []).forEach(renderMessage);
@@ -427,7 +608,6 @@
 
     function subscribeToMessages() {
       if (realtimeMessagesSub) db.removeChannel(realtimeMessagesSub);
-
       realtimeMessagesSub = db.channel('public:messages:' + currentChannel)
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
           if (payload.new.channel_id === currentChannel) {
@@ -444,9 +624,7 @@
       const input = document.getElementById('message-input');
       const text = input.value.trim();
       if (!text || !currentUser) return;
-
       input.value = '';
-
       await db.from('messages').insert([{
         channel_id: currentChannel,
         sender_id: currentUser.id,
@@ -465,14 +643,17 @@
       }]);
     }
 
-    function switchChannel(channel) {
+    function switchChannel(channel, emoji = '💬') {
       currentChannel = channel;
-      document.getElementById('channel-name').textContent = `#${channel}`;
-      document.getElementById('channel-status').textContent = 'Public community chat';
-      
-      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f0f2f5]'));
+      const displayName = channel.startsWith('dm-') ? channel : `#${channel}`;
+      document.getElementById('channel-name').textContent = displayName;
+      document.getElementById('channel-icon').textContent = emoji;
+      document.getElementById('channel-status').textContent = channel.startsWith('dm-') ? 'Direct message' : 'Public community chat';
+
+      // update sidebar highlight
+      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
       const activeBtn = document.querySelector(`[data-id="${channel}"]`);
-      if (activeBtn) activeBtn.classList.add('bg-[#f0f2f5]');
+      if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
 
       showChatOnMobile();
       loadMessages();
@@ -481,48 +662,43 @@
 
     function switchDM(recipientId, recipientName) {
       const ids = [currentUser.id, recipientId].sort();
-      currentChannel = `dm-${ids[0]}-${ids[1]}`;
+      const dmChannel = `dm-${ids[0]}-${ids[1]}`;
+      currentChannel = dmChannel;
       document.getElementById('channel-name').textContent = `💬 @${recipientName}`;
+      document.getElementById('channel-icon').textContent = '💬';
       document.getElementById('channel-status').textContent = 'Direct message';
 
-      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f0f2f5]'));
+      // update pill to show DM context (optional, keep lounge pill for public)
+      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
       const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
-      if (activeBtn) activeBtn.classList.add('bg-[#f0f2f5]');
+      if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
 
       const drawer = document.getElementById('directory-drawer');
-      if (!drawer.classList.contains('translate-x-full')) {
-        drawer.classList.add('translate-x-full');
-      }
-
+      if (!drawer.classList.contains('translate-x-full')) drawer.classList.add('translate-x-full');
       showChatOnMobile();
       loadMessages();
       subscribeToMessages();
     }
 
+    // ---------- render message ----------
     function renderMessage(msg) {
       const container = document.getElementById('messages-container');
       const isMe = currentUser && msg.sender_id === currentUser.id;
       const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
       const msgHTML = `
-        <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-2">
-          <div class="flex items-center gap-2 mb-0.5 px-1">
-            <span class="text-[10px] font-semibold text-[#667781]">${msg.sender_name}</span>
+        <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-1.5 message-in">
+          <div class="flex items-center gap-2 mb-1 px-2">
+            <span class="text-[10px] font-semibold text-[#5e6f82] tracking-wide">${msg.sender_name}</span>
           </div>
-          <div class="max-w-[85%] sm:max-w-md px-3.5 py-2 rounded-xl text-xs sm:text-sm shadow-sm relative ${
-            isMe 
-              ? 'bg-[#d9fdd3] text-[#111b21] rounded-tr-none' 
-              : 'bg-white text-[#111b21] rounded-tl-none border border-[#e9edef]'
-          }">
-            <p class="break-words leading-relaxed">${msg.text}</p>
-            <div class="flex items-center justify-end gap-1 mt-1 text-[9px] text-[#667781]">
+          <div class="max-w-[85%] sm:max-w-md px-4 py-2.5 text-sm relative ${isMe ? 'bubble-me' : 'bubble-other'}">
+            <p class="break-words leading-relaxed text-[#0b1a2b]">${msg.text}</p>
+            <div class="flex items-center justify-end gap-1.5 mt-1.5 text-[9px] text-[#5e6f82] opacity-80">
               <span>${timeStr}</span>
-              ${isMe ? '<span class="text-[#53bdeb] font-bold">✓✓</span>' : ''}
+              ${isMe ? '<span class="text-[#53bdeb] font-bold text-[11px]">✓✓</span>' : ''}
             </div>
           </div>
         </div>
       `;
-
       container.insertAdjacentHTML('beforeend', msgHTML);
     }
   </script>
