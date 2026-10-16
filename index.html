@@ -3,20 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Chitchat Nepal- Connect·Chat·Belong</title>
+  <title>Chitchat Nepal - Connect·Chat·Belong</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-<!-- Standard Favicons -->
-<link rel="icon" type="image/png" sizes="32x32" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/favicon.png">
-<link rel="icon" type="image/png" sizes="16x16" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/favicon.png">
-
-<!-- Apple Touch Icon (iOS Home Screen) -->
-<link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/favicon.png">
-
-<!-- Shortcut Fallback -->
-<link rel="shortcut icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/favicon.png" type="image/png">
-  
   <style>
     html, body {
       height: 100%;
@@ -153,7 +145,6 @@
       .mobile-header-padding { padding-left: 12px; padding-right: 12px; }
     }
 
-    /* ----- notification toast — now clickable ----- */
     .notification-toast {
       position: fixed;
       top: 16px;
@@ -202,6 +193,13 @@
       font-size: 15px;
       flex-shrink: 0;
       box-shadow: 0 2px 8px rgba(0,168,132,0.3);
+      overflow: hidden;
+    }
+    .notification-toast .toast-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
     }
     .notification-toast .toast-content {
       flex: 1;
@@ -266,6 +264,33 @@
       font-weight: 700;
       line-height: 1;
     }
+
+    /* brand icon styling */
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow: 0 4px 16px rgba(0,168,132,0.25);
+    }
+    .brand-icon-sm {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+    .brand-icon-xs {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+    .channel-icon-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -275,7 +300,9 @@
 
   <!-- ========== NOTIFICATION TOAST (clickable) ========== -->
   <div id="notification-toast" class="notification-toast" onclick="handleToastClick()">
-    <div class="toast-icon" id="toast-icon">💬</div>
+    <div class="toast-icon" id="toast-icon">
+      <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Chitchat Nepal">
+    </div>
     <div class="toast-content">
       <div class="toast-title" id="toast-title">New message</div>
       <div class="toast-text" id="toast-text">Someone sent a message</div>
@@ -287,7 +314,7 @@
   <div id="auth-screen" class="fixed inset-0 bg-gradient-to-br from-[#f7f9fc] via-[#eef3f9] to-[#e6edf6] z-50 flex items-center justify-center p-4">
     <div class="bg-white/80 backdrop-blur-xl border border-white/60 p-8 sm:p-10 rounded-[36px] max-w-md w-full card-shadow-lg space-y-7">
       <div class="flex items-center gap-4">
-        <div class="bg-gradient-to-br from-[#00a884] to-[#018f70] text-white font-bold p-4 rounded-[20px] text-3xl shadow-lg shadow-[#00a884]/25">🇳🇵</div>
+        <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Chitchat Nepal" class="brand-icon">
         <div>
           <h2 class="text-2xl font-extrabold tracking-tight text-[#0b1a2b]">Chitchat Nepal</h2>
           <p class="text-xs font-medium text-[#5e6f82] tracking-wide">Connect · Chat · Belong</p>
@@ -349,7 +376,7 @@
         <div class="absolute inset-0 bg-gradient-to-b from-[#00a884]/5 to-transparent pointer-events-none"></div>
         <div class="relative flex justify-between items-center">
           <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-[#00a884] to-[#018f70] text-white font-bold flex items-center justify-center text-sm shadow-md avatar-ring" id="user-avatar-initial">A</div>
+            <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Profile" class="w-11 h-11 rounded-full object-cover shadow-md avatar-ring" id="user-avatar-initial">
             <div>
               <h4 class="text-sm font-bold text-[#0b1a2b]" id="user-display">Ayush</h4>
               <p class="text-[10px] font-medium text-[#00a884] flex items-center gap-1.5">
@@ -419,7 +446,9 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
           
-          <div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-[#00a884]/15 to-[#00a884]/5 text-[#00a884] font-bold flex items-center justify-center text-base shrink-0" id="channel-icon">💬</div>
+          <div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-[#00a884]/15 to-[#00a884]/5 text-[#00a884] font-bold flex items-center justify-center text-base shrink-0 overflow-hidden" id="channel-icon">
+            <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Channel" class="channel-icon-img">
+          </div>
           <div class="min-w-0">
             <h3 class="text-xs md:text-sm font-bold text-[#0b1a2b] truncate max-w-[120px] sm:max-w-[200px] md:max-w-none" id="channel-name">#Chautari-Lounge</h3>
             <p class="text-[9px] md:text-[10px] font-medium text-[#5e6f82] truncate" id="channel-status">Public community chat</p>
@@ -478,6 +507,9 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_toqaL-nV0vmTlb27Sh6_xA_3fb5Mebb';
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Brand icon URL (used for default avatars & channel icons)
+    const BRAND_ICON_URL = 'https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png';
 
     let currentUser = null;
     let currentDisplayName = 'User';
@@ -557,14 +589,14 @@
 
     // ---------- NOTIFICATION TOAST (with click-to-open) ----------
     let toastTimer = null;
-    let toastTargetChannel = null;   // remembers which channel the toast is about
+    let toastTargetChannel = null;
 
     function showNotificationToast(title, text, channelId, icon = '💬') {
       const toast = document.getElementById('notification-toast');
       document.getElementById('toast-title').textContent = title;
       document.getElementById('toast-text').textContent = text;
-      document.getElementById('toast-icon').textContent = icon;
-      toastTargetChannel = channelId;   // store target
+      // The toast icon now always uses the brand icon image
+      toastTargetChannel = channelId;
       toast.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => {
@@ -573,27 +605,20 @@
       }, 4000);
     }
 
-    // Called when user clicks the toast
     function handleToastClick() {
       if (!toastTargetChannel) return;
       const channelId = toastTargetChannel;
-
-      // Hide toast immediately
       const toast = document.getElementById('notification-toast');
       toast.classList.remove('show');
       clearTimeout(toastTimer);
       toastTargetChannel = null;
 
-      // Determine if it's a DM or public lounge
       if (channelId.startsWith('dm-')) {
-        // We need the recipient id to call switchDM.
-        // The channel id is "dm-<id1>-<id2>". Find the one that's not us.
         const parts = channelId.split('-');
         const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
         const otherName = onlineUsersMap.get(otherId) || 'User';
         switchDM(otherId, otherName);
       } else {
-        // Public lounge: find emoji from the dropdown or use default
         let emoji = '💬';
         const option = document.querySelector(`.lounge-option[data-channel="${channelId}"]`);
         if (option) {
@@ -756,10 +781,9 @@
       document.getElementById('chat-screen').classList.remove('hidden');
       document.getElementById('chat-screen').classList.add('flex');
       document.getElementById('user-display').textContent = name;
-      document.getElementById('user-avatar-initial').textContent = name.charAt(0).toUpperCase();
+      // user avatar stays brand icon (already in HTML)
 
       document.getElementById('channel-name').textContent = '#Chautari-Lounge';
-      document.getElementById('channel-icon').textContent = '💬';
       document.getElementById('channel-status').textContent = 'Public community chat';
       document.getElementById('lounge-pill-label').textContent = '#Chautari-Lounge';
       document.querySelector('#lounge-pill .emoji').textContent = '💬';
@@ -831,10 +855,11 @@
         if (id !== currentUser.id) {
           otherCount++;
           const dmChannelId = `dm-${[currentUser.id, id].sort().join('-')}`;
+          // Use brand icon for all user avatars now
           userListEl.insertAdjacentHTML('beforeend', `
             <button onclick="switchDM('${id}', '${username}')" class="channel-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-soft text-[#0b1a2b] hover:bg-[#f1f5f9] flex items-center justify-between" data-id="dm-${id}" data-channel-id="${dmChannelId}">
               <div class="flex items-center gap-3 truncate">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#00a884]/15 to-[#00a884]/5 text-[#00a884] font-bold flex items-center justify-center text-xs shrink-0">${username.charAt(0).toUpperCase()}</div>
+                <img src="${BRAND_ICON_URL}" alt="${username}" class="w-8 h-8 rounded-full object-cover shrink-0 shadow-sm">
                 <div class="truncate"><p class="font-semibold text-xs">@${username}</p><p class="text-[10px] text-[#00a884]">Online now</p></div>
               </div>
               <span class="w-2 h-2 rounded-full bg-[#00a884] shrink-0 shadow-[0_0_0_2px_rgba(0,168,132,0.2)]"></span>
@@ -843,7 +868,7 @@
           activeMembersEl.insertAdjacentHTML('beforeend', `
             <div onclick="switchDM('${id}', '${username}')" class="flex items-center justify-between px-3.5 py-2.5 bg-white hover:bg-[#f8fafc] rounded-2xl cursor-pointer transition-soft text-xs text-[#0b1a2b] group border border-[#f1f5f9] shadow-sm">
               <div class="flex items-center gap-2.5 truncate">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#00a884] shrink-0 shadow-[0_0_0_2px_rgba(0,168,132,0.2)]"></span>
+                <img src="${BRAND_ICON_URL}" alt="${username}" class="w-6 h-6 rounded-full object-cover shrink-0">
                 <span class="truncate font-medium group-hover:text-[#00a884] transition">@${username}</span>
               </div>
               <span class="text-[10px] text-[#5e6f82] bg-[#f1f5f9] px-2.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition font-medium">Chat</span>
@@ -855,7 +880,6 @@
         userListEl.innerHTML = `<p class="text-xs text-[#94a3b8] p-3 text-center font-medium">No other users online</p>`;
         activeMembersEl.innerHTML = `<p class="text-xs text-[#94a3b8] p-2 text-center font-medium">You are the only one online</p>`;
       }
-      // Re-apply unread badges
       updateUnreadBadges();
     }
 
@@ -880,13 +904,11 @@
           if (!msg || !currentUser) return;
           const isMe = msg.sender_id === currentUser.id;
 
-          // If message is for current channel, render live
           if (msg.channel_id === currentChannel) {
             renderMessage(msg);
             const container = document.getElementById('messages-container');
             container.scrollTop = container.scrollHeight;
           } else {
-            // Message for another channel -> increment unread
             if (!isMe) {
               const prev = unreadCounts.get(msg.channel_id) || 0;
               unreadCounts.set(msg.channel_id, prev + 1);
@@ -895,39 +917,24 @@
             }
           }
 
-          // Sound + toast: only for others' messages
           if (!isMe) {
             playNotificationSound();
 
             const isDifferentChannel = msg.channel_id !== currentChannel;
             if (document.hidden || window.innerWidth < 768 || isDifferentChannel) {
-              // Build a nice title
-              let title, icon;
+              let title;
               if (msg.channel_id.startsWith('dm-')) {
                 title = `${msg.sender_name}`;
-                icon = '💬';
               } else {
                 title = `#${msg.channel_id}`;
-                // try to find emoji
-                const option = document.querySelector(`.lounge-option[data-channel="${msg.channel_id}"]`);
-                if (option) {
-                  const emojiEl = option.querySelector('.emoji');
-                  if (emojiEl) icon = emojiEl.textContent;
-                }
-                if (!icon || icon === '💬') {
-                  // fallback emoji map
-                  const map = { 'Chautari-Lounge': '💬', 'Tech-Nepal': '💻', 'Gaff-Saff': '☕' };
-                  icon = map[msg.channel_id] || '💬';
-                }
               }
-              showNotificationToast(title, msg.text, msg.channel_id, icon);
+              showNotificationToast(title, msg.text, msg.channel_id);
             }
           }
         })
         .subscribe();
     }
 
-    // ---- unread badge helpers ----
     function updateUnreadBadges() {
       document.querySelectorAll('.lounge-option').forEach(btn => {
         const ch = btn.dataset.channel;
@@ -954,7 +961,6 @@
             const badge = document.createElement('span');
             badge.className = 'unread-badge ml-2';
             badge.textContent = count > 99 ? '99+' : count;
-            // Insert before the online dot
             const dot = btn.querySelector('.w-2.h-2.rounded-full');
             if (dot) {
               dot.parentNode.insertBefore(badge, dot);
@@ -994,7 +1000,6 @@
       currentChannel = channel;
       const displayName = channel.startsWith('dm-') ? channel : `#${channel}`;
       document.getElementById('channel-name').textContent = displayName;
-      document.getElementById('channel-icon').textContent = emoji;
       document.getElementById('channel-status').textContent = channel.startsWith('dm-') ? 'Direct message' : 'Public community chat';
 
       document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
@@ -1011,7 +1016,6 @@
       const dmChannel = `dm-${ids[0]}-${ids[1]}`;
       currentChannel = dmChannel;
       document.getElementById('channel-name').textContent = `💬 @${recipientName}`;
-      document.getElementById('channel-icon').textContent = '💬';
       document.getElementById('channel-status').textContent = 'Direct message';
 
       document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
