@@ -142,7 +142,6 @@
       .mobile-header-padding { padding-left: 12px; padding-right: 12px; }
     }
 
-    /* ----- notification toast ----- */
     .notification-toast {
       position: fixed;
       top: 16px;
@@ -198,7 +197,6 @@
       text-overflow: ellipsis;
     }
 
-    /* ----- sound toggle button ----- */
     .sound-toggle {
       position: relative;
       width: 32px;
@@ -215,6 +213,22 @@
     }
     .sound-toggle:hover { background: white; border-color: #cbd5e1; color: #00a884; }
     .sound-toggle.muted { color: #ef4444; border-color: #fecaca; background: #fef2f2; }
+
+    /* ----- unread badge ----- */
+    .unread-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background: #00a884;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+    }
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -374,7 +388,6 @@
           </div>
         </div>
         <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
-          <!-- Sound toggle -->
           <button id="sound-toggle" onclick="toggleSound()" class="sound-toggle" title="Toggle notification sound">
             <svg id="sound-icon-on" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M11 5L6 9H2v6h4l5 4V5z"/></svg>
             <svg id="sound-icon-off" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>
@@ -431,15 +444,16 @@
     let currentUser = null;
     let currentDisplayName = 'User';
     let currentChannel = 'Chautari-Lounge';
-    let realtimeMessagesSub = null;
+    let globalMessagesSub = null;     // single global subscription (all channels)
     let presenceChannel = null;
     let onlineUsersMap = new Map();
+    let unreadCounts = new Map();     // channel -> count
 
     // ---------- NOTIFICATION SOUND (Web Audio API) ----------
     let audioContext = null;
     let soundEnabled = true;
     let lastSoundTime = 0;
-    const SOUND_COOLDOWN_MS = 300; // prevent overlapping sounds
+    const SOUND_COOLDOWN_MS = 300;
 
     function initAudioContext() {
       if (!audioContext) {
@@ -449,20 +463,17 @@
           console.warn('Web Audio API not supported');
         }
       }
-      // Resume context on user interaction (required by browsers)
       if (audioContext && audioContext.state === 'suspended') {
         audioContext.resume().catch(() => {});
       }
     }
 
-    // Resume audio on first user gesture
     document.addEventListener('click', () => initAudioContext(), { once: false });
     document.addEventListener('touchstart', () => initAudioContext(), { once: false });
     document.addEventListener('keydown', () => initAudioContext(), { once: false });
 
     function playNotificationSound() {
       if (!soundEnabled) return;
-      
       const now = Date.now();
       if (now - lastSoundTime < SOUND_COOLDOWN_MS) return;
       lastSoundTime = now;
@@ -470,11 +481,8 @@
       try {
         initAudioContext();
         if (!audioContext) return;
-
         const t = audioContext.currentTime;
 
-        // ---- Modern "pop / ding" notification ----
-        // Two quick ascending tones with a soft envelope
         const osc1 = audioContext.createOscillator();
         const osc2 = audioContext.createOscillator();
         const gain1 = audioContext.createGain();
@@ -483,18 +491,16 @@
         osc1.type = 'sine';
         osc2.type = 'sine';
 
-        osc1.frequency.setValueAtTime(880, t);        // A5
-        osc1.frequency.setValueAtTime(1174.66, t + 0.08); // D6
+        osc1.frequency.setValueAtTime(880, t);
+        osc1.frequency.setValueAtTime(1174.66, t + 0.08);
 
-        osc2.frequency.setValueAtTime(1318.51, t + 0.04); // E6
-        osc2.frequency.setValueAtTime(1567.98, t + 0.10); // G6
+        osc2.frequency.setValueAtTime(1318.51, t + 0.04);
+        osc2.frequency.setValueAtTime(1567.98, t + 0.10);
 
-        // Envelope for osc1
         gain1.gain.setValueAtTime(0, t);
         gain1.gain.linearRampToValueAtTime(0.12, t + 0.015);
         gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
 
-        // Envelope for osc2
         gain2.gain.setValueAtTime(0, t + 0.03);
         gain2.gain.linearRampToValueAtTime(0.08, t + 0.05);
         gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
@@ -508,7 +514,6 @@
         osc1.stop(t + 0.3);
         osc2.start(t + 0.03);
         osc2.stop(t + 0.3);
-
       } catch (e) {
         console.warn('Could not play notification sound', e);
       }
@@ -523,8 +528,6 @@
         btn.classList.remove('muted');
         onIcon.classList.remove('hidden');
         offIcon.classList.add('hidden');
-        // Play a quick confirmation
-        playNotificationSound();
       } else {
         btn.classList.add('muted');
         onIcon.classList.add('hidden');
@@ -540,9 +543,7 @@
       document.getElementById('toast-text').textContent = text;
       toast.classList.add('show');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2800);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
     }
 
     // ---------- helpers ----------
@@ -562,21 +563,15 @@
       }, { onConflict: 'id' });
     }
 
-    // ---------- mobile sidebar ----------
+    // ---------- mobile sidebar / drawer ----------
     function openSidebarOnMobile() {
-      const sidebar = document.getElementById('sidebar-panel');
-      const backdrop = document.getElementById('sidebar-backdrop');
-      sidebar.classList.remove('-translate-x-full');
-      backdrop.classList.remove('hidden');
+      document.getElementById('sidebar-panel').classList.remove('-translate-x-full');
+      document.getElementById('sidebar-backdrop').classList.remove('hidden');
     }
-
     function closeSidebarOnMobile() {
-      const sidebar = document.getElementById('sidebar-panel');
-      const backdrop = document.getElementById('sidebar-backdrop');
-      sidebar.classList.add('-translate-x-full');
-      backdrop.classList.add('hidden');
+      document.getElementById('sidebar-panel').classList.add('-translate-x-full');
+      document.getElementById('sidebar-backdrop').classList.add('hidden');
     }
-
     function toggleMobileDirectory() {
       const drawer = document.getElementById('directory-drawer');
       const backdrop = document.getElementById('directory-backdrop');
@@ -589,12 +584,9 @@
         backdrop.classList.remove('hidden');
       }
     }
-
     function closeDirectoryOnMobile() {
-      const drawer = document.getElementById('directory-drawer');
-      const backdrop = document.getElementById('directory-backdrop');
-      drawer.classList.add('translate-x-full');
-      backdrop.classList.add('hidden');
+      document.getElementById('directory-drawer').classList.add('translate-x-full');
+      document.getElementById('directory-backdrop').classList.add('hidden');
     }
 
     // ---------- lounge dropdown ----------
@@ -689,7 +681,7 @@
       if (presenceChannel) presenceChannel.untrack();
       await db.auth.signOut();
       currentUser = null;
-      if (realtimeMessagesSub) db.removeChannel(realtimeMessagesSub);
+      if (globalMessagesSub) db.removeChannel(globalMessagesSub);
       document.getElementById('auth-screen').classList.remove('hidden');
       document.getElementById('chat-screen').classList.add('hidden');
       document.getElementById('chat-screen').classList.remove('flex');
@@ -708,7 +700,6 @@
       document.getElementById('user-display').textContent = name;
       document.getElementById('user-avatar-initial').textContent = name.charAt(0).toUpperCase();
 
-      // Default lounge
       document.getElementById('channel-name').textContent = '#Chautari-Lounge';
       document.getElementById('channel-icon').textContent = '💬';
       document.getElementById('channel-status').textContent = 'Public community chat';
@@ -719,15 +710,14 @@
       });
 
       loadMessages();
-      subscribeToMessages();
+      subscribeToAllMessages();   // single global subscription
       setupPresence();
-      
+
       if (window.innerWidth < 768) {
         closeSidebarOnMobile();
         closeDirectoryOnMobile();
       }
 
-      // Try to init audio (will resume on first interaction)
       initAudioContext();
     }
 
@@ -817,29 +807,118 @@
       container.innerHTML = '';
       (data || []).forEach(renderMessage);
       container.scrollTop = container.scrollHeight;
+      // Clear unread for the current channel when opening it
+      unreadCounts.delete(currentChannel);
+      updateUnreadBadges();
     }
 
-    function subscribeToMessages() {
-      if (realtimeMessagesSub) db.removeChannel(realtimeMessagesSub);
-      realtimeMessagesSub = db.channel('public:messages:' + currentChannel)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-          if (payload.new.channel_id === currentChannel) {
-            const msg = payload.new;
-            renderMessage(msg);
-            const container = document.getElementById('messages-container');
-            container.scrollTop = container.scrollHeight;
+    // ---- GLOBAL SUBSCRIPTION: listens to ALL messages, regardless of channel ----
+    function subscribeToAllMessages() {
+      if (globalMessagesSub) db.removeChannel(globalMessagesSub);
 
-            // ---- Play notification sound for messages from OTHERS ----
-            if (currentUser && msg.sender_id !== currentUser.id) {
-              playNotificationSound();
-              // Show toast if the page is not focused or chat is not visible
-              if (document.hidden || window.innerWidth < 768) {
-                showNotificationToast(msg.sender_name, msg.text);
-              }
+      globalMessagesSub = db.channel('public:all-messages')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+          const msg = payload.new;
+          if (!msg || !currentUser) return;
+
+          // Ignore our own messages (we already render them optimistically? No — we don't.
+          // We DO render our own messages via the subscription too, so we should not skip them,
+          // but we should not play a sound for them.)
+          const isMe = msg.sender_id === currentUser.id;
+
+          // If this message belongs to the currently open channel, render it live.
+          if (msg.channel_id === currentChannel) {
+            // Avoid duplicates if we happen to already have it (e.g. from optimistic insert)
+            if (!isMe) {
+              renderMessage(msg);
+              const container = document.getElementById('messages-container');
+              container.scrollTop = container.scrollHeight;
+            }
+            // For own messages, the subscription will render them (no duplicate since we don't optimistically insert).
+            if (isMe) {
+              renderMessage(msg);
+              const container = document.getElementById('messages-container');
+              container.scrollTop = container.scrollHeight;
+            }
+          } else {
+            // Message is for a DIFFERENT channel.
+            // Increment unread count for that channel (only for others' messages)
+            if (!isMe) {
+              const prev = unreadCounts.get(msg.channel_id) || 0;
+              unreadCounts.set(msg.channel_id, prev + 1);
+              updateUnreadBadges();
+
+              // Update the sidebar list item badge if it's a DM
+              updateSidebarBadge(msg.channel_id, prev + 1);
+            }
+          }
+
+          // ---- Notification sound: ONLY for messages from OTHER users ----
+          if (!isMe) {
+            playNotificationSound();
+
+            // Toast: show if the page is hidden, on mobile, or if message is for another channel
+            const isDifferentChannel = msg.channel_id !== currentChannel;
+            if (document.hidden || window.innerWidth < 768 || isDifferentChannel) {
+              const channelLabel = msg.channel_id.startsWith('dm-')
+                ? `DM from ${msg.sender_name}`
+                : `#${msg.channel_id}`;
+              showNotificationToast(
+                isDifferentChannel ? `New in ${channelLabel}` : msg.sender_name,
+                msg.text
+              );
             }
           }
         })
         .subscribe();
+    }
+
+    // ---- unread badge helpers ----
+    function updateUnreadBadges() {
+      // Update lounge options in the dropdown
+      document.querySelectorAll('.lounge-option').forEach(btn => {
+        const ch = btn.dataset.channel;
+        const count = unreadCounts.get(ch) || 0;
+        // Remove any existing badge
+        const existing = btn.querySelector('.unread-badge');
+        if (existing) existing.remove();
+        if (count > 0) {
+          const badge = document.createElement('span');
+          badge.className = 'unread-badge ml-auto';
+          badge.textContent = count > 99 ? '99+' : count;
+          btn.appendChild(badge);
+        }
+      });
+
+      // Update the pill label if current channel has unread (shouldn't happen since we clear on open)
+      // Update the DM list badges
+      document.querySelectorAll('#users-sidebar-list .channel-btn').forEach(btn => {
+        const id = btn.dataset.id;
+        if (!id || !id.startsWith('dm-')) return;
+        // Extract channel id from data-id? We store dm-<id> in the button's data-id,
+        // but the actual channel key is different. We'll handle DM badges via updateSidebarBadge.
+      });
+    }
+
+    function updateSidebarBadge(channelId, count) {
+      // For DM channels, the sidebar button uses data-id="dm-<recipientId>"
+      // but channelId is "dm-<sortedIds>". We need to find the button that matches the recipient.
+      // Simpler: iterate over sidebar buttons and try to match by checking if the channelId contains the recipient id.
+      // We'll store the channel id on the button as a data attribute when rendering.
+      const buttons = document.querySelectorAll('#users-sidebar-list .channel-btn');
+      buttons.forEach(btn => {
+        const btnChannel = btn.dataset.channelId;
+        if (btnChannel === channelId) {
+          const existing = btn.querySelector('.unread-badge');
+          if (existing) existing.remove();
+          if (count > 0) {
+            const badge = document.createElement('span');
+            badge.className = 'unread-badge ml-2';
+            badge.textContent = count > 99 ? '99+' : count;
+            btn.appendChild(badge);
+          }
+        }
+      });
     }
 
     async function handleSendMessage(e) {
@@ -848,10 +927,6 @@
       const text = input.value.trim();
       if (!text || !currentUser) return;
       input.value = '';
-
-      // Play a subtle "sent" sound
-      playNotificationSound();
-
       await db.from('messages').insert([{
         channel_id: currentChannel,
         sender_id: currentUser.id,
@@ -862,7 +937,6 @@
 
     async function sendQuickMessage(text) {
       if (!currentUser) return;
-      playNotificationSound();
       await db.from('messages').insert([{
         channel_id: currentChannel,
         sender_id: currentUser.id,
@@ -882,8 +956,11 @@
       const activeBtn = document.querySelector(`[data-id="${channel}"]`);
       if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
 
+      // Clear unread for this channel
+      unreadCounts.delete(channel);
+      updateUnreadBadges();
+
       loadMessages();
-      subscribeToMessages();
     }
 
     function switchDM(recipientId, recipientName) {
@@ -900,9 +977,11 @@
 
       closeSidebarOnMobile();
       closeDirectoryOnMobile();
-      
+
+      unreadCounts.delete(dmChannel);
+      updateUnreadBadges();
+
       loadMessages();
-      subscribeToMessages();
     }
 
     // ---------- render message ----------
