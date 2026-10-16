@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Chitchat Nepal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Chitchat Nepal 🇳🇵</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { background-color: #f0f2f5; color: #111b21; font-family: system-ui, -apple-system, sans-serif; }
+    html, body { height: 100%; height: 100dvh; overflow: hidden; background-color: #f0f2f5; color: #111b21; font-family: system-ui, -apple-system, sans-serif; }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: #d1d7db; border-radius: 4px; }
     .chat-bg { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.75px, transparent 0.75px); background-size: 24px 24px; }
   </style>
 </head>
-<body class="h-screen w-screen flex flex-col overflow-hidden select-none">
+<body class="h-[100dvh] w-screen flex flex-col overflow-hidden select-none">
 
   <!-- Auth Screen -->
   <div id="auth-screen" class="fixed inset-0 bg-[#f0f2f5] z-50 flex items-center justify-center p-4">
@@ -69,7 +69,7 @@
   </div>
 
   <!-- Main Chat App Area -->
-  <div id="chat-screen" class="hidden flex-1 flex h-full w-full overflow-hidden">
+  <div id="chat-screen" class="hidden flex-1 flex h-[100dvh] w-full overflow-hidden">
     
     <!-- Left Sidebar (Lounges & DMs) -->
     <aside id="sidebar-panel" class="w-full md:w-80 bg-white border-r border-[#e9edef] flex flex-col h-full shrink-0">
@@ -85,25 +85,20 @@
         <button onclick="handleLogout()" class="text-xs bg-white hover:bg-[#e9edef] text-[#667781] px-3 py-1.5 rounded-lg border border-[#e9edef] transition font-medium">Logout</button>
       </div>
 
-      <!-- Search Box -->
-      <div class="p-2.5 border-b border-[#e9edef] shrink-0">
-        <input type="text" placeholder="Search chats" class="w-full bg-[#f0f2f5] border border-transparent focus:border-[#00a884] rounded-lg px-3.5 py-2 text-xs text-[#111b21] focus:outline-none">
-      </div>
-
       <!-- Navigation Lists -->
       <div class="flex-1 overflow-y-auto divide-y divide-[#f0f2f5]">
         <!-- Public Lounges -->
         <div class="p-2 space-y-1">
           <p class="text-[10px] font-bold text-[#667781] uppercase tracking-wider px-3 py-1">Public Lounges</p>
-          <button onclick="switchChannel('Chautari-Lounge')" class="channel-btn w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3 bg-[#f0f2f5]" data-id="Chautari-Lounge">
+          <button onclick="switchChannel('Chautari-Lounge')" class="channel-btn w-full text-left px-3 py-3 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3 bg-[#f0f2f5]" data-id="Chautari-Lounge">
             <span class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs shrink-0">💬</span>
             <div class="flex-1 truncate"><p class="font-medium text-xs">#Chautari-Lounge</p><p class="text-[10px] text-[#667781]">General public square</p></div>
           </button>
-          <button onclick="switchChannel('Tech-Nepal')" class="channel-btn w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3" data-id="Tech-Nepal">
+          <button onclick="switchChannel('Tech-Nepal')" class="channel-btn w-full text-left px-3 py-3 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3" data-id="Tech-Nepal">
             <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs shrink-0">💻</span>
             <div class="flex-1 truncate"><p class="font-medium text-xs">#Tech-Nepal</p><p class="text-[10px] text-[#667781]">Coding & tech discussions</p></div>
           </button>
-          <button onclick="switchChannel('Gaff-Saff')" class="channel-btn w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3" data-id="Gaff-Saff">
+          <button onclick="switchChannel('Gaff-Saff')" class="channel-btn w-full text-left px-3 py-3 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3" data-id="Gaff-Saff">
             <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs shrink-0">☕</span>
             <div class="flex-1 truncate"><p class="font-medium text-xs">#Gaff-Saff</p><p class="text-[10px] text-[#667781]">Casual conversations</p></div>
           </button>
@@ -111,18 +106,18 @@
 
         <!-- Direct Messages -->
         <div class="p-2 space-y-1">
-          <p class="text-[10px] font-bold text-[#667781] uppercase tracking-wider px-3 py-1">Direct Messages (Online)</p>
+          <p class="text-[10px] font-bold text-[#667781] uppercase tracking-wider px-3 py-1">Direct Messages (Online Now)</p>
           <div id="users-sidebar-list" class="space-y-1"></div>
         </div>
       </div>
     </aside>
 
     <!-- Main Chat Window -->
-    <main id="chat-panel" class="hidden md:flex flex-1 flex-col justify-between chat-bg h-full w-full">
+    <main id="chat-panel" class="hidden md:flex flex-1 flex-col justify-between chat-bg h-full w-full relative overflow-hidden">
       <!-- Chat Header -->
-      <div class="bg-[#f0f2f5] border-b border-[#e9edef] px-3.5 py-2.5 flex justify-between items-center shadow-sm shrink-0">
+      <div class="bg-[#f0f2f5] border-b border-[#e9edef] px-3.5 py-2.5 flex justify-between items-center shadow-sm shrink-0 z-20">
         <div class="flex items-center gap-2.5">
-          <!-- Back button on mobile view -->
+          <!-- Back button on mobile -->
           <button onclick="showSidebarOnMobile()" class="md:hidden text-[#00a884] p-1 rounded-lg hover:bg-[#e9edef] font-bold text-sm flex items-center gap-1">
             <span>←</span> <span class="text-xs">Chats</span>
           </button>
@@ -140,25 +135,28 @@
       </div>
 
       <!-- Messages Stream -->
-      <div id="messages-container" class="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-3"></div>
+      <div id="messages-container" class="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-3 pb-24 md:pb-6"></div>
 
-      <!-- Nepali Sticker Bar -->
-      <div class="bg-[#f0f2f5]/90 border-t border-[#e9edef] px-3 py-1.5 flex items-center gap-2 overflow-x-auto shrink-0">
-        <span class="text-[11px] text-[#667781] font-semibold mr-1 shrink-0">Stickers:</span>
-        <button onclick="sendSticker('🙏 Namaste')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🙏 Namaste</button>
-        <button onclick="sendSticker('🥟 Momo')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🥟 Momo</button>
-        <button onclick="sendSticker('☕ Chiya')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">☕ Chiya</button>
-        <button onclick="sendSticker('🏔️ Himal')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🏔️ Himal</button>
-        <button onclick="sendSticker('🇳🇵 Flag')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🇳🇵 Flag</button>
+      <!-- Fixed Input & Sticker Container -->
+      <div class="shrink-0 bg-[#f0f2f5] border-t border-[#e9edef] z-20">
+        <!-- Nepali Sticker Bar -->
+        <div class="px-3 py-1.5 flex items-center gap-2 overflow-x-auto border-b border-[#e9edef]/50">
+          <span class="text-[10px] text-[#667781] font-semibold mr-1 shrink-0">Stickers:</span>
+          <button onclick="sendSticker('🙏 Namaste')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🙏 Namaste</button>
+          <button onclick="sendSticker('🥟 Momo')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🥟 Momo</button>
+          <button onclick="sendSticker('☕ Chiya')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">☕ Chiya</button>
+          <button onclick="sendSticker('🏔️ Himal')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🏔️ Himal</button>
+          <button onclick="sendSticker('🇳🇵 Flag')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🇳🇵 Flag</button>
+        </div>
+
+        <!-- Message Input Bar -->
+        <form onsubmit="handleSendMessage(event)" class="p-2.5 sm:p-3 flex items-center gap-2">
+          <input id="message-input" type="text" placeholder="Type a message..." class="flex-1 bg-white border border-[#e9edef] rounded-xl px-3.5 py-2.5 sm:py-3 text-xs sm:text-sm text-[#111b21] focus:outline-none focus:border-[#00a884] shadow-sm">
+          <button type="submit" class="bg-[#00a884] hover:bg-[#01755c] active:scale-95 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl transition shadow-md font-medium text-xs sm:text-sm shrink-0 flex items-center gap-1">
+            <span>Send</span>
+          </button>
+        </form>
       </div>
-
-      <!-- Input Bar -->
-      <form onsubmit="handleSendMessage(event)" class="bg-[#f0f2f5] p-2.5 sm:p-3 border-t border-[#e9edef] flex items-center gap-2 shrink-0">
-        <input id="message-input" type="text" placeholder="Type a message" class="flex-1 bg-white border border-[#e9edef] rounded-xl px-3.5 py-2.5 sm:py-3 text-xs sm:text-sm text-[#111b21] focus:outline-none focus:border-[#00a884] shadow-sm">
-        <button type="submit" class="bg-[#00a884] hover:bg-[#01755c] active:scale-95 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl transition shadow-md font-medium text-xs sm:text-sm shrink-0">
-          Send
-        </button>
-      </form>
     </main>
 
     <!-- Right Active Members Professional Sidebar / Mobile Slide Drawer -->
@@ -315,7 +313,7 @@
       }
     });
 
-    // Mobile navigation helpers
+    // Mobile Navigation Switchers
     function showChatOnMobile() {
       if (window.innerWidth < 768) {
         document.getElementById('sidebar-panel').classList.add('hidden');
@@ -337,7 +335,7 @@
       drawer.classList.toggle('translate-x-full');
     }
 
-    // Realtime Presence
+    // Presence
     function setupPresence() {
       if (presenceChannel) db.removeChannel(presenceChannel);
 
