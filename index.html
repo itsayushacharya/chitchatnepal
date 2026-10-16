@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chitchat Nepal 🇳🇵</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { background-color: #f0f2f5; color: #111b21; font-family: system-ui, -apple-system, sans-serif; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #d1d7db; border-radius: 4px; }
+    .chat-bg { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.75px, transparent 0.75px); background-size: 24px 24px; }
+  </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+  <!-- Auth Screen -->
+  <div id="auth-screen" class="fixed inset-0 bg-[#f0f2f5] z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-[#e9edef] p-8 rounded-2xl max-w-md w-full shadow-xl space-y-6">
+      <div class="flex items-center gap-3">
+        <div class="bg-[#00a884] text-white font-bold p-3 rounded-2xl text-xl shadow-md">🇳🇵</div>
+        <div>
+          <h2 class="text-2xl font-bold text-[#111b21]">Chitchat Nepal</h2>
+          <p class="text-xs text-[#667781]">Secure & professional messaging</p>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs font-semibold text-[#667781] uppercase tracking-wider block mb-1">Username or Email</label>
+          <input id="auth-email" type="text" placeholder="e.g. ayushacharya" class="w-full bg-[#f0f2f5] border border-[#e9edef] rounded-xl px-4 py-3 text-sm text-[#111b21] focus:outline-none focus:border-[#00a884]">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-[#667781] uppercase tracking-wider block mb-1">Password</label>
+          <input id="auth-password" type="password" placeholder="••••••••" class="w-full bg-[#f0f2f5] border border-[#e9edef] rounded-xl px-4 py-3 text-sm text-[#111b21] focus:outline-none focus:border-[#00a884]">
+        </div>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button onclick="handleLogin()" class="flex-1 bg-[#00a884] hover:bg-[#01755c] text-white font-medium py-3 rounded-xl transition shadow-md">Log In</button>
+        <button onclick="handleSignup()" class="flex-1 bg-[#e9edef] hover:bg-[#d1d7db] text-[#111b21] font-medium py-3 rounded-xl transition">Sign Up</button>
+      </div>
+      <div class="relative flex py-1 items-center">
+        <div class="flex-grow border-t border-[#e9edef]"></div>
+        <span class="flex-shrink mx-3 text-xs text-[#667781]">OR</span>
+        <div class="flex-grow border-t border-[#e9edef]"></div>
+      </div>
+      <button onclick="openGuestModal()" class="w-full bg-[#f0f2f5] hover:bg-[#e9edef] text-[#00a884] border border-[#00a884]/30 font-medium py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
+        <span>⚡</span> Quick Chat as Guest
+      </button>
+      <p id="auth-error" class="text-xs text-red-500 text-center hidden"></p>
+    </div>
+  </div>
+
+  <!-- Custom Guest Username Modal Popup -->
+  <div id="guest-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
+    <div class="bg-white border border-[#e9edef] p-6 rounded-2xl max-w-sm w-full shadow-2xl space-y-4">
+      <div class="space-y-1">
+        <h3 class="text-lg font-bold text-[#111b21]">Choose Guest Username</h3>
+        <p class="text-xs text-[#667781]">Enter a display name to join the chat instantly.</p>
+      </div>
+      <div>
+        <input id="guest-username-input" type="text" placeholder="e.g. KathmanduExplorer" onkeydown="if(event.key==='Enter') confirmGuestLogin()" class="w-full bg-[#f0f2f5] border border-[#e9edef] rounded-xl px-4 py-3 text-sm text-[#111b21] focus:outline-none focus:border-[#00a884]">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeGuestModal()" class="flex-1 bg-[#e9edef] hover:bg-[#d1d7db] text-[#111b21] font-medium py-2.5 rounded-xl transition text-xs">Cancel</button>
+        <button onclick="confirmGuestLogin()" class="flex-1 bg-[#00a884] hover:bg-[#01755c] text-white font-medium py-2.5 rounded-xl transition text-xs shadow-md">Join Chat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Chat App Area -->
+  <div id="chat-screen" class="hidden flex-1 flex overflow-hidden">
+    
+    <!-- Left Professional Sidebar -->
+    <aside class="w-80 bg-white border-r border-[#e9edef] flex flex-col">
+      <!-- Profile Header -->
+      <div class="bg-[#f0f2f5] p-4 border-b border-[#e9edef] flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-[#00a884] text-white font-bold flex items-center justify-center text-sm shadow" id="user-avatar-initial">A</div>
+          <div>
+            <h4 class="text-sm font-semibold text-[#111b21]" id="user-display">Ayush</h4>
+            <p class="text-[11px] text-[#00a884] font-medium flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#00a884]"></span> Online</p>
+          </div>
+        </div>
+        <button onclick="handleLogout()" class="text-xs bg-white hover:bg-[#e9edef] text-[#667781] px-3 py-1.5 rounded-lg border border-[#e9edef] transition font-medium">Logout</button>
+      </div>
+
+      <!-- Search Box -->
+      <div class="p-3 border-b border-[#e9edef]">
+        <input type="text" id="search-input" onkeyup="filterChats()" placeholder="Search active users or lounges" class="w-full bg-[#f0f2f5] border border-transparent focus:border-[#00a884] rounded-lg px-4 py-2 text-xs text-[#111b21] focus:outline-none">
+      </div>
+
+      <!-- Sidebar Navigation Lists -->
+      <div class="flex-1 overflow-y-auto divide-y divide-[#f0f2f5]">
+        <!-- Public Lounges Section -->
+        <div class="p-2 space-y-1">
+          <p class="text-[11px] font-bold text-[#667781] uppercase tracking-wider px-3 py-1">Public Lounges</p>
+          <button onclick="switchChannel('Chautari-Lounge')" class="channel-btn w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3 bg-[#f0f2f5]" data-id="Chautari-Lounge">
+            <span class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-sm">💬</span>
+            <div class="flex-1 truncate"><p class="font-medium text-xs">#Chautari-Lounge</p><p class="text-[10px] text-[#667781]">General public square</p></div>
+          </button>
+          <button onclick="switchChannel('Tech-Nepal')" class="channel-btn w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3" data-id="Tech-Nepal">
+            <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm">💻</span>
+            <div class="flex-1 truncate"><p class="font-medium text-xs">#Tech-Nepal</p><p class="text-[10px] text-[#667781]">Coding & tech discussions</p></div>
+          </button>
+          <button onclick="switchChannel('Gaff-Saff')" class="channel-btn w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center gap-3" data-id="Gaff-Saff">
+            <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm">☕</span>
+            <div class="flex-1 truncate"><p class="font-medium text-xs">#Gaff-Saff</p><p class="text-[10px] text-[#667781]">Casual conversations</p></div>
+          </button>
+        </div>
+
+        <!-- Direct Messages Section -->
+        <div class="p-2 space-y-1">
+          <p class="text-[11px] font-bold text-[#667781] uppercase tracking-wider px-3 py-1">Direct Messages (Online Now)</p>
+          <div id="users-sidebar-list" class="space-y-1"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Window -->
+    <main class="flex-1 flex flex-col justify-between chat-bg">
+      <!-- Active Chat Header -->
+      <div class="bg-[#f0f2f5] border-b border-[#e9edef] px-6 py-3 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-[#00a884]/20 text-[#00a884] font-bold flex items-center justify-center text-sm">💬</div>
+          <div>
+            <h3 class="text-sm font-bold text-[#111b21]" id="channel-name">#Chautari-Lounge</h3>
+            <p class="text-[11px] text-[#667781]" id="channel-status">Public community chat</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs bg-white border border-[#e9edef] px-3 py-1 rounded-full text-[#667781] font-medium shadow-sm">Online Users: <strong id="active-count" class="text-[#00a884]">1</strong></span>
+        </div>
+      </div>
+
+      <!-- Messages Scroll Area -->
+      <div id="messages-container" class="flex-1 overflow-y-auto p-6 space-y-3"></div>
+
+      <!-- Quick Nepali Sticker Bar -->
+      <div class="bg-[#f0f2f5]/90 border-t border-[#e9edef] px-4 py-2 flex items-center gap-2 overflow-x-auto">
+        <span class="text-xs text-[#667781] font-semibold mr-1">Stickers:</span>
+        <button onclick="sendSticker('🙏 Namaste')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium">🙏 Namaste</button>
+        <button onclick="sendSticker('🥟 Momo')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium">🥟 Momo</button>
+        <button onclick="sendSticker('☕ Chiya')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium">☕ Chiya</button>
+        <button onclick="sendSticker('🏔️ Himal')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium">🏔️ Himal</button>
+        <button onclick="sendSticker('🇳🇵 Flag')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium">🇳🇵 Flag</button>
+      </div>
+
+      <!-- Input Bar -->
+      <form onsubmit="handleSendMessage(event)" class="bg-[#f0f2f5] p-3 border-t border-[#e9edef] flex items-center gap-3">
+        <input id="message-input" type="text" placeholder="Type a message" class="flex-1 bg-white border border-[#e9edef] rounded-xl px-4 py-3 text-sm text-[#111b21] focus:outline-none focus:border-[#00a884] shadow-sm">
+        <button type="submit" class="bg-[#00a884] hover:bg-[#01755c] text-white px-6 py-3 rounded-xl transition shadow-md font-medium text-sm flex items-center gap-2">
+          <span>Send</span>
+        </button>
+      </form>
+    </main>
+
+    <!-- Right Active Members Professional Sidebar -->
+    <aside class="w-64 bg-white border-l border-[#e9edef] flex flex-col hidden xl:flex">
+      <div class="p-4 border-b border-[#e9edef] bg-[#f0f2f5]">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-[#667781]">Online Directory</h4>
+      </div>
+      <div class="p-3 flex-1 overflow-y-auto space-y-1.5" id="active-members-list"></div>
+    </aside>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://bmhjltwabzmtyvrfaoeq.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_toqaL-nV0vmTlb27Sh6_xA_3fb5Mebb';
+
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentUser = null;
+    let currentDisplayName = 'User';
+    let currentChannel = 'Chautari-Lounge';
+    let realtimeMessagesSub = null;
+    let presenceChannel = null;
+    let onlineUsersMap = new Map(); // Tracks currently connected users
+
+    function formatEmail(input) {
+      return input.includes('@') ? input : `${input.trim().toLowerCase()}@chitchat.np`;
+    }
+
+    async function ensureProfileExists(user, customName) {
+      if (!user) return;
+      const username = customName || (user.email ? user.email.split('@')[0] : 'Guest');
+      currentDisplayName = username;
+      
+      await db.from('profiles').upsert({
+        id: user.id,
+        username: username,
+        display_name: username,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+    }
+
+    function openGuestModal() {
+      document.getElementById('guest-modal').classList.remove('hidden');
+      const input = document.getElementById('guest-username-input');
+      input.value = "NepaliUser_" + Math.floor(100 + Math.random() * 900);
+      input.focus();
+      input.select();
+    }
+
+    function closeGuestModal() {
+      document.getElementById('guest-modal').classList.add('hidden');
+    }
+
+    async function confirmGuestLogin() {
+      const guestInput = document.getElementById('guest-username-input').value;
+      if (!guestInput) return;
+      
+      closeGuestModal();
+      const guestName = guestInput.trim().replace(/\s+/g, '_');
+      const email = `${guestName.toLowerCase()}@chitchat.np`;
+      const password = 'guestpassword123';
+
+      let { data, error } = await db.auth.signInWithPassword({ email, password });
+      if (error) {
+        const signUpRes = await db.auth.signUp({ email, password });
+        data = signUpRes.data;
+      }
+
+      if (data?.user) {
+        await ensureProfileExists(data.user, guestName);
+        initSession(data.user, guestName);
+      }
+    }
+
+    async function handleSignup() {
+      const rawInput = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+      const errorEl = document.getElementById('auth-error');
+
+      if (!rawInput || !password) return;
+      const email = formatEmail(rawInput);
+      const username = rawInput.split('@')[0];
+
+      errorEl.classList.add('hidden');
+      const { data, error } = await db.auth.signUp({ email, password });
+
+      if (error) {
+        errorEl.textContent = error.message;
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      if (data?.user) {
+        await ensureProfileExists(data.user, username);
+        initSession(data.user, username);
+      }
+    }
+
+    async function handleLogin() {
+      const rawInput = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+      const errorEl = document.getElementById('auth-error');
+
+      if (!rawInput || !password) return;
+      const email = formatEmail(rawInput);
+      const username = rawInput.split('@')[0];
+
+      errorEl.classList.add('hidden');
+      const { data, error } = await db.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errorEl.textContent = error.message;
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      await ensureProfileExists(data.user, username);
+      initSession(data.user, username);
+    }
+
+    async function handleLogout() {
+      if (presenceChannel) presenceChannel.untrack();
+      await db.auth.signOut();
+      currentUser = null;
+      if (realtimeMessagesSub) db.removeChannel(realtimeMessagesSub);
+      document.getElementById('auth-screen').classList.remove('hidden');
+      document.getElementById('chat-screen').classList.add('hidden');
+    }
+
+    async function initSession(user, fallbackName) {
+      currentUser = user;
+      const name = fallbackName || (user.email ? user.email.split('@')[0] : 'User');
+      currentDisplayName = name;
+      await ensureProfileExists(user, name);
+
+      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('chat-screen').classList.remove('hidden');
+      document.getElementById('chat-screen').classList.add('flex');
+      document.getElementById('user-display').textContent = name;
+      document.getElementById('user-avatar-initial').textContent = name.charAt(0).toUpperCase();
+
+      loadMessages();
+      subscribeToMessages();
+      setupPresence();
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const { data: { session } } = await db.auth.getSession();
+      if (session?.user) {
+        const username = session.user.email.split('@')[0];
+        initSession(session.user, username);
+      }
+    });
+
+    // -------------------------------------------------------------
+    // REALTIME PRESENCE (LIVE ONLINE / OFFLINE TRACKING)
+    // -------------------------------------------------------------
+    function setupPresence() {
+      if (presenceChannel) db.removeChannel(presenceChannel);
+
+      presenceChannel = db.channel('online-presence', {
+        config: { presence: { key: currentUser.id } }
+      });
+
+      presenceChannel
+        .on('presence', { event: 'sync' }, () => {
+          const state = presenceChannel.presenceState();
+          onlineUsersMap.clear();
+
+          Object.keys(state).forEach(key => {
+            const presences = state[key];
+            if (presences && presences.length > 0) {
+              const u = presences[0];
+              onlineUsersMap.set(u.id, u.username);
+            }
+          });
+
+          renderOnlineUsers();
+        })
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            await presenceChannel.track({
+              id: currentUser.id,
+              username: currentDisplayName,
+              online_at: new Date().toISOString()
+            });
+          }
+        });
+    }
+
+    function renderOnlineUsers() {
+      const userListEl = document.getElementById('users-sidebar-list');
+      const activeMembersEl = document.getElementById('active-members-list');
+      const activeCountEl = document.getElementById('active-count');
+
+      userListEl.innerHTML = '';
+      activeMembersEl.innerHTML = '';
+
+      // Total count includes self + others
+      activeCountEl.textContent = onlineUsersMap.size;
+
+      let otherCount = 0;
+      onlineUsersMap.forEach((username, id) => {
+        if (id !== currentUser.id) {
+          otherCount++;
+          // Sidebar DM button
+          userListEl.insertAdjacentHTML('beforeend', `
+            <button onclick="switchDM('${id}', '${username}')" class="channel-btn w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition text-[#111b21] hover:bg-[#f0f2f5] flex items-center justify-between" data-id="dm-${id}">
+              <div class="flex items-center gap-3 truncate">
+                <div class="w-8 h-8 rounded-full bg-[#00a884]/20 text-[#00a884] font-bold flex items-center justify-center text-xs shrink-0">${username.charAt(0).toUpperCase()}</div>
+                <div class="truncate"><p class="font-medium text-xs">@${username}</p><p class="text-[10px] text-[#00a884]">Online now</p></div>
+              </div>
+              <span class="w-2.5 h-2.5 rounded-full bg-[#00a884] shrink-0 border-2 border-white"></span>
+            </button>
+          `);
+
+          // Right Sidebar Online Directory Card
+          activeMembersEl.insertAdjacentHTML('beforeend', `
+            <div onclick="switchDM('${id}', '${username}')" class="flex items-center justify-between px-3 py-2 bg-[#f0f2f5]/60 hover:bg-[#f0f2f5] rounded-xl cursor-pointer transition text-xs text-[#111b21] group">
+              <div class="flex items-center gap-2.5 truncate">
+                <span class="w-2 h-2 rounded-full bg-[#00a884] shrink-0"></span>
+                <span class="truncate font-medium group-hover:text-[#00a884] transition">@${username}</span>
+              </div>
+              <span class="text-[10px] text-[#667781] bg-white px-2 py-0.5 rounded shadow-sm opacity-0 group-hover:opacity-100 transition">Chat</span>
+            </div>
+          `);
+        }
+      });
+
+      if (otherCount === 0) {
+        userListEl.innerHTML = `<p class="text-xs text-[#667781] p-3 text-center">No other users online right now</p>`;
+        activeMembersEl.innerHTML = `<p class="text-xs text-[#667781] p-2 text-center">You are the only one online</p>`;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // MESSAGES
+    // -------------------------------------------------------------
+    async function loadMessages() {
+      const { data, error } = await db
+        .from('messages')
+        .select('*')
+        .eq('channel_id', currentChannel)
+        .order('created_at', { ascending: true });
+
+      if (error) return;
+
+      const container = document.getElementById('messages-container');
+      container.innerHTML = '';
+      (data || []).forEach(renderMessage);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function subscribeToMessages() {
+      if (realtimeMessagesSub) db.removeChannel(realtimeMessagesSub);
+
+      realtimeMessagesSub = db.channel('public:messages:' + currentChannel)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+          if (payload.new.channel_id === currentChannel) {
+            renderMessage(payload.new);
+            const container = document.getElementById('messages-container');
+            container.scrollTop = container.scrollHeight;
+          }
+        })
+        .subscribe();
+    }
+
+    async function handleSendMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('message-input');
+      const text = input.value.trim();
+      if (!text || !currentUser) return;
+
+      input.value = '';
+
+      await db.from('messages').insert([{
+        channel_id: currentChannel,
+        sender_id: currentUser.id,
+        sender_name: currentDisplayName,
+        text: text
+      }]);
+    }
+
+    function sendSticker(stickerText) {
+      if (!currentUser) return;
+      db.from('messages').insert([{
+        channel_id: currentChannel,
+        sender_id: currentUser.id,
+        sender_name: currentDisplayName,
+        text: stickerText
+      }]);
+    }
+
+    function switchChannel(channel) {
+      currentChannel = channel;
+      document.getElementById('channel-name').textContent = `#${channel}`;
+      document.getElementById('channel-status').textContent = 'Public community chat';
+      
+      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f0f2f5]'));
+      const activeBtn = document.querySelector(`[data-id="${channel}"]`);
+      if (activeBtn) activeBtn.classList.add('bg-[#f0f2f5]');
+
+      loadMessages();
+      subscribeToMessages();
+    }
+
+    function switchDM(recipientId, recipientName) {
+      const ids = [currentUser.id, recipientId].sort();
+      currentChannel = `dm-${ids[0]}-${ids[1]}`;
+      document.getElementById('channel-name').textContent = `💬 Private Chat with @${recipientName}`;
+      document.getElementById('channel-status').textContent = 'End-to-end simulated secure direct message';
+
+      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f0f2f5]'));
+      const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
+      if (activeBtn) activeBtn.classList.add('bg-[#f0f2f5]');
+
+      loadMessages();
+      subscribeToMessages();
+    }
+
+    function renderMessage(msg) {
+      const container = document.getElementById('messages-container');
+      const isMe = currentUser && msg.sender_id === currentUser.id;
+      const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const msgHTML = `
+        <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-2">
+          <div class="flex items-center gap-2 mb-0.5 px-1">
+            <span class="text-[11px] font-semibold text-[#667781]">${msg.sender_name}</span>
+          </div>
+          <div class="max-w-md px-4 py-2 rounded-xl text-xs sm:text-sm shadow-sm relative ${
+            isMe 
+              ? 'bg-[#d9fdd3] text-[#111b21] rounded-tr-none' 
+              : 'bg-white text-[#111b21] rounded-tl-none border border-[#e9edef]'
+          }">
+            <p class="break-words leading-relaxed">${msg.text}</p>
+            <div class="flex items-center justify-end gap-1 mt-1 text-[9px] text-[#667781]">
+              <span>${timeStr}</span>
+              ${isMe ? '<span class="text-[#53bdeb] font-bold">✓✓</span>' : ''}
+            </div>
+          </div>
+        </div>
+      `;
+
+      container.insertAdjacentHTML('beforeend', msgHTML);
+    }
+  </script>
+</body>
+</html>
