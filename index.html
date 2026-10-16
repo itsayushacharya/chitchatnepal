@@ -137,16 +137,15 @@
       <!-- Messages Stream -->
       <div id="messages-container" class="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-3 pb-24 md:pb-6"></div>
 
-      <!-- Fixed Input & Sticker Container -->
+      <!-- Fixed Input & Quick Phrases Container -->
       <div class="shrink-0 bg-[#f0f2f5] border-t border-[#e9edef] z-20">
-        <!-- Nepali Sticker Bar -->
+        <!-- Quick Chat Phrases Bar -->
         <div class="px-3 py-1.5 flex items-center gap-2 overflow-x-auto border-b border-[#e9edef]/50">
-          <span class="text-[10px] text-[#667781] font-semibold mr-1 shrink-0">Stickers:</span>
-          <button onclick="sendSticker('🙏 Namaste')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🙏 Namaste</button>
-          <button onclick="sendSticker('🥟 Momo')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🥟 Momo</button>
-          <button onclick="sendSticker('☕ Chiya')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">☕ Chiya</button>
-          <button onclick="sendSticker('🏔️ Himal')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🏔️ Himal</button>
-          <button onclick="sendSticker('🇳🇵 Flag')" class="px-2.5 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium shrink-0">🇳🇵 Flag</button>
+          <span class="text-[10px] text-[#667781] font-semibold mr-1 shrink-0">Quick Chat:</span>
+          <button onclick="sendQuickMessage('Namaste 🙏')" class="px-3 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium text-[#111b21] shrink-0">Namaste 🙏</button>
+          <button onclick="sendQuickMessage('Hello')" class="px-3 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium text-[#111b21] shrink-0">Hello</button>
+          <button onclick="sendQuickMessage('Hi')" class="px-3 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium text-[#111b21] shrink-0">Hi</button>
+          <button onclick="sendQuickMessage('How are you?')" class="px-3 py-1 bg-white hover:bg-[#e9edef] active:scale-95 rounded-lg text-xs border border-[#e9edef] shadow-sm font-medium text-[#111b21] shrink-0">How are you?</button>
         </div>
 
         <!-- Message Input Bar -->
@@ -456,13 +455,13 @@
       }]);
     }
 
-    function sendSticker(stickerText) {
+    async function sendQuickMessage(text) {
       if (!currentUser) return;
-      db.from('messages').insert([{
+      await db.from('messages').insert([{
         channel_id: currentChannel,
         sender_id: currentUser.id,
         sender_name: currentDisplayName,
-        text: stickerText
+        text: text
       }]);
     }
 
