@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Chitchat Nepal - Connect·Chat·Belong</title>
+    <title>Chitchat Nepal - Connect·Chat·Belong</title>
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
@@ -273,18 +273,6 @@
       object-fit: cover;
       box-shadow: 0 4px 16px rgba(0,168,132,0.25);
     }
-    .brand-icon-sm {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      object-fit: cover;
-    }
-    .brand-icon-xs {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      object-fit: cover;
-    }
     .channel-icon-img {
       width: 100%;
       height: 100%;
@@ -358,7 +346,7 @@
         <p class="text-xs text-[#5e6f82]">Enter a display name to join instantly.</p>
       </div>
       <div>
-        <input id="guest-username-input" type="text" placeholder="e.g. KathmanduExplorer" onkeydown="if(event.key==='Enter') confirmGuestLogin()" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 text-sm text-[#0b1a2b] focus:bg-white transition-soft">
+        <input id="guest-username-input" type="text" placeholder="e.g. chitchatnpuser_123" onkeydown="if(event.key==='Enter') confirmGuestLogin()" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 text-sm text-[#0b1a2b] focus:bg-white transition-soft">
       </div>
       <div class="flex gap-3 pt-1">
         <button onclick="closeGuestModal()" class="flex-1 bg-white hover:bg-[#f1f5f9] text-[#5e6f82] font-semibold py-3.5 rounded-2xl transition-soft border border-[#e2e8f0] text-xs">Cancel</button>
@@ -508,8 +496,11 @@
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Brand icon URL (used for default avatars & channel icons)
+    // Brand icon URL
     const BRAND_ICON_URL = 'https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png';
+
+    // Guest username prefix
+    const GUEST_PREFIX = 'chitchatnpuser_';
 
     let currentUser = null;
     let currentDisplayName = 'User';
@@ -587,15 +578,14 @@
       }
     }
 
-    // ---------- NOTIFICATION TOAST (with click-to-open) ----------
+    // ---------- NOTIFICATION TOAST ----------
     let toastTimer = null;
     let toastTargetChannel = null;
 
-    function showNotificationToast(title, text, channelId, icon = '💬') {
+    function showNotificationToast(title, text, channelId) {
       const toast = document.getElementById('notification-toast');
       document.getElementById('toast-title').textContent = title;
       document.getElementById('toast-text').textContent = text;
-      // The toast icon now always uses the brand icon image
       toastTargetChannel = channelId;
       toast.classList.add('show');
       clearTimeout(toastTimer);
@@ -707,7 +697,8 @@
       const modal = document.getElementById('guest-modal');
       modal.classList.remove('hidden');
       const input = document.getElementById('guest-username-input');
-      input.value = "NepaliUser_" + Math.floor(100 + Math.random() * 900);
+      // Changed prefix to chitchatnpuser_
+      input.value = GUEST_PREFIX + Math.floor(100 + Math.random() * 900);
       input.focus();
       input.select();
     }
@@ -781,7 +772,6 @@
       document.getElementById('chat-screen').classList.remove('hidden');
       document.getElementById('chat-screen').classList.add('flex');
       document.getElementById('user-display').textContent = name;
-      // user avatar stays brand icon (already in HTML)
 
       document.getElementById('channel-name').textContent = '#Chautari-Lounge';
       document.getElementById('channel-status').textContent = 'Public community chat';
@@ -855,7 +845,6 @@
         if (id !== currentUser.id) {
           otherCount++;
           const dmChannelId = `dm-${[currentUser.id, id].sort().join('-')}`;
-          // Use brand icon for all user avatars now
           userListEl.insertAdjacentHTML('beforeend', `
             <button onclick="switchDM('${id}', '${username}')" class="channel-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-soft text-[#0b1a2b] hover:bg-[#f1f5f9] flex items-center justify-between" data-id="dm-${id}" data-channel-id="${dmChannelId}">
               <div class="flex items-center gap-3 truncate">
