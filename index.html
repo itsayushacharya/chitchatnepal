@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Chitchat Nepal · modern social</title>
-  <!-- Favicon -->
+  <title>Chitchat Nepal-Connect·Chat·Belong</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -350,7 +349,7 @@
         </div>
       </div>
 
-      <!-- Success message (hidden by default) -->
+      <!-- Success message -->
       <div id="auth-success" class="auth-success hidden">
         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <span>Registration successful! Please log in.</span>
@@ -568,6 +567,9 @@
     let onlineUsersMap = new Map();
     let unreadCounts = new Map();
 
+    // Store known user names globally to survive offline transitions
+    const knownUserNames = new Map();
+
     // ---------- ENTER KEY HANDLER FOR AUTH ----------
     function handleAuthKeydown(event) {
       if (event.key === 'Enter') {
@@ -687,6 +689,7 @@
       }, 4000);
     }
 
+    // --- FIXED: EXACT DM CHAT OPENING ---
     function handleToastClick() {
       if (!toastTargetChannel) return;
       const channelId = toastTargetChannel;
@@ -703,10 +706,15 @@
       }
 
       if (channelId.startsWith('dm-')) {
+        // Extract IDs robustly
         const parts = channelId.split('-');
         const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
-        const otherName = onlineUsersMap.get(otherId) || 'User';
-        switchDM(otherId, otherName);
+        
+        // Try to find the real name from online users, then known names, then fallback
+        let otherName = knownUserNames.get(otherId) || onlineUsersMap.get(otherId) || 'User';
+        
+        // Open the exact DM channel matching the ID
+        openExactDM(otherId, otherName);
       } else {
         let emoji = '💬';
         const option = document.querySelector(`.lounge-option[data-channel="${channelId}"]`);
@@ -720,6 +728,28 @@
         }
         selectLounge(channelId, emoji, channelId);
       }
+    }
+
+    // New helper: ensures we open exactly the right DM channel without ID mixups
+    function openExactDM(recipientId, recipientName) {
+      const ids = [currentUser.id, recipientId].sort();
+      const dmChannel = `dm-${ids[0]}-${ids[1]}`;
+      currentChannel = dmChannel;
+      
+      document.getElementById('channel-name').textContent = `💬 @${recipientName}`;
+      document.getElementById('channel-status').textContent = 'Direct message';
+
+      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
+      const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
+      if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
+
+      closeSidebarOnMobile();
+      closeDirectoryOnMobile();
+
+      unreadCounts.delete(dmChannel);
+      updateUnreadBadges();
+      loadMessages();
+      showChatOnMobile();
     }
 
     function showChatOnMobile() {
@@ -829,6 +859,7 @@
         data = signUpRes.data;
       }
       if (data?.user) {
+        knownUserNames.set(data.user.id, guestName);
         await ensureProfileExists(data.user, guestName);
         initSession(data.user, guestName);
       }
@@ -856,14 +887,10 @@
         return;
       }
       
-      // Show success message and ask user to log in
       if (data?.user) {
         successEl.classList.remove('hidden');
-        // Clear password field for security
         document.getElementById('auth-password').value = '';
-        // Focus on the email field for login
         document.getElementById('auth-email').focus();
-        // Scroll the success message into view
         successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
@@ -889,6 +916,7 @@
         return;
       }
       
+      knownUserNames.set(data.user.id, username);
       await ensureProfileExists(data.user, username);
       initSession(data.user, username);
     }
@@ -902,7 +930,6 @@
       document.getElementById('chat-screen').classList.add('hidden');
       document.getElementById('chat-screen').classList.remove('flex');
       closeSidebarOnMobile();
-      // Hide any auth messages when returning to auth screen
       document.getElementById('auth-success').classList.add('hidden');
       document.getElementById('auth-error').classList.add('hidden');
     }
@@ -912,6 +939,8 @@
       currentUser = user;
       const name = fallbackName || (user.email ? user.email.split('@')[0] : 'User');
       currentDisplayName = name;
+      knownUserNames.set(user.id, name);
+      
       await ensureProfileExists(user, name);
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('chat-screen').classList.remove('hidden');
@@ -941,6 +970,7 @@
       const { data: { session } } = await db.auth.getSession();
       if (session?.user) {
         const username = session.user.email.split('@')[0];
+        knownUserNames.set(session.user.id, username);
         initSession(session.user, username);
       }
     });
@@ -958,6 +988,7 @@
             if (presences && presences.length > 0) {
               const u = presences[0];
               onlineUsersMap.set(u.id, u.username);
+              knownUserNames.set(u.id, u.username); // Remember their name
             }
           });
           renderOnlineUsers();
@@ -991,7 +1022,7 @@
           otherCount++;
           const dmChannelId = `dm-${[currentUser.id, id].sort().join('-')}`;
           userListEl.insertAdjacentHTML('beforeend', `
-            <button onclick="switchDM('${id}', '${username}')" class="channel-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-soft text-[#0b1a2b] hover:bg-[#f1f5f9] flex items-center justify-between" data-id="dm-${id}" data-channel-id="${dmChannelId}">
+            <button onclick="openExactDM('${id}', '${username}')" class="channel-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-soft text-[#0b1a2b] hover:bg-[#f1f5f9] flex items-center justify-between" data-id="dm-${id}" data-channel-id="${dmChannelId}">
               <div class="flex items-center gap-3 truncate">
                 <img src="${BRAND_ICON_URL}" alt="${username}" class="w-8 h-8 rounded-full object-cover shrink-0 shadow-sm">
                 <div class="truncate"><p class="font-semibold text-xs">@${username}</p><p class="text-[10px] text-[#00a884]">Online now</p></div>
@@ -1000,7 +1031,7 @@
             </button>
           `);
           activeMembersEl.insertAdjacentHTML('beforeend', `
-            <div onclick="switchDM('${id}', '${username}')" class="flex items-center justify-between px-3.5 py-2.5 bg-white hover:bg-[#f8fafc] rounded-2xl cursor-pointer transition-soft text-xs text-[#0b1a2b] group border border-[#f1f5f9] shadow-sm">
+            <div onclick="openExactDM('${id}', '${username}')" class="flex items-center justify-between px-3.5 py-2.5 bg-white hover:bg-[#f8fafc] rounded-2xl cursor-pointer transition-soft text-xs text-[#0b1a2b] group border border-[#f1f5f9] shadow-sm">
               <div class="flex items-center gap-2.5 truncate">
                 <img src="${BRAND_ICON_URL}" alt="${username}" class="w-6 h-6 rounded-full object-cover shrink-0">
                 <span class="truncate font-medium group-hover:text-[#00a884] transition">@${username}</span>
@@ -1037,6 +1068,11 @@
           const msg = payload.new;
           if (!msg || !currentUser) return;
           const isMe = msg.sender_id === currentUser.id;
+
+          // Remember the sender's name for future DM opening
+          if (msg.sender_id && msg.sender_name) {
+            knownUserNames.set(msg.sender_id, msg.sender_name);
+          }
 
           if (msg.channel_id === currentChannel) {
             renderMessage(msg);
@@ -1141,26 +1177,6 @@
       if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
 
       unreadCounts.delete(channel);
-      updateUnreadBadges();
-      loadMessages();
-      showChatOnMobile();
-    }
-
-    function switchDM(recipientId, recipientName) {
-      const ids = [currentUser.id, recipientId].sort();
-      const dmChannel = `dm-${ids[0]}-${ids[1]}`;
-      currentChannel = dmChannel;
-      document.getElementById('channel-name').textContent = `💬 @${recipientName}`;
-      document.getElementById('channel-status').textContent = 'Direct message';
-
-      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
-      const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
-      if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
-
-      closeSidebarOnMobile();
-      closeDirectoryOnMobile();
-
-      unreadCounts.delete(dmChannel);
       updateUnreadBadges();
       loadMessages();
       showChatOnMobile();
