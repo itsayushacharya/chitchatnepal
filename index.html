@@ -474,7 +474,7 @@
       toastTimer = setTimeout(() => { document.getElementById('notification-toast').classList.remove('show'); }, 4000);
     }
 
-    // --- THE FIX: Clean extraction of the exact ID from the DM string ---
+    // --- EXACT ID EXTRACTION TO PREVENT BLANK CHATS ---
     function handleToastClick() {
       if (!toastTargetChannel) return;
       const channelId = toastTargetChannel;
@@ -485,11 +485,13 @@
       if (channelId === currentChannel) { showChatOnMobile(); loadMessages(); return; }
 
       if (channelId.startsWith('dm-')) {
-        // Extract the ID parts, ignoring the "dm-" prefix
+        // Force the extraction of the real ID parts from the DM string
         const parts = channelId.split('-');
-        // Format is dm-id1-id2. We need the ID that is NOT us.
         const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
+        
+        // If we know their name, use it. Otherwise, fallback to "Chat" (but it will still open the correct chat history)
         const otherName = knownUserNames.get(otherId) || 'Chat';
+        
         openExactDM(otherId, otherName);
       } else {
         let emoji = '💬';
@@ -516,6 +518,7 @@
       const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
       if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
 
+      // Always add to left sidebar if they are not there
       if (!activeDMUsers.has(recipientId)) {
          activeDMUsers.add(recipientId);
          if (displayName !== 'Chat') knownUserNames.set(recipientId, displayName);
@@ -696,21 +699,25 @@
               
               const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
               if (otherId && otherId !== currentUser.id) {
-                if (msg.sender_id === otherId && msg.sender_name && msg.sender_name !== 'User' && msg.sender_name !== 'Chat') {
-                  activeDMUsers.add(otherId);
+                // If they sent a message, grab their name
+                if (msg.sender_id === otherId && msg.sender_name) {
                   knownUserNames.set(otherId, msg.sender_name);
+                  activeDMUsers.add(otherId);
                 } else if (!knownUserNames.has(otherId)) {
+                  // If we don't have their name yet, add to queue
                   missingIds.add(otherId);
                 }
               }
             }
           });
           
+          // Fetch missing names from DB
           if (missingIds.size > 0) {
             await fetchMissingNames(Array.from(missingIds));
+            
+            // If we got the name, add them to the sidebar
             missingIds.forEach(id => {
-              const fetchedName = knownUserNames.get(id);
-              if (fetchedName && fetchedName !== 'User' && fetchedName !== 'Chat') {
+              if (knownUserNames.has(id)) {
                 activeDMUsers.add(id);
               }
             });
@@ -773,6 +780,7 @@
       // LEFT SIDEBAR (Recent DMs)
       let dmCount = 0;
       activeDMUsers.forEach(id => {
+        // Skip if we STILL don't have a real name (prevents '@User' or '@Chat' from showing)
         let name = knownUserNames.get(id);
         if (!name || name === 'User' || name === 'Chat') {
           return;
