@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Chitchat Nepal · modern social</title>
+    <title>Chitchat Nepal-Connect·Chat·Belong</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -501,7 +501,6 @@
       }
     }
 
-    // --- FORCES EXACT CHANNEL ID, IGNORING NAMES ---
     function openExactDM(recipientId, recipientName) {
       const ids = [currentUser.id, recipientId].sort();
       const dmChannel = `dm-${ids[0]}-${ids[1]}`;
@@ -519,6 +518,7 @@
       const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
       if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
 
+      // Always add to left sidebar if they are not there
       if (!activeDMUsers.has(recipientId)) {
          activeDMUsers.add(recipientId);
          if (displayName !== 'Chat') knownUserNames.set(recipientId, displayName);
