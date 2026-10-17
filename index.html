@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Chitchat Nepal-Connect·Chat·Belong</title>
+  <title>Chitchat Nepal · modern social</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -474,7 +474,7 @@
       toastTimer = setTimeout(() => { document.getElementById('notification-toast').classList.remove('show'); }, 4000);
     }
 
-    // --- EXACT ID EXTRACTION TO PREVENT BLANK CHATS ---
+    // --- THE FINAL FIX: Strict ID extraction, bypassing name lookups for the channel ---
     function handleToastClick() {
       if (!toastTargetChannel) return;
       const channelId = toastTargetChannel;
@@ -502,6 +502,7 @@
     }
 
     function openExactDM(recipientId, recipientName) {
+      // Force the channel ID to be exactly this, guaranteeing it matches the real messages
       const ids = [currentUser.id, recipientId].sort();
       const dmChannel = `dm-${ids[0]}-${ids[1]}`;
       currentChannel = dmChannel;
@@ -518,7 +519,7 @@
       const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
       if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
 
-      // Always add to left sidebar if they are not there
+      // Add to recent DMs if not there
       if (!activeDMUsers.has(recipientId)) {
          activeDMUsers.add(recipientId);
          if (displayName !== 'Chat') knownUserNames.set(recipientId, displayName);
@@ -530,6 +531,7 @@
       unreadCounts.delete(dmChannel);
       updateUnreadBadges();
       
+      // Fetch the actual messages for this channel
       loadMessages();
       showChatOnMobile();
     }
