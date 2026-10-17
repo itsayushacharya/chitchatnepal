@@ -448,6 +448,9 @@
     let toastTargetChannel = null;
 
     function showNotificationToast(title, text, channelId) {
+      // If title is blank or somehow defaults to 'User', fallback to text
+      if (!title || title === 'User' || title === 'Chat') title = 'New message';
+      
       document.getElementById('toast-title').textContent = title;
       document.getElementById('toast-text').textContent = text;
       toastTargetChannel = channelId;
@@ -466,9 +469,14 @@
       if (channelId === currentChannel) { showChatOnMobile(); loadMessages(); return; }
 
       if (channelId.startsWith('dm-')) {
+        // Extract the actual user ID from the channel ID string (dm-id1-id2)
         const parts = channelId.split('-');
         const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
-        const otherName = knownUserNames.get(otherId) || 'User';
+        
+        // Look up real name, fallback to 'Chat' if missing
+        const otherName = knownUserNames.get(otherId) || 'Chat';
+        
+        // Open chat box directly by ID, bypassing any name checks that cause the bug
         openExactDM(otherId, otherName);
       } else {
         let emoji = '💬';
@@ -637,7 +645,6 @@
               const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
               if (otherId !== currentUser.id) {
                 activeDMUsers.add(otherId);
-                // If the sender is NOT us, then the sender is the other person. Map their ID to their name!
                 if (msg.sender_id === otherId && msg.sender_name) {
                   knownUserNames.set(otherId, msg.sender_name);
                 }
