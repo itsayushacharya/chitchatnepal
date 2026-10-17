@@ -699,23 +699,18 @@
               
               const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
               if (otherId && otherId !== currentUser.id) {
-                // If they sent a message, grab their name
                 if (msg.sender_id === otherId && msg.sender_name) {
                   knownUserNames.set(otherId, msg.sender_name);
                   activeDMUsers.add(otherId);
                 } else if (!knownUserNames.has(otherId)) {
-                  // If we don't have their name yet, add to queue
                   missingIds.add(otherId);
                 }
               }
             }
           });
           
-          // Fetch missing names from DB
           if (missingIds.size > 0) {
             await fetchMissingNames(Array.from(missingIds));
-            
-            // If we got the name, add them to the sidebar
             missingIds.forEach(id => {
               if (knownUserNames.has(id)) {
                 activeDMUsers.add(id);
@@ -780,7 +775,6 @@
       // LEFT SIDEBAR (Recent DMs)
       let dmCount = 0;
       activeDMUsers.forEach(id => {
-        // Skip if we STILL don't have a real name (prevents '@User' or '@Chat' from showing)
         let name = knownUserNames.get(id);
         if (!name || name === 'User' || name === 'Chat') {
           return;
