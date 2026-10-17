@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
- <title>Chitchat Nepal-Connect·Chat·Belong</title>
+  <title>Chitchat Nepal-Connect·Chat·Belong</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -202,6 +202,18 @@
       background: #00a884; color: white; font-size: 10px; font-weight: 700;
     }
 
+    .menu-notification-dot {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 10px;
+      height: 10px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: none;
+    }
+
     .brand-icon { width: 48px; height: 48px; border-radius: 16px; object-fit: cover; box-shadow: 0 4px 16px rgba(0,168,132,0.25); }
     .channel-icon-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
@@ -327,7 +339,12 @@
     <main id="chat-panel" class="flex flex-1 flex-col justify-between chat-bg h-full w-full relative overflow-hidden">
       <div class="bg-white/80 backdrop-blur-xl border-b border-[#e9eef3] px-3 md:px-4 py-3 flex justify-between items-center shrink-0 z-20">
         <div class="flex items-center gap-2 md:gap-3 min-w-0">
-          <button onclick="openSidebarOnMobile()" class="md:hidden text-[#0b1a2b] p-2 -ml-1 rounded-xl hover:bg-[#f1f5f9]"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+          
+          <button onclick="openSidebarOnMobile()" class="md:hidden text-[#0b1a2b] p-2 -ml-1 rounded-xl hover:bg-[#f1f5f9] relative">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <span id="menu-notification-dot" class="menu-notification-dot"></span>
+          </button>
+          
           <div class="w-9 h-9 rounded-full bg-[#00a884]/15 flex items-center justify-center shrink-0" id="channel-icon">
             <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" class="channel-icon-img">
           </div>
@@ -448,9 +465,7 @@
     let toastTargetChannel = null;
 
     function showNotificationToast(title, text, channelId) {
-      // If title is blank or somehow defaults to 'User', fallback to text
       if (!title || title === 'User' || title === 'Chat') title = 'New message';
-      
       document.getElementById('toast-title').textContent = title;
       document.getElementById('toast-text').textContent = text;
       toastTargetChannel = channelId;
@@ -459,6 +474,7 @@
       toastTimer = setTimeout(() => { document.getElementById('notification-toast').classList.remove('show'); }, 4000);
     }
 
+    // --- THE FIX: Clean extraction of the exact ID from the DM string ---
     function handleToastClick() {
       if (!toastTargetChannel) return;
       const channelId = toastTargetChannel;
@@ -469,14 +485,11 @@
       if (channelId === currentChannel) { showChatOnMobile(); loadMessages(); return; }
 
       if (channelId.startsWith('dm-')) {
-        // Extract the actual user ID from the channel ID string (dm-id1-id2)
+        // Extract the ID parts, ignoring the "dm-" prefix
         const parts = channelId.split('-');
+        // Format is dm-id1-id2. We need the ID that is NOT us.
         const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
-        
-        // Look up real name, fallback to 'Chat' if missing
         const otherName = knownUserNames.get(otherId) || 'Chat';
-        
-        // Open chat box directly by ID, bypassing any name checks that cause the bug
         openExactDM(otherId, otherName);
       } else {
         let emoji = '💬';
@@ -490,15 +503,22 @@
       const ids = [currentUser.id, recipientId].sort();
       const dmChannel = `dm-${ids[0]}-${ids[1]}`;
       currentChannel = dmChannel;
-      document.getElementById('channel-name').textContent = `💬 @${recipientName}`;
+      
+      let displayName = recipientName;
+      if (!displayName || displayName === 'User' || displayName === 'Chat') {
+          displayName = knownUserNames.get(recipientId) || 'Chat';
+      }
+      
+      document.getElementById('channel-name').textContent = `💬 @${displayName}`;
       document.getElementById('channel-status').textContent = 'Direct message';
+      
       document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
       const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
       if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
 
       if (!activeDMUsers.has(recipientId)) {
          activeDMUsers.add(recipientId);
-         if (recipientName !== 'User') knownUserNames.set(recipientId, recipientName);
+         if (displayName !== 'Chat') knownUserNames.set(recipientId, displayName);
          renderUI();
       }
 
@@ -506,6 +526,7 @@
       closeDirectoryOnMobile();
       unreadCounts.delete(dmChannel);
       updateUnreadBadges();
+      
       loadMessages();
       showChatOnMobile();
     }
@@ -527,8 +548,13 @@
       await db.from('profiles').upsert({ id: user.id, username: currentDisplayName, display_name: currentDisplayName, updated_at: new Date().toISOString() }, { onConflict: 'id' });
     }
 
-    function openSidebarOnMobile() { document.getElementById('sidebar-panel').classList.remove('-translate-x-full'); document.getElementById('sidebar-backdrop').classList.remove('hidden'); }
+    function openSidebarOnMobile() { 
+      document.getElementById('sidebar-panel').classList.remove('-translate-x-full'); 
+      document.getElementById('sidebar-backdrop').classList.remove('hidden'); 
+      document.getElementById('menu-notification-dot').style.display = 'none';
+    }
     function closeSidebarOnMobile() { document.getElementById('sidebar-panel').classList.add('-translate-x-full'); document.getElementById('sidebar-backdrop').classList.add('hidden'); }
+    
     function toggleMobileDirectory() {
       const drawer = document.getElementById('directory-drawer');
       const backdrop = document.getElementById('directory-backdrop');
@@ -631,26 +657,65 @@
       loadMessages();
       subscribeToAllMessages();
       setupPresence();
-      if (window.innerWidth < 768) { closeSidebarOnMobile(); closeDirectoryOnMobile(); }
+      
+      if (window.innerWidth < 768) { 
+        closeSidebarOnMobile(); 
+        setTimeout(() => {
+          const drawer = document.getElementById('directory-drawer');
+          const backdrop = document.getElementById('directory-backdrop');
+          if (drawer.classList.contains('translate-x-full')) {
+            drawer.classList.remove('translate-x-full');
+            backdrop.classList.remove('hidden');
+          }
+        }, 500);
+      }
     }
 
-    // --- BULLETPROOF FETCHING: Extracts names directly from message history ---
+    async function fetchMissingNames(userIds) {
+      if (!userIds || userIds.length === 0) return;
+      try {
+        const { data, error } = await db.from('profiles').select('id, username').in('id', userIds);
+        if (!error && data) {
+          data.forEach(p => {
+            if (p.username) knownUserNames.set(p.id, p.username);
+          });
+        }
+      } catch (e) { console.warn('Error fetching names:', e); }
+    }
+
     async function fetchRecentDMs() {
       try {
         const { data, error } = await db.from('messages').select('channel_id, sender_id, sender_name').like('channel_id', `dm-%${currentUser.id}%`);
         if (!error && data) {
+          const missingIds = new Set();
+          
           data.forEach(msg => {
             if (msg.channel_id.startsWith('dm-')) {
               const parts = msg.channel_id.split('-');
+              if (parts.length < 3) return;
+              
               const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
-              if (otherId !== currentUser.id) {
-                activeDMUsers.add(otherId);
-                if (msg.sender_id === otherId && msg.sender_name) {
+              if (otherId && otherId !== currentUser.id) {
+                if (msg.sender_id === otherId && msg.sender_name && msg.sender_name !== 'User' && msg.sender_name !== 'Chat') {
+                  activeDMUsers.add(otherId);
                   knownUserNames.set(otherId, msg.sender_name);
+                } else if (!knownUserNames.has(otherId)) {
+                  missingIds.add(otherId);
                 }
               }
             }
           });
+          
+          if (missingIds.size > 0) {
+            await fetchMissingNames(Array.from(missingIds));
+            missingIds.forEach(id => {
+              const fetchedName = knownUserNames.get(id);
+              if (fetchedName && fetchedName !== 'User' && fetchedName !== 'Chat') {
+                activeDMUsers.add(id);
+              }
+            });
+          }
+          
           renderUI();
         }
       } catch (e) { console.warn(e); }
@@ -708,7 +773,11 @@
       // LEFT SIDEBAR (Recent DMs)
       let dmCount = 0;
       activeDMUsers.forEach(id => {
-        const name = knownUserNames.get(id) || 'User';
+        let name = knownUserNames.get(id);
+        if (!name || name === 'User' || name === 'Chat') {
+          return;
+        }
+        
         const isOnline = onlineUsersMap.has(id);
         const dmChannel = `dm-${[currentUser.id, id].sort().join('-')}`;
         dmCount++;
@@ -757,7 +826,7 @@
         if (msg.channel_id.startsWith('dm-') && !isMe) {
           const parts = msg.channel_id.split('-');
           const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
-          if (!activeDMUsers.has(otherId)) {
+          if (!activeDMUsers.has(otherId) && msg.sender_name && msg.sender_name !== 'User' && msg.sender_name !== 'Chat') {
             activeDMUsers.add(otherId);
             renderUI();
           }
@@ -769,6 +838,10 @@
         } else if (!isMe) {
           unreadCounts.set(msg.channel_id, (unreadCounts.get(msg.channel_id) || 0) + 1);
           updateUnreadBadges();
+          
+          if (window.innerWidth < 768) {
+            document.getElementById('menu-notification-dot').style.display = 'block';
+          }
         }
 
         if (!isMe) {
