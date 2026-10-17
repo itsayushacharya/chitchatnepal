@@ -140,10 +140,6 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    @media (max-width: 767px) {
-      .mobile-header-padding { padding-left: 12px; padding-right: 12px; }
-    }
-
     .notification-toast {
       position: fixed;
       top: 16px;
@@ -172,14 +168,6 @@
       opacity: 1;
       pointer-events: auto;
     }
-    .notification-toast:hover {
-      background: #ffffff;
-      box-shadow: 0 24px 48px rgba(0,0,0,0.14), 0 6px 16px rgba(0,0,0,0.06);
-      transform: translateX(-50%) translateY(-2px) scale(1.01);
-    }
-    .notification-toast:active {
-      transform: translateX(-50%) translateY(0) scale(0.99);
-    }
     .notification-toast .toast-icon {
       width: 36px;
       height: 36px;
@@ -188,147 +176,57 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 15px;
       flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(0,168,132,0.3);
       overflow: hidden;
     }
-    .notification-toast .toast-icon img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-    .notification-toast .toast-content {
-      flex: 1;
-      min-width: 0;
-    }
-    .notification-toast .toast-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: #0b1a2b;
-      margin-bottom: 2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .notification-toast .toast-text {
-      font-size: 12px;
-      color: #5e6f82;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .notification-toast .toast-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .notification-toast .toast-content { flex: 1; min-width: 0; }
+    .notification-toast .toast-title { font-size: 12px; font-weight: 700; color: #0b1a2b; margin-bottom: 2px; }
+    .notification-toast .toast-text { font-size: 12px; color: #5e6f82; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .notification-toast .toast-action {
-      font-size: 10px;
-      font-weight: 700;
-      color: #00a884;
-      background: rgba(0,168,132,0.1);
-      padding: 4px 10px;
-      border-radius: 10px;
-      flex-shrink: 0;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 10px; font-weight: 700; color: #00a884; background: rgba(0,168,132,0.1);
+      padding: 4px 10px; border-radius: 10px; flex-shrink: 0; text-transform: uppercase;
     }
 
     .sound-toggle {
-      position: relative;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255,255,255,0.8);
-      border: 1px solid #e2e8f0;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: #5e6f82;
+      width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; background: rgba(255,255,255,0.8); border: 1px solid #e2e8f0;
+      cursor: pointer; transition: all 0.2s ease; color: #5e6f82;
     }
-    .sound-toggle:hover { background: white; border-color: #cbd5e1; color: #00a884; }
+    .sound-toggle:hover { background: white; color: #00a884; }
     .sound-toggle.muted { color: #ef4444; border-color: #fecaca; background: #fef2f2; }
 
     .unread-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 18px;
-      height: 18px;
-      padding: 0 5px;
-      border-radius: 9px;
-      background: #00a884;
-      color: white;
-      font-size: 10px;
-      font-weight: 700;
-      line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+      background: #00a884; color: white; font-size: 10px; font-weight: 700;
     }
 
-    .brand-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 16px;
-      object-fit: cover;
-      box-shadow: 0 4px 16px rgba(0,168,132,0.25);
-    }
-    .channel-icon-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
+    .brand-icon { width: 48px; height: 48px; border-radius: 16px; object-fit: cover; box-shadow: 0 4px 16px rgba(0,168,132,0.25); }
+    .channel-icon-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
     .password-toggle {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      color: #94a3b8;
-      padding: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s ease;
-      border-radius: 8px;
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      background: transparent; border: none; cursor: pointer; color: #94a3b8;
+      padding: 4px; display: flex; align-items: center; justify-content: center;
+      transition: color 0.2s ease; border-radius: 8px;
     }
-    .password-toggle:hover {
-      color: #00a884;
-      background: rgba(0,168,132,0.06);
-    }
-    .password-toggle:focus { outline: none; }
+    .password-toggle:hover { color: #00a884; background: rgba(0,168,132,0.06); }
 
     .auth-success {
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      color: #065f46;
-      padding: 12px 16px;
-      border-radius: 16px;
-      font-size: 13px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      animation: slideDown 0.3s ease-out;
+      background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;
+      padding: 12px 16px; border-radius: 16px; font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; gap: 8px; animation: slideDown 0.3s ease-out;
     }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
   </style>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="h-[100dvh] w-screen flex flex-col overflow-hidden select-none">
 
-  <!-- ========== NOTIFICATION TOAST ========== -->
+  <!-- TOAST -->
   <div id="notification-toast" class="notification-toast" onclick="handleToastClick()">
-    <div class="toast-icon" id="toast-icon">
-      <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Chitchat Nepal">
-    </div>
+    <div class="toast-icon"><img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Icon"></div>
     <div class="toast-content">
       <div class="toast-title" id="toast-title">New message</div>
       <div class="toast-text" id="toast-text">Someone sent a message</div>
@@ -336,181 +234,115 @@
     <div class="toast-action">Open</div>
   </div>
 
-  <!-- ========== AUTH SCREEN ========== -->
+  <!-- AUTH SCREEN -->
   <div id="auth-screen" class="fixed inset-0 bg-gradient-to-br from-[#f7f9fc] via-[#eef3f9] to-[#e6edf6] z-50 flex items-center justify-center p-4">
     <div class="bg-white/80 backdrop-blur-xl border border-white/60 p-8 sm:p-10 rounded-[36px] max-w-md w-full card-shadow-lg space-y-7">
       <div class="flex items-center gap-4">
         <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Chitchat Nepal" class="brand-icon">
         <div>
-          <h2 class="text-2xl font-extrabold tracking-tight text-[#0b1a2b]">Chitchat Nepal</h2>
-          <p class="text-xs font-medium text-[#5e6f82] tracking-wide">Connect · Chat · Belong</p>
+          <h2 class="text-2xl font-extrabold text-[#0b1a2b]">Chitchat Nepal</h2>
+          <p class="text-xs font-medium text-[#5e6f82]">Connect · Chat · Belong</p>
         </div>
       </div>
-
       <div id="auth-success" class="auth-success hidden">
         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <span>Registration successful! Please log in.</span>
       </div>
-
       <div class="space-y-4">
         <div class="space-y-1.5">
           <label class="text-[11px] font-semibold text-[#5e6f82] uppercase tracking-wider block ml-1">Username or Email</label>
-          <input id="auth-email" type="text" placeholder="e.g. ayushacharya" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 text-sm text-[#0b1a2b] placeholder:text-[#94a3b8] transition-soft focus:bg-white">
+          <input id="auth-email" type="text" placeholder="e.g. ayushacharya" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 text-sm text-[#0b1a2b] transition-soft focus:bg-white">
         </div>
         <div class="space-y-1.5">
           <label class="text-[11px] font-semibold text-[#5e6f82] uppercase tracking-wider block ml-1">Password</label>
           <div class="relative">
-            <input id="auth-password" type="password" placeholder="••••••••" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 pr-12 text-sm text-[#0b1a2b] placeholder:text-[#94a3b8] transition-soft focus:bg-white">
-            <button type="button" id="toggle-password" class="password-toggle" onclick="togglePasswordVisibility()" aria-label="Show password">
-              <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-              </svg>
-              <svg id="eye-off-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-              </svg>
+            <input id="auth-password" type="password" placeholder="••••••••" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 pr-12 text-sm text-[#0b1a2b] transition-soft focus:bg-white">
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
+              <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <svg id="eye-off-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
             </button>
           </div>
         </div>
       </div>
-
       <div class="flex gap-3 pt-1">
-        <button onclick="handleLogin()" class="flex-1 bg-gradient-to-r from-[#00a884] to-[#018f70] hover:brightness-105 active:scale-[0.97] text-white font-semibold py-4 rounded-2xl transition-soft shadow-lg shadow-[#00a884]/20 text-sm">Log In</button>
+        <button onclick="handleLogin()" class="flex-1 bg-gradient-to-r from-[#00a884] to-[#018f70] hover:brightness-105 active:scale-[0.97] text-white font-semibold py-4 rounded-2xl transition-soft shadow-lg text-sm">Log In</button>
         <button onclick="handleSignup()" class="flex-1 bg-white hover:bg-[#f1f5f9] active:scale-[0.97] text-[#0b1a2b] font-semibold py-4 rounded-2xl transition-soft border border-[#e2e8f0] text-sm">Sign Up</button>
       </div>
-
-      <div class="relative flex py-1 items-center">
-        <div class="flex-grow border-t border-[#e2e8f0]"></div>
-        <span class="flex-shrink mx-4 text-[11px] font-medium text-[#94a3b8] uppercase tracking-wider">or</span>
-        <div class="flex-grow border-t border-[#e2e8f0]"></div>
-      </div>
-
-      <button onclick="openGuestModal()" class="w-full bg-[#f1f5f9] hover:bg-[#e9f0f5] active:scale-[0.97] text-[#00a884] border border-[#00a884]/15 font-semibold py-4 rounded-2xl transition-soft text-sm flex items-center justify-center gap-3">
-        <span class="text-lg">⚡</span> Quick Chat as Guest
-      </button>
+      <div class="relative flex py-1 items-center"><div class="flex-grow border-t border-[#e2e8f0]"></div><span class="flex-shrink mx-4 text-[11px] font-medium text-[#94a3b8] uppercase">or</span><div class="flex-grow border-t border-[#e2e8f0]"></div></div>
+      <button onclick="openGuestModal()" class="w-full bg-[#f1f5f9] hover:bg-[#e9f0f5] active:scale-[0.97] text-[#00a884] border border-[#00a884]/15 font-semibold py-4 rounded-2xl transition-soft text-sm flex items-center justify-center gap-3"><span class="text-lg">⚡</span> Quick Chat as Guest</button>
       <p id="auth-error" class="text-xs text-red-500 text-center hidden font-medium"></p>
     </div>
   </div>
 
-  <!-- ========== GUEST MODAL ========== -->
+  <!-- GUEST MODAL -->
   <div id="guest-modal" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
     <div class="bg-white/95 backdrop-blur-xl border border-white/60 p-8 rounded-[32px] max-w-sm w-full card-shadow-lg space-y-6">
-      <div class="space-y-1.5">
-        <h3 class="text-xl font-bold text-[#0b1a2b]">Choose guest username</h3>
-        <p class="text-xs text-[#5e6f82]">Enter a display name to join instantly.</p>
-      </div>
-      <div>
-        <input id="guest-username-input" type="text" placeholder="e.g. chitchatnpuser_123" onkeydown="if(event.key==='Enter') confirmGuestLogin()" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 text-sm text-[#0b1a2b] focus:bg-white transition-soft">
-      </div>
+      <div class="space-y-1.5"><h3 class="text-xl font-bold text-[#0b1a2b]">Choose guest username</h3><p class="text-xs text-[#5e6f82]">Enter a display name to join instantly.</p></div>
+      <div><input id="guest-username-input" type="text" placeholder="e.g. chitchatnpuser_123" onkeydown="if(event.key==='Enter') confirmGuestLogin()" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 text-sm text-[#0b1a2b] focus:bg-white transition-soft"></div>
       <div class="flex gap-3 pt-1">
         <button onclick="closeGuestModal()" class="flex-1 bg-white hover:bg-[#f1f5f9] text-[#5e6f82] font-semibold py-3.5 rounded-2xl transition-soft border border-[#e2e8f0] text-xs">Cancel</button>
-        <button onclick="confirmGuestLogin()" class="flex-1 bg-gradient-to-r from-[#00a884] to-[#018f70] text-white font-semibold py-3.5 rounded-2xl transition-soft shadow-lg shadow-[#00a884]/20 text-xs">Join Chat</button>
+        <button onclick="confirmGuestLogin()" class="flex-1 bg-gradient-to-r from-[#00a884] to-[#018f70] text-white font-semibold py-3.5 rounded-2xl transition-soft shadow-lg text-xs">Join Chat</button>
       </div>
     </div>
   </div>
 
-  <!-- ========== MAIN CHAT APP ========== -->
+  <!-- MAIN APP -->
   <div id="chat-screen" class="hidden flex-1 flex h-[100dvh] w-full overflow-hidden">
 
-    <!-- ===== LEFT SIDEBAR (Lounges & DMs) ===== -->
-    <aside id="sidebar-panel" class="fixed md:static inset-y-0 left-0 z-40 w-[300px] md:w-[300px] bg-white/95 md:bg-white/80 backdrop-blur-xl border-r border-[#e9eef3] flex flex-col h-full shrink-0 shadow-2xl md:shadow-sm drawer-left transform -translate-x-full md:translate-x-0">
-      <div class="relative p-4 pb-3 border-b border-[#e9eef3]">
-        <div class="absolute inset-0 bg-gradient-to-b from-[#00a884]/5 to-transparent pointer-events-none"></div>
-        <div class="relative flex justify-between items-center">
-          <div class="flex items-center gap-3">
-            <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Profile" class="w-11 h-11 rounded-full object-cover shadow-md avatar-ring" id="user-avatar-initial">
-            <div>
-              <h4 class="text-sm font-bold text-[#0b1a2b]" id="user-display">Ayush</h4>
-              <p class="text-[10px] font-medium text-[#00a884] flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-[#00a884] pulse-dot"></span> Online
-              </p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="closeSidebarOnMobile()" class="md:hidden text-[#5e6f82] hover:text-[#0b1a2b] p-1.5 rounded-xl hover:bg-[#f1f5f9] transition-soft">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-            <button onclick="handleLogout()" class="text-[11px] bg-white/80 hover:bg-[#f1f5f9] text-[#5e6f82] px-3.5 py-2 rounded-xl border border-[#e2e8f0] transition-soft font-semibold shadow-sm hidden md:block">Logout</button>
-          </div>
+    <!-- LEFT SIDEBAR -->
+    <aside id="sidebar-panel" class="fixed md:static inset-y-0 left-0 z-40 w-[300px] bg-white/95 backdrop-blur-xl border-r border-[#e9eef3] flex flex-col h-full shrink-0 drawer-left transform -translate-x-full md:translate-x-0">
+      <div class="p-4 border-b border-[#e9eef3] flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" class="w-11 h-11 rounded-full object-cover shadow-md">
+          <div><h4 class="text-sm font-bold text-[#0b1a2b]" id="user-display">User</h4><p class="text-[10px] text-[#00a884] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#00a884] pulse-dot"></span> Online</p></div>
         </div>
-        <button onclick="handleLogout()" class="md:hidden w-full mt-3 text-[11px] bg-white/80 hover:bg-[#f1f5f9] text-[#5e6f82] px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] transition-soft font-semibold shadow-sm">Logout</button>
+        <button onclick="closeSidebarOnMobile()" class="md:hidden text-[#5e6f82] p-1.5 rounded-xl hover:bg-[#f1f5f9]"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        <button onclick="handleLogout()" class="text-[11px] bg-white/80 hover:bg-[#f1f5f9] text-[#5e6f82] px-3.5 py-2 rounded-xl border border-[#e2e8f0] hidden md:block">Logout</button>
       </div>
-
       <div class="flex-1 overflow-y-auto">
-        <!-- Public Lounges -->
+        <!-- Lounges -->
         <div class="p-3 pb-1 relative" id="lounge-selector-wrapper">
-          <p class="text-[10px] font-bold text-[#94a3b8] uppercase tracking-[1px] px-2 mb-1.5">Public Lounges</p>
-          <div class="relative">
-            <button id="lounge-pill" class="lounge-pill w-full justify-between" onclick="toggleLoungeDropdown(event)">
-              <span class="flex items-center gap-2">
-                <span class="emoji">💬</span>
-                <span id="lounge-pill-label">#Chautari-Lounge</span>
-              </span>
-              <svg class="w-3.5 h-3.5 text-[#94a3b8] transition-soft" id="lounge-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            <div id="lounge-dropdown" class="lounge-dropdown">
-              <button class="lounge-option active" data-channel="Chautari-Lounge" onclick="selectLounge('Chautari-Lounge', '💬', 'Chautari-Lounge')">
-                <span class="emoji">💬</span>
-                <div><div>#Chautari-Lounge</div><div class="desc">General public square</div></div>
-              </button>
-              <button class="lounge-option" data-channel="Tech-Nepal" onclick="selectLounge('Tech-Nepal', '💻', 'Tech-Nepal')">
-                <span class="emoji">💻</span>
-                <div><div>#Tech-Nepal</div><div class="desc">Coding & tech discussions</div></div>
-              </button>
-              <button class="lounge-option" data-channel="Gaff-Saff" onclick="selectLounge('Gaff-Saff', '☕', 'Gaff-Saff')">
-                <span class="emoji">☕</span>
-                <div><div>#Gaff-Saff</div><div class="desc">Casual conversations</div></div>
-              </button>
-            </div>
+          <p class="text-[10px] font-bold text-[#94a3b8] uppercase px-2 mb-1.5">Public Lounges</p>
+          <button id="lounge-pill" class="lounge-pill w-full justify-between" onclick="toggleLoungeDropdown(event)">
+            <span class="flex items-center gap-2"><span class="emoji">💬</span><span id="lounge-pill-label">#Chautari-Lounge</span></span>
+            <svg class="w-3.5 h-3.5 text-[#94a3b8]" id="lounge-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div id="lounge-dropdown" class="lounge-dropdown">
+            <button class="lounge-option active" data-channel="Chautari-Lounge" onclick="selectLounge('Chautari-Lounge', '💬', 'Chautari-Lounge')"><span class="emoji">💬</span><div><div>#Chautari-Lounge</div></div></button>
+            <button class="lounge-option" data-channel="Tech-Nepal" onclick="selectLounge('Tech-Nepal', '💻', 'Tech-Nepal')"><span class="emoji">💻</span><div><div>#Tech-Nepal</div></div></button>
+            <button class="lounge-option" data-channel="Gaff-Saff" onclick="selectLounge('Gaff-Saff', '☕', 'Gaff-Saff')"><span class="emoji">☕</span><div><div>#Gaff-Saff</div></div></button>
           </div>
         </div>
-
-        <!-- Direct Messages (History / Active threads) -->
+        <!-- Recent DMs -->
         <div class="p-3 pt-1 space-y-1">
-          <div class="flex items-center justify-between px-2 mb-1">
-            <p class="text-[10px] font-bold text-[#94a3b8] uppercase tracking-[1px]">Direct Messages</p>
-          </div>
-          <div id="users-sidebar-list" class="space-y-0.5">
-             <!-- DM buttons will be injected here -->
-          </div>
+          <p class="text-[10px] font-bold text-[#94a3b8] uppercase px-2 mb-1">Direct Messages</p>
+          <div id="users-sidebar-list" class="space-y-0.5"></div>
         </div>
-      </div>
-
-      <div class="p-3 border-t border-[#e9eef3] bg-white/50">
-        <p class="text-[10px] text-center text-[#94a3b8] font-medium">Chitchat Nepal · since 2024</p>
       </div>
     </aside>
 
     <div id="sidebar-backdrop" class="fixed inset-0 bg-black/30 z-30 hidden md:hidden" onclick="closeSidebarOnMobile()"></div>
 
-    <!-- ===== MAIN CHAT AREA ===== -->
+    <!-- MAIN CHAT -->
     <main id="chat-panel" class="flex flex-1 flex-col justify-between chat-bg h-full w-full relative overflow-hidden">
-      <div class="bg-white/80 backdrop-blur-xl border-b border-[#e9eef3] px-3 md:px-4 py-3 flex justify-between items-center shrink-0 z-20 shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
+      <div class="bg-white/80 backdrop-blur-xl border-b border-[#e9eef3] px-3 md:px-4 py-3 flex justify-between items-center shrink-0 z-20">
         <div class="flex items-center gap-2 md:gap-3 min-w-0">
-          <button onclick="openSidebarOnMobile()" class="md:hidden text-[#0b1a2b] p-2 -ml-1 rounded-xl hover:bg-[#f1f5f9] transition-soft shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-          </button>
-          
-          <div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-[#00a884]/15 to-[#00a884]/5 text-[#00a884] font-bold flex items-center justify-center text-base shrink-0 overflow-hidden" id="channel-icon">
-            <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Channel" class="channel-icon-img">
+          <button onclick="openSidebarOnMobile()" class="md:hidden text-[#0b1a2b] p-2 -ml-1 rounded-xl hover:bg-[#f1f5f9]"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+          <div class="w-9 h-9 rounded-full bg-[#00a884]/15 flex items-center justify-center shrink-0" id="channel-icon">
+            <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" class="channel-icon-img">
           </div>
           <div class="min-w-0">
-            <h3 class="text-xs md:text-sm font-bold text-[#0b1a2b] truncate max-w-[120px] sm:max-w-[200px] md:max-w-none" id="channel-name">#Chautari-Lounge</h3>
-            <p class="text-[9px] md:text-[10px] font-medium text-[#5e6f82] truncate" id="channel-status">Public community chat</p>
+            <h3 class="text-xs md:text-sm font-bold text-[#0b1a2b] truncate" id="channel-name">#Chautari-Lounge</h3>
+            <p class="text-[9px] md:text-[10px] text-[#5e6f82] truncate" id="channel-status">Public community chat</p>
           </div>
         </div>
         <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
-          <button id="sound-toggle" onclick="toggleSound()" class="sound-toggle" title="Toggle notification sound">
+          <button id="sound-toggle" onclick="toggleSound()" class="sound-toggle">
             <svg id="sound-icon-on" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M11 5L6 9H2v6h4l5 4V5z"/></svg>
-            <svg id="sound-icon-off" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>
+            <svg id="sound-icon-off" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
           </button>
-          <button onclick="toggleMobileDirectory()" class="md:hidden text-xs bg-white/80 border border-[#e2e8f0] px-3 py-2 rounded-full text-[#5e6f82] font-medium shadow-sm flex items-center gap-1.5 transition-soft hover:bg-white">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-            <strong id="active-count-mobile" class="text-[#00a884] font-bold">1</strong>
-          </button>
-          <button onclick="toggleMobileDirectory()" class="hidden md:flex text-xs bg-white/80 border border-[#e2e8f0] px-4 py-2 rounded-full text-[#5e6f82] font-medium shadow-sm items-center gap-1.5 transition-soft hover:bg-white">
-            <span>Online:</span> <strong id="active-count" class="text-[#00a884] font-bold">1</strong>
-          </button>
+          <button onclick="toggleMobileDirectory()" class="md:hidden text-xs bg-white border border-[#e2e8f0] px-3 py-2 rounded-full flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg><strong id="active-count-mobile" class="text-[#00a884] font-bold">1</strong></button>
+          <button onclick="toggleMobileDirectory()" class="hidden md:flex text-xs bg-white border border-[#e2e8f0] px-4 py-2 rounded-full items-center gap-1.5"><span>Online:</span> <strong id="active-count" class="text-[#00a884] font-bold">1</strong></button>
         </div>
       </div>
 
@@ -518,36 +350,30 @@
 
       <div class="shrink-0 bg-white/80 backdrop-blur-xl border-t border-[#e9eef3] z-20">
         <div class="px-3 md:px-4 pt-2.5 pb-1 flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span class="text-[10px] font-bold text-[#94a3b8] uppercase tracking-wider mr-1 shrink-0">Quick</span>
-          <button onclick="sendQuickMessage('Namaste 🙏')" class="px-3.5 py-1.5 bg-white hover:bg-[#f1f5f9] active:scale-[0.96] rounded-full text-xs border border-[#e2e8f0] shadow-sm font-medium text-[#0b1a2b] shrink-0 transition-soft">Namaste 🙏</button>
-          <button onclick="sendQuickMessage('Hello')" class="px-3.5 py-1.5 bg-white hover:bg-[#f1f5f9] active:scale-[0.96] rounded-full text-xs border border-[#e2e8f0] shadow-sm font-medium text-[#0b1a2b] shrink-0 transition-soft">Hello</button>
-          <button onclick="sendQuickMessage('Hi')" class="px-3.5 py-1.5 bg-white hover:bg-[#f1f5f9] active:scale-[0.96] rounded-full text-xs border border-[#e2e8f0] shadow-sm font-medium text-[#0b1a2b] shrink-0 transition-soft">Hi</button>
-          <button onclick="sendQuickMessage('How are you?')" class="px-3.5 py-1.5 bg-white hover:bg-[#f1f5f9] active:scale-[0.96] rounded-full text-xs border border-[#e2e8f0] shadow-sm font-medium text-[#0b1a2b] shrink-0 transition-soft">How are you?</button>
+          <span class="text-[10px] font-bold text-[#94a3b8] uppercase">Quick</span>
+          <button onclick="sendQuickMessage('Namaste 🙏')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Namaste 🙏</button>
+          <button onclick="sendQuickMessage('Hello')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Hello</button>
+          <button onclick="sendQuickMessage('Hi')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Hi</button>
         </div>
-
         <form onsubmit="handleSendMessage(event)" class="p-2.5 md:p-4 flex items-center gap-2">
-          <input id="message-input" type="text" placeholder="Type a message..." class="flex-1 bg-white border border-[#e2e8f0] rounded-full px-4 md:px-5 py-3 md:py-3.5 text-sm text-[#0b1a2b] placeholder:text-[#94a3b8] shadow-sm transition-soft focus:bg-white">
-          <button type="submit" class="bg-gradient-to-r from-[#00a884] to-[#018f70] hover:brightness-105 active:scale-[0.96] text-white px-5 md:px-8 py-3 md:py-3.5 rounded-full transition-soft shadow-lg shadow-[#00a884]/20 font-semibold text-xs md:text-sm shrink-0">
-            <span>Send</span>
-          </button>
+          <input id="message-input" type="text" placeholder="Type a message..." class="flex-1 bg-white border border-[#e2e8f0] rounded-full px-4 py-3 text-sm transition-soft focus:bg-white">
+          <button type="submit" class="bg-gradient-to-r from-[#00a884] to-[#018f70] text-white px-5 md:px-8 py-3 rounded-full font-semibold text-sm">Send</button>
         </form>
       </div>
     </main>
 
-    <!-- ===== RIGHT DRAWER (Online Directory Only) ===== -->
-    <aside id="directory-drawer" class="fixed md:static inset-y-0 right-0 w-72 bg-white/95 backdrop-blur-xl border-l border-[#e9eef3] flex flex-col z-40 transform translate-x-full md:translate-x-0 drawer-right shadow-2xl md:shadow-none">
-      <div class="p-4 border-b border-[#e9eef3] bg-white/60 flex justify-between items-center">
-        <h4 class="text-[11px] font-bold uppercase tracking-[1px] text-[#5e6f82]">Online Users</h4>
-        <button onclick="toggleMobileDirectory()" class="md:hidden text-[#5e6f82] hover:text-[#0b1a2b] font-bold text-sm p-1.5 rounded-xl hover:bg-[#f1f5f9] transition-soft">✕</button>
+    <!-- RIGHT DIRECTORY -->
+    <aside id="directory-drawer" class="fixed md:static inset-y-0 right-0 w-72 bg-white/95 backdrop-blur-xl border-l border-[#e9eef3] flex flex-col z-40 transform translate-x-full md:translate-x-0 drawer-right">
+      <div class="p-4 border-b border-[#e9eef3] flex justify-between items-center">
+        <h4 class="text-[11px] font-bold uppercase text-[#5e6f82]">Online Users</h4>
+        <button onclick="toggleMobileDirectory()" class="md:hidden text-[#5e6f82] font-bold p-1.5">✕</button>
       </div>
       <div class="p-3 flex-1 overflow-y-auto space-y-1.5" id="active-members-list"></div>
     </aside>
-
     <div id="directory-backdrop" class="fixed inset-0 bg-black/30 z-30 hidden md:hidden" onclick="toggleMobileDirectory()"></div>
   </div>
 
   <script>
-    // ---------- supabase init ----------
     const SUPABASE_URL = 'https://bmhjltwabzmtyvrfaoeq.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_toqaL-nV0vmTlb27Sh6_xA_3fb5Mebb';
     const { createClient } = supabase;
@@ -561,158 +387,93 @@
     let currentChannel = 'Chautari-Lounge';
     let globalMessagesSub = null;
     let presenceChannel = null;
+    
     let onlineUsersMap = new Map();
     let unreadCounts = new Map();
-    const knownUserNames = new Map();
+    let knownUserNames = new Map(); 
+    let activeDMUsers = new Set(); 
 
     function handleAuthKeydown(event) {
       if (event.key === 'Enter') {
         event.preventDefault();
-        const emailVal = document.getElementById('auth-email').value.trim();
-        const passVal = document.getElementById('auth-password').value;
-        if (emailVal && passVal) {
-          handleLogin();
-        } else if (emailVal) {
-          document.getElementById('auth-password').focus();
-        }
+        if (document.getElementById('auth-email').value && document.getElementById('auth-password').value) handleLogin();
       }
     }
 
     function togglePasswordVisibility() {
-      const passwordInput = document.getElementById('auth-password');
-      const eyeIcon = document.getElementById('eye-icon');
-      const eyeOffIcon = document.getElementById('eye-off-icon');
-      const toggleBtn = document.getElementById('toggle-password');
-
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        eyeIcon.classList.add('hidden');
-        eyeOffIcon.classList.remove('hidden');
-        toggleBtn.setAttribute('aria-label', 'Hide password');
+      const input = document.getElementById('auth-password');
+      const on = document.getElementById('eye-icon');
+      const off = document.getElementById('eye-off-icon');
+      if (input.type === 'password') {
+        input.type = 'text'; on.classList.add('hidden'); off.classList.remove('hidden');
       } else {
-        passwordInput.type = 'password';
-        eyeIcon.classList.remove('hidden');
-        eyeOffIcon.classList.add('hidden');
-        toggleBtn.setAttribute('aria-label', 'Show password');
+        input.type = 'password'; on.classList.remove('hidden'); off.classList.add('hidden');
       }
     }
 
-    // ---------- NOTIFICATION SOUND ----------
     let audioContext = null;
     let soundEnabled = true;
-    let lastSoundTime = 0;
-    const SOUND_COOLDOWN_MS = 300;
-
     function initAudioContext() {
-      if (!audioContext) {
-        try {
-          audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        } catch (e) { console.warn('Web Audio API not supported'); }
-      }
-      if (audioContext && audioContext.state === 'suspended') {
-        audioContext.resume().catch(() => {});
-      }
+      if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioContext.state === 'suspended') audioContext.resume().catch(()=>{});
     }
-
-    document.addEventListener('click', () => initAudioContext(), { once: false });
-    document.addEventListener('touchstart', () => initAudioContext(), { once: false });
-    document.addEventListener('keydown', () => initAudioContext(), { once: false });
+    document.addEventListener('click', initAudioContext);
+    document.addEventListener('touchstart', initAudioContext);
 
     function playNotificationSound() {
       if (!soundEnabled) return;
-      const now = Date.now();
-      if (now - lastSoundTime < SOUND_COOLDOWN_MS) return;
-      lastSoundTime = now;
       try {
         initAudioContext();
-        if (!audioContext) return;
         const t = audioContext.currentTime;
-        const osc1 = audioContext.createOscillator();
-        const osc2 = audioContext.createOscillator();
-        const gain1 = audioContext.createGain();
-        const gain2 = audioContext.createGain();
-        osc1.type = 'sine'; osc2.type = 'sine';
-        osc1.frequency.setValueAtTime(880, t);
-        osc1.frequency.setValueAtTime(1174.66, t + 0.08);
-        osc2.frequency.setValueAtTime(1318.51, t + 0.04);
-        osc2.frequency.setValueAtTime(1567.98, t + 0.10);
-        gain1.gain.setValueAtTime(0, t);
-        gain1.gain.linearRampToValueAtTime(0.12, t + 0.015);
-        gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
-        gain2.gain.setValueAtTime(0, t + 0.03);
-        gain2.gain.linearRampToValueAtTime(0.08, t + 0.05);
-        gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-        osc1.connect(gain1); osc2.connect(gain2);
-        gain1.connect(audioContext.destination); gain2.connect(audioContext.destination);
-        osc1.start(t); osc1.stop(t + 0.3);
-        osc2.start(t + 0.03); osc2.stop(t + 0.3);
-      } catch (e) { console.warn('Could not play notification sound', e); }
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, t);
+        osc.frequency.setValueAtTime(1174.66, t + 0.08);
+        gain.gain.setValueAtTime(0.1, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+        osc.connect(gain); gain.connect(audioContext.destination);
+        osc.start(t); osc.stop(t + 0.3);
+      } catch (e) {}
     }
 
     function toggleSound() {
       soundEnabled = !soundEnabled;
-      const btn = document.getElementById('sound-toggle');
-      const onIcon = document.getElementById('sound-icon-on');
-      const offIcon = document.getElementById('sound-icon-off');
-      if (soundEnabled) {
-        btn.classList.remove('muted');
-        onIcon.classList.remove('hidden');
-        offIcon.classList.add('hidden');
-      } else {
-        btn.classList.add('muted');
-        onIcon.classList.add('hidden');
-        offIcon.classList.remove('hidden');
-      }
+      document.getElementById('sound-icon-on').classList.toggle('hidden', !soundEnabled);
+      document.getElementById('sound-icon-off').classList.toggle('hidden', soundEnabled);
+      document.getElementById('sound-toggle').classList.toggle('muted', !soundEnabled);
     }
 
-    // ---------- NOTIFICATION TOAST ----------
     let toastTimer = null;
     let toastTargetChannel = null;
 
     function showNotificationToast(title, text, channelId) {
-      const toast = document.getElementById('notification-toast');
       document.getElementById('toast-title').textContent = title;
       document.getElementById('toast-text').textContent = text;
       toastTargetChannel = channelId;
-      toast.classList.add('show');
+      document.getElementById('notification-toast').classList.add('show');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => {
-        toast.classList.remove('show');
-        toastTargetChannel = null;
-      }, 4000);
+      toastTimer = setTimeout(() => { document.getElementById('notification-toast').classList.remove('show'); }, 4000);
     }
 
     function handleToastClick() {
       if (!toastTargetChannel) return;
       const channelId = toastTargetChannel;
-
-      const toast = document.getElementById('notification-toast');
-      toast.classList.remove('show');
+      document.getElementById('notification-toast').classList.remove('show');
       clearTimeout(toastTimer);
       toastTargetChannel = null;
 
-      if (channelId === currentChannel) {
-        showChatOnMobile();
-        loadMessages();
-        return;
-      }
+      if (channelId === currentChannel) { showChatOnMobile(); loadMessages(); return; }
 
       if (channelId.startsWith('dm-')) {
         const parts = channelId.split('-');
         const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
-        let otherName = knownUserNames.get(otherId) || onlineUsersMap.get(otherId) || 'User';
+        const otherName = knownUserNames.get(otherId) || 'User';
         openExactDM(otherId, otherName);
       } else {
         let emoji = '💬';
         const option = document.querySelector(`.lounge-option[data-channel="${channelId}"]`);
-        if (option) {
-          const emojiEl = option.querySelector('.emoji');
-          if (emojiEl) emoji = emojiEl.textContent;
-        }
-        if (!emoji || emoji === '💬') {
-          const map = { 'Chautari-Lounge': '💬', 'Tech-Nepal': '💻', 'Gaff-Saff': '☕' };
-          emoji = map[channelId] || '💬';
-        }
+        if (option) emoji = option.querySelector('.emoji').textContent;
         selectLounge(channelId, emoji, channelId);
       }
     }
@@ -721,17 +482,20 @@
       const ids = [currentUser.id, recipientId].sort();
       const dmChannel = `dm-${ids[0]}-${ids[1]}`;
       currentChannel = dmChannel;
-      
       document.getElementById('channel-name').textContent = `💬 @${recipientName}`;
       document.getElementById('channel-status').textContent = 'Direct message';
-
       document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
       const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
       if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
 
+      if (!activeDMUsers.has(recipientId)) {
+         activeDMUsers.add(recipientId);
+         if (recipientName !== 'User') knownUserNames.set(recipientId, recipientName);
+         renderUI();
+      }
+
       closeSidebarOnMobile();
       closeDirectoryOnMobile();
-
       unreadCounts.delete(dmChannel);
       updateUnreadBadges();
       loadMessages();
@@ -747,70 +511,41 @@
       }
     }
 
-    function formatEmail(input) {
-      return input.includes('@') ? input : `${input.trim().toLowerCase()}@chitchat.np`;
-    }
+    function formatEmail(input) { return input.includes('@') ? input : `${input.trim().toLowerCase()}@chitchat.np`; }
 
     async function ensureProfileExists(user, customName) {
       if (!user) return;
-      const username = customName || (user.email ? user.email.split('@')[0] : 'Guest');
-      currentDisplayName = username;
-      await db.from('profiles').upsert({
-        id: user.id,
-        username: username,
-        display_name: username,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'id' });
+      currentDisplayName = customName || (user.email ? user.email.split('@')[0] : 'Guest');
+      await db.from('profiles').upsert({ id: user.id, username: currentDisplayName, display_name: currentDisplayName, updated_at: new Date().toISOString() }, { onConflict: 'id' });
     }
 
-    function openSidebarOnMobile() {
-      document.getElementById('sidebar-panel').classList.remove('-translate-x-full');
-      document.getElementById('sidebar-backdrop').classList.remove('hidden');
-    }
-    function closeSidebarOnMobile() {
-      document.getElementById('sidebar-panel').classList.add('-translate-x-full');
-      document.getElementById('sidebar-backdrop').classList.add('hidden');
-    }
+    function openSidebarOnMobile() { document.getElementById('sidebar-panel').classList.remove('-translate-x-full'); document.getElementById('sidebar-backdrop').classList.remove('hidden'); }
+    function closeSidebarOnMobile() { document.getElementById('sidebar-panel').classList.add('-translate-x-full'); document.getElementById('sidebar-backdrop').classList.add('hidden'); }
     function toggleMobileDirectory() {
       const drawer = document.getElementById('directory-drawer');
       const backdrop = document.getElementById('directory-backdrop');
-      const isOpen = !drawer.classList.contains('translate-x-full');
-      if (isOpen) {
-        drawer.classList.add('translate-x-full');
-        backdrop.classList.add('hidden');
-      } else {
-        drawer.classList.remove('translate-x-full');
-        backdrop.classList.remove('hidden');
-      }
+      drawer.classList.toggle('translate-x-full');
+      backdrop.classList.toggle('hidden');
     }
-    function closeDirectoryOnMobile() {
-      document.getElementById('directory-drawer').classList.add('translate-x-full');
-      document.getElementById('directory-backdrop').classList.add('hidden');
-    }
+    function closeDirectoryOnMobile() { document.getElementById('directory-drawer').classList.add('translate-x-full'); document.getElementById('directory-backdrop').classList.add('hidden'); }
 
     function toggleLoungeDropdown(e) {
       e.stopPropagation();
-      const dropdown = document.getElementById('lounge-dropdown');
-      const chevron = document.getElementById('lounge-chevron');
-      dropdown.classList.toggle('show');
-      chevron.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+      document.getElementById('lounge-dropdown').classList.toggle('show');
+      document.getElementById('lounge-chevron').style.transform = document.getElementById('lounge-dropdown').classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
     }
-
     document.addEventListener('click', (e) => {
       const wrapper = document.getElementById('lounge-selector-wrapper');
       if (wrapper && !wrapper.contains(e.target)) {
         document.getElementById('lounge-dropdown')?.classList.remove('show');
-        const chev = document.getElementById('lounge-chevron');
-        if (chev) chev.style.transform = 'rotate(0deg)';
+        const chev = document.getElementById('lounge-chevron'); if (chev) chev.style.transform = 'rotate(0deg)';
       }
     });
 
     function selectLounge(channel, emoji, label) {
       document.getElementById('lounge-pill-label').textContent = `#${label}`;
       document.querySelector('#lounge-pill .emoji').textContent = emoji;
-      document.querySelectorAll('.lounge-option').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.channel === channel);
-      });
+      document.querySelectorAll('.lounge-option').forEach(btn => btn.classList.toggle('active', btn.dataset.channel === channel));
       document.getElementById('lounge-dropdown').classList.remove('show');
       document.getElementById('lounge-chevron').style.transform = 'rotate(0deg)';
       switchChannel(channel, emoji);
@@ -818,33 +553,21 @@
     }
 
     function openGuestModal() {
-      const modal = document.getElementById('guest-modal');
-      modal.classList.remove('hidden');
-      const input = document.getElementById('guest-username-input');
-      input.value = GUEST_PREFIX + Math.floor(100 + Math.random() * 900);
-      input.focus();
-      input.select();
+      document.getElementById('guest-modal').classList.remove('hidden');
+      document.getElementById('guest-username-input').value = GUEST_PREFIX + Math.floor(100 + Math.random() * 900);
+      document.getElementById('guest-username-input').focus();
     }
-    function closeGuestModal() {
-      document.getElementById('guest-modal').classList.add('hidden');
-    }
+    function closeGuestModal() { document.getElementById('guest-modal').classList.add('hidden'); }
+    
     async function confirmGuestLogin() {
       const guestInput = document.getElementById('guest-username-input').value;
       if (!guestInput) return;
       closeGuestModal();
       const guestName = guestInput.trim().replace(/\s+/g, '_');
       const email = `${guestName.toLowerCase()}@chitchat.np`;
-      const password = 'guestpassword123';
-      let { data, error } = await db.auth.signInWithPassword({ email, password });
-      if (error) {
-        const signUpRes = await db.auth.signUp({ email, password });
-        data = signUpRes.data;
-      }
-      if (data?.user) {
-        knownUserNames.set(data.user.id, guestName);
-        await ensureProfileExists(data.user, guestName);
-        initSession(data.user, guestName);
-      }
+      let { data, error } = await db.auth.signInWithPassword({ email, password: 'guestpassword123' });
+      if (error) data = (await db.auth.signUp({ email, password: 'guestpassword123' })).data;
+      if (data?.user) { knownUserNames.set(data.user.id, guestName); await ensureProfileExists(data.user, guestName); initSession(data.user, guestName); }
     }
 
     async function handleSignup() {
@@ -852,26 +575,14 @@
       const password = document.getElementById('auth-password').value;
       const errorEl = document.getElementById('auth-error');
       const successEl = document.getElementById('auth-success');
-      
       if (!rawInput || !password) return;
-      const email = formatEmail(rawInput);
-      
-      errorEl.classList.add('hidden');
-      successEl.classList.add('hidden');
-      
-      const { data, error } = await db.auth.signUp({ email, password });
-      
-      if (error) {
-        errorEl.textContent = error.message;
-        errorEl.classList.remove('hidden');
-        return;
-      }
-      
+      errorEl.classList.add('hidden'); successEl.classList.add('hidden');
+      const { data, error } = await db.auth.signUp({ email: formatEmail(rawInput), password });
+      if (error) { errorEl.textContent = error.message; errorEl.classList.remove('hidden'); return; }
       if (data?.user) {
         successEl.classList.remove('hidden');
         document.getElementById('auth-password').value = '';
         document.getElementById('auth-email').focus();
-        successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
 
@@ -880,69 +591,62 @@
       const password = document.getElementById('auth-password').value;
       const errorEl = document.getElementById('auth-error');
       const successEl = document.getElementById('auth-success');
-      
       if (!rawInput || !password) return;
-      const email = formatEmail(rawInput);
-      const username = rawInput.split('@')[0];
-      
-      errorEl.classList.add('hidden');
-      successEl.classList.add('hidden');
-      
-      const { data, error } = await db.auth.signInWithPassword({ email, password });
-      
-      if (error) {
-        errorEl.textContent = error.message;
-        errorEl.classList.remove('hidden');
-        return;
-      }
-      
-      knownUserNames.set(data.user.id, username);
-      await ensureProfileExists(data.user, username);
-      initSession(data.user, username);
+      errorEl.classList.add('hidden'); successEl.classList.add('hidden');
+      const { data, error } = await db.auth.signInWithPassword({ email: formatEmail(rawInput), password });
+      if (error) { errorEl.textContent = error.message; errorEl.classList.remove('hidden'); return; }
+      knownUserNames.set(data.user.id, rawInput.split('@')[0]);
+      await ensureProfileExists(data.user, rawInput.split('@')[0]);
+      initSession(data.user, rawInput.split('@')[0]);
     }
 
     async function handleLogout() {
       if (presenceChannel) presenceChannel.untrack();
       await db.auth.signOut();
-      currentUser = null;
-      if (globalMessagesSub) db.removeChannel(globalMessagesSub);
+      currentUser = null; if (globalMessagesSub) db.removeChannel(globalMessagesSub);
       document.getElementById('auth-screen').classList.remove('hidden');
       document.getElementById('chat-screen').classList.add('hidden');
-      document.getElementById('chat-screen').classList.remove('flex');
       closeSidebarOnMobile();
-      document.getElementById('auth-success').classList.add('hidden');
-      document.getElementById('auth-error').classList.add('hidden');
     }
 
     async function initSession(user, fallbackName) {
       currentUser = user;
-      const name = fallbackName || (user.email ? user.email.split('@')[0] : 'User');
-      currentDisplayName = name;
-      knownUserNames.set(user.id, name);
+      currentDisplayName = fallbackName || 'User';
+      knownUserNames.set(user.id, currentDisplayName);
+      await ensureProfileExists(user, currentDisplayName);
       
-      await ensureProfileExists(user, name);
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('chat-screen').classList.remove('hidden');
-      document.getElementById('chat-screen').classList.add('flex');
-      document.getElementById('user-display').textContent = name;
+      document.getElementById('user-display').textContent = currentDisplayName;
 
-      document.getElementById('channel-name').textContent = '#Chautari-Lounge';
-      document.getElementById('channel-status').textContent = 'Public community chat';
-      document.getElementById('lounge-pill-label').textContent = '#Chautari-Lounge';
-      document.querySelector('#lounge-pill .emoji').textContent = '💬';
-      document.querySelectorAll('.lounge-option').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.channel === 'Chautari-Lounge');
-      });
-
+      await fetchRecentDMs();
       loadMessages();
       subscribeToAllMessages();
       setupPresence();
+      if (window.innerWidth < 768) { closeSidebarOnMobile(); closeDirectoryOnMobile(); }
+    }
 
-      if (window.innerWidth < 768) {
-        closeSidebarOnMobile();
-        closeDirectoryOnMobile();
-      }
-      initAudioContext();
+    // --- BULLETPROOF FETCHING: Extracts names directly from message history ---
+    async function fetchRecentDMs() {
+      try {
+        const { data, error } = await db.from('messages').select('channel_id, sender_id, sender_name').like('channel_id', `dm-%${currentUser.id}%`);
+        if (!error && data) {
+          data.forEach(msg => {
+            if (msg.channel_id.startsWith('dm-')) {
+              const parts = msg.channel_id.split('-');
+              const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
+              if (otherId !== currentUser.id) {
+                activeDMUsers.add(otherId);
+                // If the sender is NOT us, then the sender is the other person. Map their ID to their name!
+                if (msg.sender_id === otherId && msg.sender_name) {
+                  knownUserNames.set(otherId, msg.sender_name);
+                }
+              }
+            }
+          });
+          renderUI();
+        }
+      } catch (e) { console.warn(e); }
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
@@ -957,80 +661,67 @@
     function setupPresence() {
       if (presenceChannel) db.removeChannel(presenceChannel);
       presenceChannel = db.channel('online-presence', { config: { presence: { key: currentUser.id } } });
-      presenceChannel
-        .on('presence', { event: 'sync' }, () => {
-          const state = presenceChannel.presenceState();
-          onlineUsersMap.clear();
-          Object.keys(state).forEach(key => {
-            const presences = state[key];
-            if (presences && presences.length > 0) {
-              const u = presences[0];
-              onlineUsersMap.set(u.id, u.username);
-              knownUserNames.set(u.id, u.username);
-            }
-          });
-          renderOnlineUsers();
-        })
-        .subscribe(async (status) => {
-          if (status === 'SUBSCRIBED') {
-            await presenceChannel.track({
-              id: currentUser.id,
-              username: currentDisplayName,
-              online_at: new Date().toISOString()
-            });
-          }
+      presenceChannel.on('presence', { event: 'sync' }, () => {
+        const state = presenceChannel.presenceState();
+        onlineUsersMap.clear();
+        Object.keys(state).forEach(key => {
+          const p = state[key]; if (p && p.length > 0) { onlineUsersMap.set(p[0].id, p[0].username); knownUserNames.set(p[0].id, p[0].username); }
         });
+        renderUI();
+      }).subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') await presenceChannel.track({ id: currentUser.id, username: currentDisplayName });
+      });
     }
 
-    function renderOnlineUsers() {
-      const userListEl = document.getElementById('users-sidebar-list');
-      const activeMembersEl = document.getElementById('active-members-list');
-      const activeCountEl = document.getElementById('active-count');
-      const activeCountMobile = document.getElementById('active-count-mobile');
-      const onlinePill = document.getElementById('online-pill-count');
+    function renderUI() {
+      const sidebarList = document.getElementById('users-sidebar-list');
+      const activeList = document.getElementById('active-members-list');
+      sidebarList.innerHTML = ''; activeList.innerHTML = '';
       
-      userListEl.innerHTML = '';
-      activeMembersEl.innerHTML = '';
-      
-      const count = onlineUsersMap.size;
-      if (activeCountEl) activeCountEl.textContent = count;
-      if (activeCountMobile) activeCountMobile.textContent = count;
-      if (onlinePill) onlinePill.textContent = count;
+      document.getElementById('active-count').textContent = onlineUsersMap.size;
+      document.getElementById('active-count-mobile').textContent = onlineUsersMap.size;
 
-      let otherCount = 0;
-      onlineUsersMap.forEach((username, id) => {
+      // RIGHT DRAWER (Online Users)
+      let onlineOthers = 0;
+      onlineUsersMap.forEach((name, id) => {
         if (id !== currentUser.id) {
-          otherCount++;
-          
-          // --- LEFT SIDEBAR: Direct Messages (Active Threads) ---
-          const dmChannelId = `dm-${[currentUser.id, id].sort().join('-')}`;
-          userListEl.insertAdjacentHTML('beforeend', `
-            <button onclick="openExactDM('${id}', '${username}')" class="channel-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-soft text-[#0b1a2b] hover:bg-[#f1f5f9] flex items-center justify-between" data-id="dm-${id}" data-channel-id="${dmChannelId}">
-              <div class="flex items-center gap-3 truncate">
-                <img src="${BRAND_ICON_URL}" alt="${username}" class="w-8 h-8 rounded-full object-cover shrink-0 shadow-sm">
-                <div class="truncate"><p class="font-semibold text-xs">@${username}</p><p class="text-[10px] text-[#00a884]">Active now</p></div>
-              </div>
-              <span class="w-2 h-2 rounded-full bg-[#00a884] shrink-0 shadow-[0_0_0_2px_rgba(0,168,132,0.2)]"></span>
-            </button>
-          `);
-          
-          // --- RIGHT DRAWER: Online Directory ---
-          activeMembersEl.insertAdjacentHTML('beforeend', `
-            <div onclick="openExactDM('${id}', '${username}')" class="flex items-center justify-between px-3.5 py-2.5 bg-white hover:bg-[#f8fafc] rounded-2xl cursor-pointer transition-soft text-xs text-[#0b1a2b] group border border-[#f1f5f9] shadow-sm">
+          onlineOthers++;
+          activeList.insertAdjacentHTML('beforeend', `
+            <div onclick="openExactDM('${id}', '${name}')" class="flex items-center justify-between px-3.5 py-2.5 bg-white hover:bg-[#f8fafc] rounded-2xl cursor-pointer text-xs text-[#0b1a2b] border border-[#f1f5f9]">
               <div class="flex items-center gap-2.5 truncate">
-                <img src="${BRAND_ICON_URL}" alt="${username}" class="w-6 h-6 rounded-full object-cover shrink-0">
-                <span class="truncate font-medium group-hover:text-[#00a884] transition">@${username}</span>
+                <img src="${BRAND_ICON_URL}" class="w-6 h-6 rounded-full">
+                <span class="truncate font-medium">@${name}</span>
               </div>
-              <span class="text-[10px] text-[#5e6f82] bg-[#f1f5f9] px-2.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition font-medium">Chat</span>
             </div>
           `);
         }
       });
+      if (onlineOthers === 0) activeList.innerHTML = `<p class="text-xs text-[#94a3b8] p-2 text-center">You are the only one online</p>`;
 
-      if (otherCount === 0) {
-        userListEl.innerHTML = `<p class="text-xs text-[#94a3b8] p-3 text-center font-medium">No active messages</p>`;
-        activeMembersEl.innerHTML = `<p class="text-xs text-[#94a3b8] p-2 text-center font-medium">You are the only one online</p>`;
-      }
+      // LEFT SIDEBAR (Recent DMs)
+      let dmCount = 0;
+      activeDMUsers.forEach(id => {
+        const name = knownUserNames.get(id) || 'User';
+        const isOnline = onlineUsersMap.has(id);
+        const dmChannel = `dm-${[currentUser.id, id].sort().join('-')}`;
+        dmCount++;
+        
+        sidebarList.insertAdjacentHTML('beforeend', `
+          <button onclick="openExactDM('${id}', '${name}')" class="channel-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-sm transition-soft hover:bg-[#f1f5f9] flex items-center justify-between" data-id="dm-${id}" data-channel-id="${dmChannel}">
+            <div class="flex items-center gap-3 truncate">
+              <div class="relative">
+                <img src="${BRAND_ICON_URL}" class="w-8 h-8 rounded-full">
+                ${isOnline ? `<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#00a884] border-2 border-white"></span>` : ''}
+              </div>
+              <div class="truncate">
+                <p class="font-semibold text-xs text-[#0b1a2b]">@${name}</p>
+                <p class="text-[10px] ${isOnline ? 'text-[#00a884]' : 'text-[#94a3b8]'}">${isOnline ? 'Online' : 'Offline'}</p>
+              </div>
+            </div>
+          </button>
+        `);
+      });
+      if (dmCount === 0) sidebarList.innerHTML = `<p class="text-xs text-[#94a3b8] p-3 text-center">No recent chats</p>`;
       
       updateUnreadBadges();
     }
@@ -1048,154 +739,88 @@
 
     function subscribeToAllMessages() {
       if (globalMessagesSub) db.removeChannel(globalMessagesSub);
+      globalMessagesSub = db.channel('public:all-messages').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+        const msg = payload.new;
+        if (!msg || !currentUser) return;
+        const isMe = msg.sender_id === currentUser.id;
 
-      globalMessagesSub = db.channel('public:all-messages')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-          const msg = payload.new;
-          if (!msg || !currentUser) return;
-          const isMe = msg.sender_id === currentUser.id;
+        if (msg.sender_id && msg.sender_name) knownUserNames.set(msg.sender_id, msg.sender_name);
 
-          if (msg.sender_id && msg.sender_name) {
-            knownUserNames.set(msg.sender_id, msg.sender_name);
+        // Add new messages to recent DMs
+        if (msg.channel_id.startsWith('dm-') && !isMe) {
+          const parts = msg.channel_id.split('-');
+          const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
+          if (!activeDMUsers.has(otherId)) {
+            activeDMUsers.add(otherId);
+            renderUI();
           }
+        }
 
-          if (msg.channel_id === currentChannel) {
-            renderMessage(msg);
-            const container = document.getElementById('messages-container');
-            container.scrollTop = container.scrollHeight;
-          } else {
-            if (!isMe) {
-              const prev = unreadCounts.get(msg.channel_id) || 0;
-              unreadCounts.set(msg.channel_id, prev + 1);
-              updateUnreadBadges();
-              updateSidebarBadge(msg.channel_id, prev + 1);
-            }
+        if (msg.channel_id === currentChannel) {
+          renderMessage(msg);
+          document.getElementById('messages-container').scrollTop = 999999;
+        } else if (!isMe) {
+          unreadCounts.set(msg.channel_id, (unreadCounts.get(msg.channel_id) || 0) + 1);
+          updateUnreadBadges();
+        }
+
+        if (!isMe) {
+          playNotificationSound();
+          if (document.hidden || window.innerWidth < 768 || msg.channel_id !== currentChannel) {
+            showNotificationToast(msg.channel_id.startsWith('dm-') ? msg.sender_name : `#${msg.channel_id}`, msg.text, msg.channel_id);
           }
-
-          if (!isMe) {
-            playNotificationSound();
-
-            const isDifferentChannel = msg.channel_id !== currentChannel;
-            if (document.hidden || window.innerWidth < 768 || isDifferentChannel) {
-              let title;
-              if (msg.channel_id.startsWith('dm-')) {
-                title = `${msg.sender_name}`;
-              } else {
-                title = `#${msg.channel_id}`;
-              }
-              showNotificationToast(title, msg.text, msg.channel_id);
-            }
-          }
-        })
-        .subscribe();
+        }
+      }).subscribe();
     }
 
     function updateUnreadBadges() {
       document.querySelectorAll('.lounge-option').forEach(btn => {
-        const ch = btn.dataset.channel;
-        const count = unreadCounts.get(ch) || 0;
-        const existing = btn.querySelector('.unread-badge');
-        if (existing) existing.remove();
-        if (count > 0) {
-          const badge = document.createElement('span');
-          badge.className = 'unread-badge ml-auto';
-          badge.textContent = count > 99 ? '99+' : count;
-          btn.appendChild(badge);
-        }
+        const count = unreadCounts.get(btn.dataset.channel) || 0;
+        const existing = btn.querySelector('.unread-badge'); if (existing) existing.remove();
+        if (count > 0) btn.insertAdjacentHTML('beforeend', `<span class="unread-badge ml-auto">${count}</span>`);
       });
-    }
-
-    function updateSidebarBadge(channelId, count) {
-      const buttons = document.querySelectorAll('#users-sidebar-list .channel-btn');
-      buttons.forEach(btn => {
-        const btnChannel = btn.dataset.channelId;
-        if (btnChannel === channelId) {
-          const existing = btn.querySelector('.unread-badge');
-          if (existing) existing.remove();
-          if (count > 0) {
-            const badge = document.createElement('span');
-            badge.className = 'unread-badge ml-2';
-            badge.textContent = count > 99 ? '99+' : count;
-            const dot = btn.querySelector('.w-2.h-2.rounded-full');
-            if (dot) {
-              dot.parentNode.insertBefore(badge, dot);
-            } else {
-              btn.appendChild(badge);
-            }
-          }
-        }
+      document.querySelectorAll('.channel-btn').forEach(btn => {
+        const count = unreadCounts.get(btn.dataset.channelId) || 0;
+        const existing = btn.querySelector('.unread-badge'); if (existing) existing.remove();
+        if (count > 0) btn.insertAdjacentHTML('beforeend', `<span class="unread-badge ml-2">${count}</span>`);
       });
     }
 
     async function handleSendMessage(e) {
       e.preventDefault();
       const input = document.getElementById('message-input');
-      const text = input.value.trim();
-      if (!text || !currentUser) return;
-      input.value = '';
-      await db.from('messages').insert([{
-        channel_id: currentChannel,
-        sender_id: currentUser.id,
-        sender_name: currentDisplayName,
-        text: text
-      }]);
+      if (!input.value.trim() || !currentUser) return;
+      const text = input.value.trim(); input.value = '';
+      await db.from('messages').insert([{ channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text }]);
     }
 
     async function sendQuickMessage(text) {
       if (!currentUser) return;
-      await db.from('messages').insert([{
-        channel_id: currentChannel,
-        sender_id: currentUser.id,
-        sender_name: currentDisplayName,
-        text: text
-      }]);
+      await db.from('messages').insert([{ channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text }]);
     }
 
     function switchChannel(channel, emoji = '💬') {
       currentChannel = channel;
-      const displayName = channel.startsWith('dm-') ? channel : `#${channel}`;
-      document.getElementById('channel-name').textContent = displayName;
+      document.getElementById('channel-name').textContent = channel.startsWith('dm-') ? channel : `#${channel}`;
       document.getElementById('channel-status').textContent = channel.startsWith('dm-') ? 'Direct message' : 'Public community chat';
-
       document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
-      const activeBtn = document.querySelector(`[data-id="${channel}"]`);
-      if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
-
-      unreadCounts.delete(channel);
-      updateUnreadBadges();
-      loadMessages();
-      showChatOnMobile();
+      const activeBtn = document.querySelector(`[data-id="${channel}"]`); if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
+      unreadCounts.delete(channel); updateUnreadBadges(); loadMessages(); showChatOnMobile();
     }
 
     function renderMessage(msg) {
-      const container = document.getElementById('messages-container');
       const isMe = currentUser && msg.sender_id === currentUser.id;
       const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const msgHTML = `
+      document.getElementById('messages-container').insertAdjacentHTML('beforeend', `
         <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-1.5 message-in">
-          <div class="flex items-center gap-2 mb-1 px-2">
-            <span class="text-[10px] font-semibold text-[#5e6f82] tracking-wide">${msg.sender_name}</span>
-          </div>
+          <div class="flex items-center gap-2 mb-1 px-2"><span class="text-[10px] text-[#5e6f82]">${msg.sender_name}</span></div>
           <div class="max-w-[85%] sm:max-w-md px-4 py-2.5 text-sm relative ${isMe ? 'bubble-me' : 'bubble-other'}">
-            <p class="break-words leading-relaxed text-[#0b1a2b]">${msg.text}</p>
-            <div class="flex items-center justify-end gap-1.5 mt-1.5 text-[9px] text-[#5e6f82] opacity-80">
-              <span>${timeStr}</span>
-              ${isMe ? '<span class="text-[#53bdeb] font-bold text-[11px]">✓✓</span>' : ''}
-            </div>
+            <p class="break-words">${msg.text}</p>
+            <div class="flex items-center justify-end gap-1.5 mt-1.5 text-[9px] text-[#5e6f82] opacity-80"><span>${timeStr}</span>${isMe ? '<span class="text-[#53bdeb] font-bold">✓✓</span>' : ''}</div>
           </div>
         </div>
-      `;
-      container.insertAdjacentHTML('beforeend', msgHTML);
+      `);
     }
-
-    window.addEventListener('resize', () => {
-      if (window.innerWidth >= 768) {
-        document.getElementById('sidebar-backdrop')?.classList.add('hidden');
-        document.getElementById('directory-backdrop')?.classList.add('hidden');
-        document.getElementById('sidebar-panel')?.classList.remove('-translate-x-full');
-        document.getElementById('directory-drawer')?.classList.add('translate-x-full');
-      }
-    });
   </script>
 </body>
 </html>
