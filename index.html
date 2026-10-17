@@ -278,7 +278,6 @@
       border-radius: 50%;
     }
 
-    /* Password toggle eye icon */
     .password-toggle {
       position: absolute;
       right: 14px;
@@ -301,7 +300,6 @@
     }
     .password-toggle:focus { outline: none; }
 
-    /* Success message */
     .auth-success {
       background: #ecfdf5;
       border: 1px solid #a7f3d0;
@@ -326,7 +324,7 @@
 </head>
 <body class="h-[100dvh] w-screen flex flex-col overflow-hidden select-none">
 
-  <!-- ========== NOTIFICATION TOAST (clickable) ========== -->
+  <!-- ========== NOTIFICATION TOAST ========== -->
   <div id="notification-toast" class="notification-toast" onclick="handleToastClick()">
     <div class="toast-icon" id="toast-icon">
       <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Chitchat Nepal">
@@ -349,7 +347,6 @@
         </div>
       </div>
 
-      <!-- Success message -->
       <div id="auth-success" class="auth-success hidden">
         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <span>Registration successful! Please log in.</span>
@@ -415,7 +412,7 @@
   <!-- ========== MAIN CHAT APP ========== -->
   <div id="chat-screen" class="hidden flex-1 flex h-[100dvh] w-full overflow-hidden">
 
-    <!-- ===== LEFT SIDEBAR ===== -->
+    <!-- ===== LEFT SIDEBAR (Lounges & DMs) ===== -->
     <aside id="sidebar-panel" class="fixed md:static inset-y-0 left-0 z-40 w-[300px] md:w-[300px] bg-white/95 md:bg-white/80 backdrop-blur-xl border-r border-[#e9eef3] flex flex-col h-full shrink-0 shadow-2xl md:shadow-sm drawer-left transform -translate-x-full md:translate-x-0">
       <div class="relative p-4 pb-3 border-b border-[#e9eef3]">
         <div class="absolute inset-0 bg-gradient-to-b from-[#00a884]/5 to-transparent pointer-events-none"></div>
@@ -440,8 +437,9 @@
       </div>
 
       <div class="flex-1 overflow-y-auto">
+        <!-- Public Lounges -->
         <div class="p-3 pb-1 relative" id="lounge-selector-wrapper">
-          <p class="text-[10px] font-bold text-[#94a3b8] uppercase tracking-[1px] px-2 mb-1.5">Your lounge</p>
+          <p class="text-[10px] font-bold text-[#94a3b8] uppercase tracking-[1px] px-2 mb-1.5">Public Lounges</p>
           <div class="relative">
             <button id="lounge-pill" class="lounge-pill w-full justify-between" onclick="toggleLoungeDropdown(event)">
               <span class="flex items-center gap-2">
@@ -467,12 +465,14 @@
           </div>
         </div>
 
+        <!-- Direct Messages (History / Active threads) -->
         <div class="p-3 pt-1 space-y-1">
           <div class="flex items-center justify-between px-2 mb-1">
-            <p class="text-[10px] font-bold text-[#94a3b8] uppercase tracking-[1px]">Direct messages · online</p>
-            <span class="text-[10px] font-medium text-[#00a884] bg-[#00a884]/8 px-2 py-0.5 rounded-full" id="online-pill-count">0</span>
+            <p class="text-[10px] font-bold text-[#94a3b8] uppercase tracking-[1px]">Direct Messages</p>
           </div>
-          <div id="users-sidebar-list" class="space-y-0.5"></div>
+          <div id="users-sidebar-list" class="space-y-0.5">
+             <!-- DM buttons will be injected here -->
+          </div>
         </div>
       </div>
 
@@ -534,10 +534,10 @@
       </div>
     </main>
 
-    <!-- ===== RIGHT DRAWER ===== -->
+    <!-- ===== RIGHT DRAWER (Online Directory Only) ===== -->
     <aside id="directory-drawer" class="fixed md:static inset-y-0 right-0 w-72 bg-white/95 backdrop-blur-xl border-l border-[#e9eef3] flex flex-col z-40 transform translate-x-full md:translate-x-0 drawer-right shadow-2xl md:shadow-none">
       <div class="p-4 border-b border-[#e9eef3] bg-white/60 flex justify-between items-center">
-        <h4 class="text-[11px] font-bold uppercase tracking-[1px] text-[#5e6f82]">Online directory</h4>
+        <h4 class="text-[11px] font-bold uppercase tracking-[1px] text-[#5e6f82]">Online Users</h4>
         <button onclick="toggleMobileDirectory()" class="md:hidden text-[#5e6f82] hover:text-[#0b1a2b] font-bold text-sm p-1.5 rounded-xl hover:bg-[#f1f5f9] transition-soft">✕</button>
       </div>
       <div class="p-3 flex-1 overflow-y-auto space-y-1.5" id="active-members-list"></div>
@@ -553,10 +553,7 @@
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Brand icon URL
     const BRAND_ICON_URL = 'https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png';
-
-    // Guest username prefix
     const GUEST_PREFIX = 'chitchatnpuser_';
 
     let currentUser = null;
@@ -566,11 +563,8 @@
     let presenceChannel = null;
     let onlineUsersMap = new Map();
     let unreadCounts = new Map();
-
-    // Store known user names globally to survive offline transitions
     const knownUserNames = new Map();
 
-    // ---------- ENTER KEY HANDLER FOR AUTH ----------
     function handleAuthKeydown(event) {
       if (event.key === 'Enter') {
         event.preventDefault();
@@ -584,7 +578,6 @@
       }
     }
 
-    // ---------- PASSWORD VISIBILITY TOGGLE ----------
     function togglePasswordVisibility() {
       const passwordInput = document.getElementById('auth-password');
       const eyeIcon = document.getElementById('eye-icon');
@@ -689,7 +682,6 @@
       }, 4000);
     }
 
-    // --- FIXED: EXACT DM CHAT OPENING ---
     function handleToastClick() {
       if (!toastTargetChannel) return;
       const channelId = toastTargetChannel;
@@ -706,14 +698,9 @@
       }
 
       if (channelId.startsWith('dm-')) {
-        // Extract IDs robustly
         const parts = channelId.split('-');
         const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
-        
-        // Try to find the real name from online users, then known names, then fallback
         let otherName = knownUserNames.get(otherId) || onlineUsersMap.get(otherId) || 'User';
-        
-        // Open the exact DM channel matching the ID
         openExactDM(otherId, otherName);
       } else {
         let emoji = '💬';
@@ -730,7 +717,6 @@
       }
     }
 
-    // New helper: ensures we open exactly the right DM channel without ID mixups
     function openExactDM(recipientId, recipientName) {
       const ids = [currentUser.id, recipientId].sort();
       const dmChannel = `dm-${ids[0]}-${ids[1]}`;
@@ -761,7 +747,6 @@
       }
     }
 
-    // ---------- helpers ----------
     function formatEmail(input) {
       return input.includes('@') ? input : `${input.trim().toLowerCase()}@chitchat.np`;
     }
@@ -778,7 +763,6 @@
       }, { onConflict: 'id' });
     }
 
-    // ---------- mobile sidebar / drawer ----------
     function openSidebarOnMobile() {
       document.getElementById('sidebar-panel').classList.remove('-translate-x-full');
       document.getElementById('sidebar-backdrop').classList.remove('hidden');
@@ -804,7 +788,6 @@
       document.getElementById('directory-backdrop').classList.add('hidden');
     }
 
-    // ---------- lounge dropdown ----------
     function toggleLoungeDropdown(e) {
       e.stopPropagation();
       const dropdown = document.getElementById('lounge-dropdown');
@@ -834,7 +817,6 @@
       closeSidebarOnMobile();
     }
 
-    // ---------- guest modal ----------
     function openGuestModal() {
       const modal = document.getElementById('guest-modal');
       modal.classList.remove('hidden');
@@ -865,7 +847,6 @@
       }
     }
 
-    // ---------- signup / login ----------
     async function handleSignup() {
       const rawInput = document.getElementById('auth-email').value;
       const password = document.getElementById('auth-password').value;
@@ -874,7 +855,6 @@
       
       if (!rawInput || !password) return;
       const email = formatEmail(rawInput);
-      const username = rawInput.split('@')[0];
       
       errorEl.classList.add('hidden');
       successEl.classList.add('hidden');
@@ -934,7 +914,6 @@
       document.getElementById('auth-error').classList.add('hidden');
     }
 
-    // ---------- session init ----------
     async function initSession(user, fallbackName) {
       currentUser = user;
       const name = fallbackName || (user.email ? user.email.split('@')[0] : 'User');
@@ -975,7 +954,6 @@
       }
     });
 
-    // ---------- presence ----------
     function setupPresence() {
       if (presenceChannel) db.removeChannel(presenceChannel);
       presenceChannel = db.channel('online-presence', { config: { presence: { key: currentUser.id } } });
@@ -988,7 +966,7 @@
             if (presences && presences.length > 0) {
               const u = presences[0];
               onlineUsersMap.set(u.id, u.username);
-              knownUserNames.set(u.id, u.username); // Remember their name
+              knownUserNames.set(u.id, u.username);
             }
           });
           renderOnlineUsers();
@@ -1010,26 +988,33 @@
       const activeCountEl = document.getElementById('active-count');
       const activeCountMobile = document.getElementById('active-count-mobile');
       const onlinePill = document.getElementById('online-pill-count');
+      
       userListEl.innerHTML = '';
       activeMembersEl.innerHTML = '';
+      
       const count = onlineUsersMap.size;
       if (activeCountEl) activeCountEl.textContent = count;
       if (activeCountMobile) activeCountMobile.textContent = count;
       if (onlinePill) onlinePill.textContent = count;
+
       let otherCount = 0;
       onlineUsersMap.forEach((username, id) => {
         if (id !== currentUser.id) {
           otherCount++;
+          
+          // --- LEFT SIDEBAR: Direct Messages (Active Threads) ---
           const dmChannelId = `dm-${[currentUser.id, id].sort().join('-')}`;
           userListEl.insertAdjacentHTML('beforeend', `
             <button onclick="openExactDM('${id}', '${username}')" class="channel-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-soft text-[#0b1a2b] hover:bg-[#f1f5f9] flex items-center justify-between" data-id="dm-${id}" data-channel-id="${dmChannelId}">
               <div class="flex items-center gap-3 truncate">
                 <img src="${BRAND_ICON_URL}" alt="${username}" class="w-8 h-8 rounded-full object-cover shrink-0 shadow-sm">
-                <div class="truncate"><p class="font-semibold text-xs">@${username}</p><p class="text-[10px] text-[#00a884]">Online now</p></div>
+                <div class="truncate"><p class="font-semibold text-xs">@${username}</p><p class="text-[10px] text-[#00a884]">Active now</p></div>
               </div>
               <span class="w-2 h-2 rounded-full bg-[#00a884] shrink-0 shadow-[0_0_0_2px_rgba(0,168,132,0.2)]"></span>
             </button>
           `);
+          
+          // --- RIGHT DRAWER: Online Directory ---
           activeMembersEl.insertAdjacentHTML('beforeend', `
             <div onclick="openExactDM('${id}', '${username}')" class="flex items-center justify-between px-3.5 py-2.5 bg-white hover:bg-[#f8fafc] rounded-2xl cursor-pointer transition-soft text-xs text-[#0b1a2b] group border border-[#f1f5f9] shadow-sm">
               <div class="flex items-center gap-2.5 truncate">
@@ -1041,14 +1026,15 @@
           `);
         }
       });
+
       if (otherCount === 0) {
-        userListEl.innerHTML = `<p class="text-xs text-[#94a3b8] p-3 text-center font-medium">No other users online</p>`;
+        userListEl.innerHTML = `<p class="text-xs text-[#94a3b8] p-3 text-center font-medium">No active messages</p>`;
         activeMembersEl.innerHTML = `<p class="text-xs text-[#94a3b8] p-2 text-center font-medium">You are the only one online</p>`;
       }
+      
       updateUnreadBadges();
     }
 
-    // ---------- messages ----------
     async function loadMessages() {
       const { data, error } = await db.from('messages').select('*').eq('channel_id', currentChannel).order('created_at', { ascending: true });
       if (error) return;
@@ -1069,7 +1055,6 @@
           if (!msg || !currentUser) return;
           const isMe = msg.sender_id === currentUser.id;
 
-          // Remember the sender's name for future DM opening
           if (msg.sender_id && msg.sender_name) {
             knownUserNames.set(msg.sender_id, msg.sender_name);
           }
@@ -1182,7 +1167,6 @@
       showChatOnMobile();
     }
 
-    // ---------- render message ----------
     function renderMessage(msg) {
       const container = document.getElementById('messages-container');
       const isMe = currentUser && msg.sender_id === currentUser.id;
@@ -1204,7 +1188,6 @@
       container.insertAdjacentHTML('beforeend', msgHTML);
     }
 
-    // ---------- close drawers on resize ----------
     window.addEventListener('resize', () => {
       if (window.innerWidth >= 768) {
         document.getElementById('sidebar-backdrop')?.classList.add('hidden');
