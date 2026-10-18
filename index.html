@@ -54,7 +54,7 @@
 
     .glass-panel { background: rgba(255,255,255,0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 
-    input:focus { outline: none; box-shadow: 0 0 0 4px rgba(0,168,132,0.08); border-color: #00a884; }
+    input:focus, textarea:focus { outline: none; box-shadow: 0 0 0 4px rgba(0,168,132,0.08); border-color: #00a884; }
 
     .avatar-ring { box-shadow: 0 0 0 2px #ffffff, 0 0 0 5px rgba(0,168,132,0.12); }
 
@@ -430,10 +430,10 @@
       margin: 4px 6px;
     }
 
-    /* ---- INPUT ACTION BUTTONS ---- */
+    /* ---- INPUT ACTION BUTTONS (bigger) ---- */
     .input-action-btn {
-      width: 36px;
-      height: 36px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -451,13 +451,13 @@
       border-color: #a7f3d0;
     }
     .input-action-btn:active { transform: scale(0.94); }
-    .input-action-btn svg { width: 18px; height: 18px; }
+    .input-action-btn svg { width: 21px; height: 21px; }
     .input-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* ---- SEND BUTTON (circular arrow, smaller) ---- */
+    /* ---- SEND BUTTON (circular arrow, bigger) ---- */
     .send-btn {
-      width: 36px;
-      height: 36px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -467,16 +467,41 @@
       border: none;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 3px 10px rgba(0,168,132,0.28);
+      box-shadow: 0 3px 12px rgba(0,168,132,0.32);
       flex-shrink: 0;
     }
     .send-btn:hover {
       filter: brightness(1.08);
-      box-shadow: 0 4px 14px rgba(0,168,132,0.36);
+      box-shadow: 0 5px 16px rgba(0,168,132,0.42);
     }
     .send-btn:active { transform: scale(0.92); }
-    .send-btn svg { width: 17px; height: 17px; }
+    .send-btn svg { width: 21px; height: 21px; }
     .send-btn:disabled { opacity: 0.6; cursor: wait; }
+
+    /* ---- FIXED HEIGHT TEXTAREA with internal scroll ---- */
+    .message-textarea {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 22px;
+      padding: 10px 16px;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #0b1a2b;
+      resize: none;
+      overflow-y: auto;        /* scroll inside instead of growing */
+      height: 44px;            /* fixed height matching send button */
+      max-height: 44px;        /* never grow beyond */
+      box-sizing: border-box;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+      font-family: inherit;
+      scrollbar-width: thin;
+    }
+    .message-textarea::placeholder { color: #94a3b8; }
+    .message-textarea::-webkit-scrollbar { width: 4px; }
+    .message-textarea::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
     /* ---- SPINNER ---- */
     .spinner {
@@ -790,21 +815,22 @@
           <button onclick="sendQuickMessage('Hi')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Hi</button>
         </div>
 
-        <!-- message form with left-side action buttons and circular arrow send -->
+        <!-- message form: fixed-height textarea with internal scroll -->
         <form onsubmit="handleSendMessage(event)" class="p-2.5 md:p-4 flex items-center gap-2">
-          <!-- GIF/Emoji button (left) -->
+          <!-- GIF/Emoji button (left, bigger) -->
           <button type="button" id="gif-emoji-btn" onclick="toggleGifEmojiPanel()" class="input-action-btn" title="GIF & Emoji">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </button>
-          <!-- Image upload button (left) -->
+          <!-- Image upload button (left, bigger) -->
           <button type="button" id="image-upload-btn" onclick="document.getElementById('image-upload-input').click()" class="input-action-btn" title="Send Image">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           </button>
           <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
 
-          <input id="message-input" type="text" placeholder="Type a message or paste a link..." class="flex-1 bg-white border border-[#e2e8f0] rounded-full px-4 py-2.5 text-sm transition-soft focus:bg-white">
+          <!-- fixed-height textarea with internal scrolling -->
+          <textarea id="message-input" rows="1" placeholder="Type a message…" onkeydown="handleTextareaKeydown(event)" class="message-textarea"></textarea>
 
-          <!-- Circular arrow send button (smaller) -->
+          <!-- Circular arrow send button (bigger) -->
           <button type="submit" id="send-btn" class="send-btn" title="Send message" aria-label="Send message">
             <svg id="send-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M12 19V5M5 12l7-7 7 7"/>
@@ -839,9 +865,15 @@
     const GUEST_PREFIX = 'chitchatnpuser_';
 
     // ================================================================
+    //  DEVICE DETECTION
+    //  - Mobile/touch devices: Enter = newline (send via button only)
+    //  - Desktop: Enter = send, Shift+Enter = newline
+    // ================================================================
+    const IS_MOBILE = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent)
+      || ('ontouchstart' in window && window.innerWidth < 1024);
+
+    // ================================================================
     //  IMAGE SIZE LIMIT (2 MB)
-    //  Base64 data URL length must stay under Supabase text limit.
-    //  2 MB base64 ≈ 2.7 MB of characters, safe under 4 MB request limit.
     // ================================================================
     const MAX_IMAGE_BYTES = 2 * 1024 * 1024; // 2 MB
     const MAX_IMAGE_MB = (MAX_IMAGE_BYTES / (1024 * 1024)).toFixed(1);
@@ -874,6 +906,32 @@
 
     function isCommunityChannel(channelId) {
       return COMMUNITY_CHANNELS.includes(channelId);
+    }
+
+    // ================================================================
+    //  TEXTAREA KEYDOWN (fixed height, no auto-grow)
+    // ================================================================
+    function handleTextareaKeydown(event) {
+      // ---- MOBILE: Enter = newline (never submit from keyboard) ----
+      if (IS_MOBILE) {
+        // Let browser insert newline; textarea scrolls internally
+        return;
+      }
+
+      // ---- DESKTOP: Enter = send, Shift+Enter = newline ----
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        const form = event.target.closest('form');
+        if (form) form.requestSubmit();
+      }
+      // Shift+Enter: default newline, textarea scrolls
+    }
+
+    function resetTextarea() {
+      const ta = document.getElementById('message-input');
+      if (!ta) return;
+      ta.value = '';
+      ta.scrollTop = 0;
     }
 
     // ================================================================
@@ -1165,7 +1223,6 @@
         return;
       }
 
-      // ---- SIZE CHECK (before reading) ----
       if (file.size > MAX_IMAGE_BYTES) {
         showImageSizeError(`Image is too large (${formatBytes(file.size)}). Max size is ${formatBytes(MAX_IMAGE_BYTES)}. Please choose a smaller image.`);
         return;
@@ -1175,7 +1232,6 @@
       reader.onload = (e) => {
         const dataUrl = e.target.result;
 
-        // ---- SIZE CHECK (base64 string length) ----
         const dataUrlBytes = new Blob([dataUrl]).size;
         if (dataUrlBytes > MAX_IMAGE_BYTES * 1.4) {
           showImageSizeError(`Image is too large after encoding (${formatBytes(dataUrlBytes)}). Max allowed is about ${formatBytes(MAX_IMAGE_BYTES)}. Please choose a smaller image.`);
@@ -1698,26 +1754,21 @@
       const text = input.value.trim();
 
       if (pendingImageDataUrl) {
-        // Double-check size right before sending
         const dataUrlBytes = new Blob([pendingImageDataUrl]).size;
         if (dataUrlBytes > MAX_IMAGE_BYTES * 1.4) {
           showImageSizeError(`Image is too large to send (${formatBytes(dataUrlBytes)}). Max allowed is about ${formatBytes(MAX_IMAGE_BYTES)}.`);
           return;
         }
 
-        // ---- IMAGE SENDING ----
         const imageToSend = pendingImageDataUrl;
         const textToSend = text;
 
-        // Show optimistic preview in chat immediately
         const tempId = 'temp-' + Date.now();
         renderSendingPreview(tempId, imageToSend);
 
-        // Clear input + preview UI
-        input.value = '';
+        resetTextarea();
         clearImagePreview();
 
-        // Set sending state (disables buttons, shows spinner + status bar)
         setSendingState(true, 'Sending image…');
 
         try {
@@ -1728,14 +1779,12 @@
 
           if (error) throw error;
 
-          // Send accompanying text if any
           if (textToSend) {
             await db.from('messages').insert([
               { channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text: textToSend }
             ]);
           }
 
-          // Remove optimistic preview — real message will arrive via realtime
           removeSendingPreview(tempId);
           setSendingState(false);
           showSendStatusSuccess('Image sent ✓');
@@ -1754,11 +1803,10 @@
       }
 
       if (!text) return;
-      input.value = '';
+      resetTextarea();
       await db.from('messages').insert([{ channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text }]);
     }
 
-    // Optimistic sending preview
     function renderSendingPreview(tempId, src) {
       const container = document.getElementById('messages-container');
       if (container.querySelector('p.text-center')) container.innerHTML = '';
@@ -1849,7 +1897,7 @@
     }
 
     // ================================================================
-    //  RENDER MESSAGE
+    //  RENDER MESSAGE (FIXED TEXT WRAPPING)
     // ================================================================
     function renderMessage(msg) {
       const isMe = currentUser && msg.sender_id === currentUser.id;
@@ -1886,7 +1934,8 @@
             <button class="dots-btn" title="More options"
               onclick="openMsgContextMenu(event, '${msg.id}', this.closest('.msg-row').querySelector('.msg-copy-src').textContent, '${msg.sender_id}', this.closest('.msg-row'))">⋯</button>
           </div>
-          <div class="px-4 py-2.5 text-sm relative ${isMe ? 'bubble-me' : 'bubble-other'}">
+          <!-- Added break-words and overflow-hidden here to fix text overflow -->
+          <div class="px-4 py-2.5 text-sm relative ${isMe ? 'bubble-me' : 'bubble-other'} break-words overflow-hidden">
             ${contentHtml}
             <div class="flex items-center justify-end gap-1.5 mt-1.5 text-[9px] text-[#5e6f82] opacity-80">
               <span>${timeStr}</span>
