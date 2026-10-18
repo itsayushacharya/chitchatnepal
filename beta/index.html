@@ -3,167 +3,240 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Chitchat Nepal · International</title>
+  <title>Chitchat Nepal · modern social</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-    * { -webkit-tap-highlight-color: transparent; margin:0; padding:0; box-sizing:border-box; }
-    html, body { height:100%; height:100dvh; overflow:hidden; background:#F8FAFC; font-family:'Plus Jakarta Sans',system-ui,sans-serif; -webkit-font-smoothing:antialiased; color:#0F172A; }
-    ::-webkit-scrollbar { width:3px; height:3px; } ::-webkit-scrollbar-thumb { background:#CBD5E1; border-radius:20px; }
-    .ripple { position:relative; overflow:hidden; transform:translate3d(0,0,0); }
-    .ripple:after { content:""; display:block; position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none; background-image:radial-gradient(circle, rgba(255,255,255,0.35) 10%, transparent 10.01%); background-repeat:no-repeat; background-position:50%; transform:scale(10,10); opacity:0; transition:transform .35s, opacity .7s; }
-    .ripple:active:after { transform:scale(0,0); opacity:.35; transition:0s; }
-    .ripple-dark:after { background-image:radial-gradient(circle, rgba(15,23,42,0.12) 10%, transparent 10.01%); }
-    .shadow-soft { box-shadow:0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03); }
-    .shadow-float { box-shadow:0 8px 32px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.02); }
-    .shadow-pill { box-shadow:0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02); }
-    .bubble-me { background:linear-gradient(135deg,#6366F1 0%,#4F46E5 100%); border-radius:20px 20px 4px 20px; box-shadow:0 2px 8px rgba(99,102,241,0.2); color:#FFF; }
-    .bubble-other { background:#FFF; border-radius:20px 20px 20px 4px; box-shadow:0 1px 3px rgba(0,0,0,0.03); border:1px solid #F1F5F9; color:#0F172A; }
-    .transition-soft { transition:all .25s cubic-bezier(.4,0,.2,1); }
-    .drawer-left { transition:transform .35s cubic-bezier(.22,1,.36,1); }
-    .drawer-right { transition:transform .35s cubic-bezier(.22,1,.36,1); }
-    .glass { background:rgba(255,255,255,0.85); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
-    input:focus { outline:none; box-shadow:0 0 0 3px rgba(99,102,241,0.12); border-color:#6366F1; }
-    .lounge-pill { background:#FFF; border:1px solid #E2E8F0; border-radius:16px; padding:10px 14px; font-size:13px; font-weight:600; color:#0F172A; display:flex; align-items:center; justify-content:space-between; gap:8px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.02); width:100%; }
-    .lounge-dropdown { position:absolute; top:calc(100% + 6px); left:0; right:0; background:#FFF; border:1px solid #E2E8F0; border-radius:20px; padding:6px; box-shadow:0 16px 48px rgba(0,0,0,0.1); z-index:50; display:none; }
-    .lounge-dropdown.show { display:block; }
-    .lounge-option { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:14px; font-size:13px; font-weight:500; color:#334155; cursor:pointer; width:100%; text-align:left; border:none; background:transparent; }
-    .lounge-option:hover { background:#F8FAFC; }
-    .lounge-option.active { background:#EEF2FF; color:#4F46E5; font-weight:600; }
-    .lounge-option .emoji { font-size:18px; }
-    @keyframes messageIn { from { opacity:0; transform:translateY(6px) scale(0.98);} to { opacity:1; transform:translateY(0) scale(1);} }
-    .message-in { animation:messageIn .25s ease-out; }
-    @keyframes pulseSoft { 0%,100% { opacity:1;} 50% { opacity:0.4;} }
-    .pulse-dot { animation:pulseSoft 2s infinite; }
-    .no-scrollbar::-webkit-scrollbar { display:none; } .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
-    .notification-toast { position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-120%); background:#FFF; border:1px solid #E2E8F0; border-radius:18px; padding:12px 16px; box-shadow:0 16px 48px rgba(0,0,0,0.1); z-index:400; display:flex; align-items:center; gap:10px; max-width:380px; width:calc(100% - 32px); transition:transform .4s cubic-bezier(.22,1,.36,1), opacity .3s ease; opacity:0; pointer-events:none; cursor:pointer; }
-    .notification-toast.show { transform:translateX(-50%) translateY(0); opacity:1; pointer-events:auto; }
-    .notification-toast .toast-icon { width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,#6366F1,#4F46E5); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; }
-    .notification-toast .toast-icon img { width:100%; height:100%; object-fit:cover; }
-    .notification-toast .toast-content { flex:1; min-width:0; }
-    .notification-toast .toast-title { font-size:13px; font-weight:700; color:#0F172A; margin-bottom:1px; }
-    .notification-toast .toast-text { font-size:12px; color:#64748B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .notification-toast .toast-action { font-size:10px; font-weight:700; color:#6366F1; background:#EEF2FF; padding:5px 10px; border-radius:10px; flex-shrink:0; text-transform:uppercase; }
-    .sound-toggle { width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:#FFF; border:1px solid #E2E8F0; cursor:pointer; color:#64748B; flex-shrink:0; }
-    .sound-toggle:hover { background:#F8FAFC; color:#6366F1; border-color:#C7D2FE; }
-    .sound-toggle.muted { color:#EF4444; border-color:#FECACA; background:#FEF2F2; }
-    .unread-badge { display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; padding:0 6px; border-radius:10px; background:#6366F1; color:white; font-size:10px; font-weight:700; }
-    .menu-notification-dot { position:absolute; top:-2px; right:-2px; width:10px; height:10px; background-color:#EF4444; border-radius:50%; border:2px solid #FFF; display:none; }
-    .brand-icon { width:52px; height:52px; border-radius:18px; object-fit:cover; box-shadow:0 8px 24px rgba(99,102,241,0.25); }
-    .channel-icon-img { width:100%; height:100%; object-fit:cover; border-radius:12px; }
-    .password-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:transparent; border:none; cursor:pointer; color:#94A3B8; padding:6px; display:flex; align-items:center; justify-content:center; border-radius:10px; }
-    .password-toggle:hover { color:#6366F1; background:#EEF2FF; }
-    .auth-success { background:#F0FDF4; border:1px solid #BBF7D0; color:#166534; padding:14px 16px; border-radius:16px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px; }
-    .channel-chip { background:#EEF2FF; border-radius:10px; padding:4px 10px; font-size:10px; font-weight:700; color:#4F46E5; text-transform:uppercase; letter-spacing:.3px; }
-    .avatar-img { width:100%; height:100%; object-fit:cover; border-radius:inherit; }
-    .avatar-initials { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:700; color:#FFF; border-radius:inherit; }
-    .message-image { max-width:240px; max-height:240px; border-radius:12px; object-fit:cover; cursor:pointer; }
-    .image-viewer { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:500; display:none; align-items:center; justify-content:center; padding:20px; }
-    .image-viewer.show { display:flex; }
-    .image-viewer img { max-width:100%; max-height:100%; object-fit:contain; border-radius:8px; }
-    .image-viewer .close-btn { position:absolute; top:20px; right:20px; width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; cursor:pointer; color:white; border:none; }
-    .video-call-modal { position:fixed; inset:0; background:#0F172A; z-index:500; display:none; flex-direction:column; }
-    .video-call-modal.show { display:flex; }
-    .video-container { flex:1; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#000; }
-    .remote-video { width:100%; height:100%; object-fit:cover; background:#1E293B; }
-    .local-video { position:absolute; top:16px; right:16px; width:120px; height:160px; border-radius:16px; object-fit:cover; background:#1E293B; border:2px solid rgba(255,255,255,0.2); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
-    .video-controls { position:absolute; bottom:30px; left:0; right:0; display:flex; justify-content:center; gap:16px; padding:0 20px; }
-    .video-control-btn { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; color:white; }
-    .video-control-btn.end-call { background:#EF4444; }
-    .video-control-btn.mute-btn, .video-control-btn.camera-btn { background:rgba(255,255,255,0.15); backdrop-filter:blur(8px); }
-    .video-control-btn.mute-btn.muted, .video-control-btn.camera-btn.off { background:#EF4444; }
-    .video-caller-info { position:absolute; top:20px; left:20px; display:flex; align-items:center; gap:10px; color:white; z-index:5; }
-    .video-caller-avatar { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#6366F1,#4F46E5); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; }
-    .video-caller-name { font-size:14px; font-weight:600; }
-    .video-caller-status { font-size:11px; opacity:.7; }
-    .profile-modal { position:fixed; inset:0; background:rgba(15,23,42,0.5); backdrop-filter:blur(4px); z-index:450; display:none; align-items:center; justify-content:center; padding:20px; }
-    .profile-modal.show { display:flex; }
-    .profile-card { background:#FFF; border-radius:28px; max-width:380px; width:100%; padding:32px; box-shadow:0 24px 64px rgba(0,0,0,0.15); }
-    .profile-avatar-large { width:100px; height:100px; border-radius:50%; margin:0 auto 16px; position:relative; cursor:pointer; overflow:hidden; background:linear-gradient(135deg,#6366F1,#4F46E5); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(99,102,241,0.3); }
-    .profile-avatar-large .avatar-initials { font-size:32px; }
-    .profile-avatar-large .avatar-img { border-radius:50%; }
-    .profile-avatar-large .edit-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .2s; color:white; font-size:11px; font-weight:600; flex-direction:column; gap:4px; }
-    .profile-avatar-large:hover .edit-overlay { opacity:1; }
-    .incoming-call-banner { position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-120%); background:#FFF; border:1px solid #E2E8F0; border-radius:18px; padding:14px 18px; box-shadow:0 16px 48px rgba(0,0,0,0.12); z-index:410; display:flex; align-items:center; gap:12px; max-width:380px; width:calc(100% - 32px); transition:transform .4s cubic-bezier(.22,1,.36,1), opacity .3s; opacity:0; pointer-events:none; }
-    .incoming-call-banner.show { transform:translateX(-50%) translateY(0); opacity:1; pointer-events:auto; }
-    .incoming-call-banner .call-icon { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#6366F1,#4F46E5); display:flex; align-items:center; justify-content:center; color:white; flex-shrink:0; animation:ringPulse 1.5s infinite; }
-    @keyframes ringPulse { 0%,100% { box-shadow:0 0 0 0 rgba(99,102,241,0.4);} 50% { box-shadow:0 0 0 12px rgba(99,102,241,0);} }
-    .incoming-call-banner .call-info { flex:1; min-width:0; }
-    .incoming-call-banner .call-name { font-size:13px; font-weight:700; color:#0F172A; }
-    .incoming-call-banner .call-text { font-size:11px; color:#64748B; }
-    .incoming-call-banner .call-actions { display:flex; gap:8px; flex-shrink:0; }
-    .incoming-call-banner .call-btn { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; }
-    .incoming-call-banner .call-btn.accept { background:#22C55E; color:white; }
-    .incoming-call-banner .call-btn.decline { background:#EF4444; color:white; }
-    .hidden-input { display:none; }
-    .upload-progress { position:absolute; bottom:0; left:0; height:3px; background:#FFF; border-radius:2px; transition:width .3s ease; }
-    .setup-panel { position:fixed; inset:0; background:rgba(15,23,42,0.6); backdrop-filter:blur(6px); z-index:600; display:none; align-items:center; justify-content:center; padding:20px; overflow-y:auto; }
-    .setup-panel.show { display:flex; }
-    .setup-card { background:#FFF; border-radius:24px; max-width:560px; width:100%; padding:28px; box-shadow:0 24px 64px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; }
-    .setup-card h3 { font-size:20px; font-weight:800; color:#0F172A; margin-bottom:8px; }
-    .setup-card p { font-size:13px; color:#64748B; margin-bottom:16px; line-height:1.6; }
-    .setup-card h4 { font-size:13px; font-weight:700; color:#0F172A; margin:16px 0 6px; }
-    .setup-card pre { background:#0F172A; color:#E2E8F0; padding:14px; border-radius:12px; font-size:11px; overflow-x:auto; line-height:1.5; margin-bottom:8px; font-family:monospace; }
-    .setup-card code { background:#F1F5F9; padding:2px 6px; border-radius:6px; font-size:11px; color:#4F46E5; }
-    .setup-card ul { list-style:disc; padding-left:20px; font-size:12px; color:#475569; line-height:1.8; }
-    .setup-card .btn { background:linear-gradient(135deg,#6366F1,#4F46E5); color:white; font-weight:600; padding:12px; border-radius:14px; width:100%; border:none; cursor:pointer; font-size:13px; margin-top:16px; }
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background: #f7f9fc;
+      color: #0b1a2b;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 20px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    .chat-bg {
+      background-color: #f0f5fa;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(0,168,132,0.02) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(255,193,7,0.02) 0%, transparent 40%),
+        repeating-linear-gradient(45deg, rgba(0,168,132,0.015) 0px, rgba(0,168,132,0.015) 2px, transparent 2px, transparent 10px);
+    }
+
+    .card-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 4px 16px rgba(0,0,0,0.03); }
+    .card-shadow-lg { box-shadow: 0 8px 40px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.02); }
+
+    .bubble-me {
+      background: linear-gradient(135deg, #d9fdd3 0%, #c3f0b8 100%);
+      border-radius: 22px 22px 4px 22px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .bubble-other {
+      background: #ffffff;
+      border-radius: 22px 22px 22px 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      border: 1px solid #eef2f6;
+    }
+
+    .transition-soft { transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .active-scale:active { transform: scale(0.96); }
+
+    .drawer-left { transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1); }
+    .drawer-right { transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1); }
+
+    .glass-panel { background: rgba(255,255,255,0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+    input:focus { outline: none; box-shadow: 0 0 0 4px rgba(0,168,132,0.08); border-color: #00a884; }
+
+    .avatar-ring { box-shadow: 0 0 0 2px #ffffff, 0 0 0 5px rgba(0,168,132,0.12); }
+
+    .lounge-pill {
+      background: rgba(255,255,255,0.85);
+      border: 1px solid #e2e8f0;
+      border-radius: 40px;
+      padding: 6px 14px 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #0b1a2b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      white-space: nowrap;
+    }
+    .lounge-pill:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .lounge-pill .emoji { font-size: 16px; line-height: 1; }
+
+    .lounge-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 220px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(226,232,240,0.8);
+      border-radius: 20px;
+      padding: 6px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
+      z-index: 50;
+      display: none;
+      transform-origin: top left;
+      animation: dropdownFade 0.18s ease-out;
+    }
+    .lounge-dropdown.show { display: block; }
+    @keyframes dropdownFade {
+      from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .lounge-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1e2b3c;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+    }
+    .lounge-option:hover { background: #f1f5f9; }
+    .lounge-option.active { background: #ecfdf5; color: #00a884; font-weight: 600; }
+    .lounge-option .emoji { font-size: 18px; }
+    .lounge-option .desc { font-size: 10px; color: #64748b; font-weight: 400; margin-top: 1px; }
+
+    @keyframes messageIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .message-in { animation: messageIn 0.25s ease-out; }
+
+    @keyframes pulseSoft {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .pulse-dot { animation: pulseSoft 2s infinite; }
+
+    .backdrop-blur {
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .notification-toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-120%);
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(226,232,240,0.8);
+      border-radius: 18px;
+      padding: 12px 18px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 360px;
+      width: calc(100% - 32px);
+      transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1), opacity 0.3s ease;
+      opacity: 0;
+      pointer-events: none;
+      cursor: pointer;
+    }
+    .notification-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .notification-toast .toast-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00a884, #018f70);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .notification-toast .toast-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .notification-toast .toast-content { flex: 1; min-width: 0; }
+    .notification-toast .toast-title { font-size: 12px; font-weight: 700; color: #0b1a2b; margin-bottom: 2px; }
+    .notification-toast .toast-text { font-size: 12px; color: #5e6f82; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .notification-toast .toast-action {
+      font-size: 10px; font-weight: 700; color: #00a884; background: rgba(0,168,132,0.1);
+      padding: 4px 10px; border-radius: 10px; flex-shrink: 0; text-transform: uppercase;
+    }
+
+    .sound-toggle {
+      width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; background: rgba(255,255,255,0.8); border: 1px solid #e2e8f0;
+      cursor: pointer; transition: all 0.2s ease; color: #5e6f82;
+    }
+    .sound-toggle:hover { background: white; color: #00a884; }
+    .sound-toggle.muted { color: #ef4444; border-color: #fecaca; background: #fef2f2; }
+
+    .unread-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+      background: #00a884; color: white; font-size: 10px; font-weight: 700;
+    }
+
+    .menu-notification-dot {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 10px;
+      height: 10px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: none;
+    }
+
+    .brand-icon { width: 48px; height: 48px; border-radius: 16px; object-fit: cover; box-shadow: 0 4px 16px rgba(0,168,132,0.25); }
+    .channel-icon-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+    .password-toggle {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      background: transparent; border: none; cursor: pointer; color: #94a3b8;
+      padding: 4px; display: flex; align-items: center; justify-content: center;
+      transition: color 0.2s ease; border-radius: 8px;
+    }
+    .password-toggle:hover { color: #00a884; background: rgba(0,168,132,0.06); }
+
+    .auth-success {
+      background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;
+      padding: 12px 16px; border-radius: 16px; font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; gap: 8px; animation: slideDown 0.3s ease-out;
+    }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="h-[100dvh] w-screen flex flex-col overflow-hidden select-none">
 
-  <!-- ===== SETUP INSTRUCTIONS PANEL ===== -->
-  <div id="setup-panel" class="setup-panel">
-    <div class="setup-card">
-      <h3>⚠️ Setup Required</h3>
-      <p>Images and video calls need a few things configured in your Supabase project. Follow these steps <strong>once</strong>, then reload.</p>
-
-      <h4>1. Add <code>image_url</code> column to <code>messages</code></h4>
-      <pre>ALTER TABLE messages ADD COLUMN image_url TEXT;</pre>
-
-      <h4>2. Create a storage bucket named <code>chat-images</code></h4>
-      <p style="margin-bottom:8px;">In Supabase Dashboard → Storage → New bucket → name it <code>chat-images</code> → toggle <strong>Public bucket</strong> ON.</p>
-
-      <h4>3. Add storage policies (SQL editor)</h4>
-      <pre>-- Allow anyone to read images
-CREATE POLICY "Public read" ON storage.objects
-  FOR SELECT USING (bucket_id = 'chat-images');
-
--- Allow authenticated users to upload
-CREATE POLICY "Auth upload" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'chat-images' AND auth.role() = 'authenticated');
-
--- Allow users to update their own files
-CREATE POLICY "Auth update" ON storage.objects
-  FOR UPDATE USING (bucket_id = 'chat-images' AND auth.role() = 'authenticated');</pre>
-
-      <h4>4. Enable Realtime for video signaling</h4>
-      <p>In Supabase Dashboard → Database → Replication → enable replication for a new table called <code>call_signals</code>:</p>
-      <pre>CREATE TABLE call_signals (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  channel_id TEXT NOT NULL,
-  sender_id UUID NOT NULL,
-  signal_type TEXT NOT NULL,  -- 'offer' | 'answer' | 'ice' | 'hangup'
-  payload JSONB,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-ALTER TABLE call_signals ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "read all signals" ON call_signals FOR SELECT USING (true);
-CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.uid() = sender_id);
--- Enable realtime on this table in Dashboard → Database → Replication</pre>
-
-      <h4>5. Enable video call signaling (optional but needed for real calls)</h4>
-      <ul>
-        <li>Camera/mic requires <strong>HTTPS</strong> (or localhost).</li>
-        <li>Both users must be in the same DM conversation.</li>
-      </ul>
-
-      <button class="btn" onclick="document.getElementById('setup-panel').classList.remove('show')">Got it, continue</button>
-    </div>
-  </div>
-
-  <!-- ===== TOAST ===== -->
+  <!-- TOAST -->
   <div id="notification-toast" class="notification-toast" onclick="handleToastClick()">
     <div class="toast-icon"><img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Icon"></div>
     <div class="toast-content">
@@ -173,101 +246,14 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
     <div class="toast-action">Open</div>
   </div>
 
-  <!-- ===== INCOMING VIDEO CALL BANNER ===== -->
-  <div id="incoming-call-banner" class="incoming-call-banner">
-    <div class="call-icon">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-    </div>
-    <div class="call-info">
-      <div class="call-name" id="incoming-call-name">User</div>
-      <div class="call-text">Incoming video call...</div>
-    </div>
-    <div class="call-actions">
-      <button class="call-btn accept" onclick="acceptIncomingCall()">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-      </button>
-      <button class="call-btn decline" onclick="declineIncomingCall()">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- ===== IMAGE VIEWER ===== -->
-  <div id="image-viewer" class="image-viewer" onclick="closeImageViewer(event)">
-    <button class="close-btn" onclick="closeImageViewer()">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-    </button>
-    <img id="image-viewer-img" src="" alt="Shared image">
-  </div>
-
-  <!-- ===== VIDEO CALL MODAL ===== -->
-  <div id="video-call-modal" class="video-call-modal">
-    <div class="video-container">
-      <video id="remote-video" class="remote-video" autoplay playsinline></video>
-      <video id="local-video" class="local-video" autoplay playsinline muted></video>
-      <div class="video-caller-info">
-        <div class="video-caller-avatar" id="call-avatar">US</div>
-        <div>
-          <div class="video-caller-name" id="call-remote-name">User</div>
-          <div class="video-caller-status" id="call-status">Connecting...</div>
-        </div>
-      </div>
-    </div>
-    <div class="video-controls">
-      <button class="video-control-btn mute-btn" id="mute-btn" onclick="toggleMute()">
-        <svg id="mute-icon-on" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
-        <svg id="mute-icon-off" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
-      </button>
-      <button class="video-control-btn camera-btn" id="camera-btn" onclick="toggleCamera()">
-        <svg id="camera-icon-on" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-        <svg id="camera-icon-off" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/><line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" stroke-width="2"/></svg>
-      </button>
-      <button class="video-control-btn end-call" onclick="endVideoCall()">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-1.586a1 1 0 00-.293-.707l-3.414-3.414a1 1 0 00-1.414 0l-2.586 2.586a1 1 0 01-1.414 0l-3.586-3.586a1 1 0 010-1.414l2.586-2.586a1 1 0 000-1.414L7.707 3.293A1 1 0 007 3H5z"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- ===== PROFILE MODAL ===== -->
-  <div id="profile-modal" class="profile-modal" onclick="if(event.target===this) closeProfileModal()">
-    <div class="profile-card">
-      <div class="flex justify-between items-center mb-6">
-        <h3 class="text-lg font-bold text-[#0F172A]">My Profile</h3>
-        <button onclick="closeProfileModal()" class="text-[#64748B] p-1.5 rounded-lg hover:bg-[#F8FAFC]">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <div class="profile-avatar-large" id="profile-avatar" onclick="document.getElementById('profile-pic-input').click()">
-        <div class="avatar-initials" id="profile-avatar-initials">U</div>
-        <img id="profile-avatar-img" class="avatar-img hidden" src="" alt="Profile">
-        <div class="edit-overlay">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3" stroke-width="2"/></svg>
-          <span>Change</span>
-        </div>
-      </div>
-      <input type="file" id="profile-pic-input" class="hidden-input" accept="image/*" onchange="uploadProfilePicture(event)">
-      <div class="space-y-1.5 mb-5">
-        <label class="text-[11px] font-bold text-[#64748B] uppercase tracking-wider block ml-1">Display Name</label>
-        <input id="profile-name-input" type="text" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-3.5 text-sm text-[#0F172A] focus:bg-white" placeholder="Your name">
-      </div>
-      <button onclick="saveProfileName()" class="ripple w-full bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white font-semibold py-3.5 rounded-2xl text-sm">Save Changes</button>
-      <div class="mt-4 p-3 bg-[#F8FAFC] rounded-xl">
-        <div class="flex items-center gap-2 text-[11px] text-[#64748B]">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          <span>Your profile is visible to other users</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== AUTH SCREEN ===== -->
-  <div id="auth-screen" class="fixed inset-0 bg-[#F8FAFC] z-50 flex items-center justify-center p-5">
-    <div class="bg-white border border-[#E2E8F0] p-8 sm:p-10 rounded-[32px] max-w-md w-full shadow-float space-y-7">
+  <!-- AUTH SCREEN -->
+  <div id="auth-screen" class="fixed inset-0 bg-gradient-to-br from-[#f7f9fc] via-[#eef3f9] to-[#e6edf6] z-50 flex items-center justify-center p-4">
+    <div class="bg-white/80 backdrop-blur-xl border border-white/60 p-8 sm:p-10 rounded-[36px] max-w-md w-full card-shadow-lg space-y-7">
       <div class="flex items-center gap-4">
         <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Chitchat Nepal" class="brand-icon">
         <div>
-          <h2 class="text-2xl font-extrabold text-[#0F172A] tracking-tight">Chitchat Nepal</h2>
-          <p class="text-xs font-medium text-[#64748B]">Connect · Chat · Belong</p>
+          <h2 class="text-2xl font-extrabold text-[#0b1a2b]">Chitchat Nepal</h2>
+          <p class="text-xs font-medium text-[#5e6f82]">Connect · Chat · Belong</p>
         </div>
       </div>
       <div id="auth-success" class="auth-success hidden">
@@ -276,13 +262,13 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
       </div>
       <div class="space-y-4">
         <div class="space-y-1.5">
-          <label class="text-[11px] font-bold text-[#64748B] uppercase tracking-wider block ml-1">Username or Email</label>
-          <input id="auth-email" type="text" placeholder="e.g. ayushacharya" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-4 text-sm text-[#0F172A] focus:bg-white placeholder:text-[#94A3B8]">
+          <label class="text-[11px] font-semibold text-[#5e6f82] uppercase tracking-wider block ml-1">Username or Email</label>
+          <input id="auth-email" type="text" placeholder="e.g. ayushacharya" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 text-sm text-[#0b1a2b] transition-soft focus:bg-white">
         </div>
         <div class="space-y-1.5">
-          <label class="text-[11px] font-bold text-[#64748B] uppercase tracking-wider block ml-1">Password</label>
+          <label class="text-[11px] font-semibold text-[#5e6f82] uppercase tracking-wider block ml-1">Password</label>
           <div class="relative">
-            <input id="auth-password" type="password" placeholder="••••••••" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-4 pr-12 text-sm text-[#0F172A] focus:bg-white placeholder:text-[#94A3B8]">
+            <input id="auth-password" type="password" placeholder="••••••••" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 pr-12 text-sm text-[#0b1a2b] transition-soft focus:bg-white">
             <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
               <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               <svg id="eye-off-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
@@ -291,74 +277,58 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
         </div>
       </div>
       <div class="flex gap-3 pt-1">
-        <button onclick="handleLogin()" class="ripple flex-1 bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white font-semibold py-4 rounded-2xl text-sm">Log In</button>
-        <button onclick="handleSignup()" class="ripple ripple-dark flex-1 bg-white text-[#0F172A] font-semibold py-4 rounded-2xl border border-[#E2E8F0] text-sm">Sign Up</button>
+        <button onclick="handleLogin()" class="flex-1 bg-gradient-to-r from-[#00a884] to-[#018f70] hover:brightness-105 active:scale-[0.97] text-white font-semibold py-4 rounded-2xl transition-soft shadow-lg text-sm">Log In</button>
+        <button onclick="handleSignup()" class="flex-1 bg-white hover:bg-[#f1f5f9] active:scale-[0.97] text-[#0b1a2b] font-semibold py-4 rounded-2xl transition-soft border border-[#e2e8f0] text-sm">Sign Up</button>
       </div>
-      <div class="relative flex py-1 items-center"><div class="flex-grow border-t border-[#E2E8F0]"></div><span class="flex-shrink mx-4 text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider">or</span><div class="flex-grow border-t border-[#E2E8F0]"></div></div>
-      <button onclick="openGuestModal()" class="ripple ripple-dark w-full bg-[#F8FAFC] text-[#6366F1] border border-[#E2E8F0] font-semibold py-4 rounded-2xl text-sm flex items-center justify-center gap-3"><span class="text-lg">⚡</span> Quick Chat as Guest</button>
+      <div class="relative flex py-1 items-center"><div class="flex-grow border-t border-[#e2e8f0]"></div><span class="flex-shrink mx-4 text-[11px] font-medium text-[#94a3b8] uppercase">or</span><div class="flex-grow border-t border-[#e2e8f0]"></div></div>
+      <button onclick="openGuestModal()" class="w-full bg-[#f1f5f9] hover:bg-[#e9f0f5] active:scale-[0.97] text-[#00a884] border border-[#00a884]/15 font-semibold py-4 rounded-2xl transition-soft text-sm flex items-center justify-center gap-3"><span class="text-lg">⚡</span> Quick Chat as Guest</button>
       <p id="auth-error" class="text-xs text-red-500 text-center hidden font-medium"></p>
     </div>
   </div>
 
-  <!-- ===== GUEST MODAL ===== -->
-  <div id="guest-modal" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
-    <div class="bg-white border border-[#E2E8F0] p-8 rounded-[28px] max-w-sm w-full shadow-float space-y-6">
-      <div class="space-y-1.5">
-        <h3 class="text-xl font-bold text-[#0F172A]">Choose guest username</h3>
-        <p class="text-xs text-[#64748B]">Enter a display name to join instantly.</p>
-      </div>
-      <div><input id="guest-username-input" type="text" placeholder="e.g. chitchatnpuser_123" onkeydown="if(event.key==='Enter') confirmGuestLogin()" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-4 text-sm text-[#0F172A] focus:bg-white placeholder:text-[#94A3B8]"></div>
+  <!-- GUEST MODAL -->
+  <div id="guest-modal" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
+    <div class="bg-white/95 backdrop-blur-xl border border-white/60 p-8 rounded-[32px] max-w-sm w-full card-shadow-lg space-y-6">
+      <div class="space-y-1.5"><h3 class="text-xl font-bold text-[#0b1a2b]">Choose guest username</h3><p class="text-xs text-[#5e6f82]">Enter a display name to join instantly.</p></div>
+      <div><input id="guest-username-input" type="text" placeholder="e.g. chitchatnpuser_123" onkeydown="if(event.key==='Enter') confirmGuestLogin()" class="w-full bg-[#f1f5f9] border border-[#e2e8f0] rounded-2xl px-4 py-4 text-sm text-[#0b1a2b] focus:bg-white transition-soft"></div>
       <div class="flex gap-3 pt-1">
-        <button onclick="closeGuestModal()" class="ripple ripple-dark flex-1 bg-white text-[#64748B] font-semibold py-3.5 rounded-2xl border border-[#E2E8F0] text-xs">Cancel</button>
-        <button onclick="confirmGuestLogin()" class="ripple flex-1 bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white font-semibold py-3.5 rounded-2xl text-xs">Join Chat</button>
+        <button onclick="closeGuestModal()" class="flex-1 bg-white hover:bg-[#f1f5f9] text-[#5e6f82] font-semibold py-3.5 rounded-2xl transition-soft border border-[#e2e8f0] text-xs">Cancel</button>
+        <button onclick="confirmGuestLogin()" class="flex-1 bg-gradient-to-r from-[#00a884] to-[#018f70] text-white font-semibold py-3.5 rounded-2xl transition-soft shadow-lg text-xs">Join Chat</button>
       </div>
     </div>
   </div>
 
-  <!-- ===== MAIN APP ===== -->
+  <!-- MAIN APP -->
   <div id="chat-screen" class="hidden flex-1 flex h-[100dvh] w-full overflow-hidden">
 
     <!-- LEFT SIDEBAR -->
-    <aside id="sidebar-panel" class="fixed md:static inset-y-0 left-0 z-40 w-[300px] bg-white border-r border-[#E2E8F0] flex flex-col h-full shrink-0 drawer-left transform -translate-x-full md:translate-x-0">
-      <div class="p-5 border-b border-[#F1F5F9] flex justify-between items-center">
+    <aside id="sidebar-panel" class="fixed md:static inset-y-0 left-0 z-40 w-[300px] bg-white/95 backdrop-blur-xl border-r border-[#e9eef3] flex flex-col h-full shrink-0 drawer-left transform -translate-x-full md:translate-x-0">
+      <div class="p-4 border-b border-[#e9eef3] flex justify-between items-center">
         <div class="flex items-center gap-3">
-          <div class="relative cursor-pointer" onclick="openProfileModal()">
-            <div id="sidebar-avatar" class="w-11 h-11 rounded-2xl overflow-hidden shadow-soft bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center">
-              <div class="avatar-initials" id="sidebar-avatar-initials">U</div>
-              <img id="sidebar-avatar-img" class="avatar-img hidden" src="" alt="Profile">
-            </div>
-            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#22C55E] border-2 border-white"></span>
-          </div>
-          <div>
-            <h4 class="text-sm font-bold text-[#0F172A]" id="user-display">User</h4>
-            <p class="text-[10px] text-[#22C55E] font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#22C55E] pulse-dot"></span> Online</p>
-          </div>
+          <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" class="w-11 h-11 rounded-full object-cover shadow-md">
+          <div><h4 class="text-sm font-bold text-[#0b1a2b]" id="user-display">User</h4><p class="text-[10px] text-[#00a884] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#00a884] pulse-dot"></span> Online</p></div>
         </div>
-        <button onclick="closeSidebarOnMobile()" class="md:hidden text-[#64748B] p-2 rounded-xl hover:bg-[#F8FAFC]"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
-        <button onclick="handleLogout()" class="text-[11px] bg-white text-[#64748B] px-3.5 py-2 rounded-xl border border-[#E2E8F0] hidden md:block font-semibold">Logout</button>
+        <button onclick="closeSidebarOnMobile()" class="md:hidden text-[#5e6f82] p-1.5 rounded-xl hover:bg-[#f1f5f9]"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        <button onclick="handleLogout()" class="text-[11px] bg-white/80 hover:bg-[#f1f5f9] text-[#5e6f82] px-3.5 py-2 rounded-xl border border-[#e2e8f0] hidden md:block">Logout</button>
       </div>
       <div class="flex-1 overflow-y-auto">
-        <div class="p-4 pb-2 relative" id="lounge-selector-wrapper">
-          <p class="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider px-1 mb-2">Public Lounges</p>
-          <button id="lounge-pill" class="lounge-pill ripple ripple-dark" onclick="toggleLoungeDropdown(event)">
-            <span class="flex items-center gap-2.5"><span class="emoji">💬</span><span id="lounge-pill-label">#Chautari-Lounge</span></span>
-            <svg class="w-4 h-4 text-[#94A3B8]" id="lounge-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+        <!-- Lounges -->
+        <div class="p-3 pb-1 relative" id="lounge-selector-wrapper">
+          <p class="text-[10px] font-bold text-[#94a3b8] uppercase px-2 mb-1.5">Public Lounges</p>
+          <button id="lounge-pill" class="lounge-pill w-full justify-between" onclick="toggleLoungeDropdown(event)">
+            <span class="flex items-center gap-2"><span class="emoji">💬</span><span id="lounge-pill-label">#Chautari-Lounge</span></span>
+            <svg class="w-3.5 h-3.5 text-[#94a3b8]" id="lounge-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div id="lounge-dropdown" class="lounge-dropdown">
-            <button class="lounge-option ripple ripple-dark active" data-channel="Chautari-Lounge" onclick="selectLounge('Chautari-Lounge', '💬', 'Chautari-Lounge')"><span class="emoji">💬</span><div>#Chautari-Lounge</div></button>
-            <button class="lounge-option ripple ripple-dark" data-channel="Tech-Nepal" onclick="selectLounge('Tech-Nepal', '💻', 'Tech-Nepal')"><span class="emoji">💻</span><div>#Tech-Nepal</div></button>
-            <button class="lounge-option ripple ripple-dark" data-channel="Gaff-Saff" onclick="selectLounge('Gaff-Saff', '☕', 'Gaff-Saff')"><span class="emoji">☕</span><div>#Gaff-Saff</div></button>
+            <button class="lounge-option active" data-channel="Chautari-Lounge" onclick="selectLounge('Chautari-Lounge', '💬', 'Chautari-Lounge')"><span class="emoji">💬</span><div><div>#Chautari-Lounge</div></div></button>
+            <button class="lounge-option" data-channel="Tech-Nepal" onclick="selectLounge('Tech-Nepal', '💻', 'Tech-Nepal')"><span class="emoji">💻</span><div><div>#Tech-Nepal</div></div></button>
+            <button class="lounge-option" data-channel="Gaff-Saff" onclick="selectLounge('Gaff-Saff', '☕', 'Gaff-Saff')"><span class="emoji">☕</span><div><div>#Gaff-Saff</div></div></button>
           </div>
         </div>
-        <div class="p-4 pt-2 space-y-1">
-          <p class="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider px-1 mb-2">Direct Messages</p>
+        <!-- Recent DMs -->
+        <div class="p-3 pt-1 space-y-1">
+          <p class="text-[10px] font-bold text-[#94a3b8] uppercase px-2 mb-1">Direct Messages</p>
           <div id="users-sidebar-list" class="space-y-0.5"></div>
-        </div>
-      </div>
-      <div class="p-4 border-t border-[#F1F5F9]">
-        <div class="flex items-center gap-2 text-[10px] text-[#94A3B8]">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          <span>End-to-end encrypted</span>
         </div>
       </div>
     </aside>
@@ -366,75 +336,54 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
     <div id="sidebar-backdrop" class="fixed inset-0 bg-black/30 z-30 hidden md:hidden" onclick="closeSidebarOnMobile()"></div>
 
     <!-- MAIN CHAT -->
-    <main id="chat-panel" class="flex flex-1 flex-col justify-between bg-[#F8FAFC] h-full w-full relative overflow-hidden">
-      <div class="glass border-b border-[#E2E8F0] px-3 md:px-5 py-3 flex justify-between items-center shrink-0 z-20">
-        <div class="flex items-center gap-2.5 md:gap-3.5 min-w-0">
-          <button onclick="openSidebarOnMobile()" class="md:hidden text-[#0F172A] p-2 -ml-1 rounded-xl hover:bg-[#F1F5F9] relative">
+    <main id="chat-panel" class="flex flex-1 flex-col justify-between chat-bg h-full w-full relative overflow-hidden">
+      <div class="bg-white/80 backdrop-blur-xl border-b border-[#e9eef3] px-3 md:px-4 py-3 flex justify-between items-center shrink-0 z-20">
+        <div class="flex items-center gap-2 md:gap-3 min-w-0">
+          
+          <button onclick="openSidebarOnMobile()" class="md:hidden text-[#0b1a2b] p-2 -ml-1 rounded-xl hover:bg-[#f1f5f9] relative">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             <span id="menu-notification-dot" class="menu-notification-dot"></span>
           </button>
-          <div class="w-10 h-10 rounded-xl bg-[#EEF2FF] flex items-center justify-center shrink-0 overflow-hidden" id="channel-icon">
+          
+          <div class="w-9 h-9 rounded-full bg-[#00a884]/15 flex items-center justify-center shrink-0" id="channel-icon">
             <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" class="channel-icon-img">
           </div>
           <div class="min-w-0">
-            <div class="flex items-center gap-2">
-              <h3 class="text-xs md:text-sm font-bold text-[#0F172A] truncate" id="channel-name">#Chautari-Lounge</h3>
-              <span class="channel-chip hidden sm:inline-block" id="channel-type">PUBLIC</span>
-            </div>
-            <p class="text-[9px] md:text-[10px] text-[#64748B] truncate" id="channel-status">Public community chat</p>
+            <h3 class="text-xs md:text-sm font-bold text-[#0b1a2b] truncate" id="channel-name">#Chautari-Lounge</h3>
+            <p class="text-[9px] md:text-[10px] text-[#5e6f82] truncate" id="channel-status">Public community chat</p>
           </div>
         </div>
         <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
-          <button id="video-call-btn" onclick="startVideoCall()" class="sound-toggle" title="Video call">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-          </button>
           <button id="sound-toggle" onclick="toggleSound()" class="sound-toggle">
             <svg id="sound-icon-on" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M11 5L6 9H2v6h4l5 4V5z"/></svg>
             <svg id="sound-icon-off" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
           </button>
-          <button onclick="toggleMobileDirectory()" class="md:hidden text-xs bg-white border border-[#E2E8F0] px-3 py-2 rounded-xl flex items-center gap-1.5 font-semibold shadow-pill">
-            <svg class="w-3.5 h-3.5 text-[#6366F1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-            <strong id="active-count-mobile" class="text-[#6366F1]">1</strong>
-          </button>
-          <button onclick="toggleMobileDirectory()" class="hidden md:flex text-xs bg-white border border-[#E2E8F0] px-4 py-2 rounded-xl items-center gap-2 font-semibold shadow-pill">
-            <span class="w-2 h-2 rounded-full bg-[#22C55E] pulse-dot"></span><span class="text-[#64748B]">Online</span><strong id="active-count" class="text-[#6366F1]">1</strong>
-          </button>
+          <button onclick="toggleMobileDirectory()" class="md:hidden text-xs bg-white border border-[#e2e8f0] px-3 py-2 rounded-full flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg><strong id="active-count-mobile" class="text-[#00a884] font-bold">1</strong></button>
+          <button onclick="toggleMobileDirectory()" class="hidden md:flex text-xs bg-white border border-[#e2e8f0] px-4 py-2 rounded-full items-center gap-1.5"><span>Online:</span> <strong id="active-count" class="text-[#00a884] font-bold">1</strong></button>
         </div>
       </div>
 
-      <div id="messages-container" class="flex-1 overflow-y-auto p-3 md:p-5 lg:p-6 space-y-3 pb-32 md:pb-6"></div>
+      <div id="messages-container" class="flex-1 overflow-y-auto p-3 md:p-4 lg:p-6 space-y-3 pb-32 md:pb-6"></div>
 
-      <div class="shrink-0 glass border-t border-[#E2E8F0] z-20">
-        <div class="px-3 md:px-5 pt-2.5 pb-1 flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span class="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider shrink-0">Quick</span>
-          <button onclick="sendQuickMessage('Namaste 🙏')" class="ripple ripple-dark px-3.5 py-1.5 bg-white border border-[#E2E8F0] rounded-full text-xs shrink-0 font-medium text-[#334155] shadow-pill">Namaste 🙏</button>
-          <button onclick="sendQuickMessage('Hello')" class="ripple ripple-dark px-3.5 py-1.5 bg-white border border-[#E2E8F0] rounded-full text-xs shrink-0 font-medium text-[#334155] shadow-pill">Hello</button>
-          <button onclick="sendQuickMessage('Hi')" class="ripple ripple-dark px-3.5 py-1.5 bg-white border border-[#E2E8F0] rounded-full text-xs shrink-0 font-medium text-[#334155] shadow-pill">Hi</button>
+      <div class="shrink-0 bg-white/80 backdrop-blur-xl border-t border-[#e9eef3] z-20">
+        <div class="px-3 md:px-4 pt-2.5 pb-1 flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <span class="text-[10px] font-bold text-[#94a3b8] uppercase">Quick</span>
+          <button onclick="sendQuickMessage('Namaste 🙏')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Namaste 🙏</button>
+          <button onclick="sendQuickMessage('Hello')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Hello</button>
+          <button onclick="sendQuickMessage('Hi')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Hi</button>
         </div>
         <form onsubmit="handleSendMessage(event)" class="p-2.5 md:p-4 flex items-center gap-2">
-          <button type="button" onclick="document.getElementById('image-input').click()" class="ripple ripple-dark w-10 h-10 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-center shrink-0 text-[#64748B] hover:text-[#6366F1] shadow-pill" title="Send image">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          </button>
-          <input type="file" id="image-input" class="hidden-input" accept="image/*" onchange="uploadImage(event)">
-          <div class="flex-1 relative">
-            <input id="message-input" type="text" placeholder="Type a message..." class="w-full bg-white border border-[#E2E8F0] rounded-2xl px-4 py-3.5 text-sm focus:bg-white placeholder:text-[#94A3B8]">
-          </div>
-          <button type="submit" class="ripple bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white px-5 md:px-7 py-3.5 rounded-2xl font-semibold text-sm shadow-lg active:scale-[0.97]">
-            <span class="hidden md:inline">Send</span>
-            <svg class="w-5 h-5 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-          </button>
+          <input id="message-input" type="text" placeholder="Type a message..." class="flex-1 bg-white border border-[#e2e8f0] rounded-full px-4 py-3 text-sm transition-soft focus:bg-white">
+          <button type="submit" class="bg-gradient-to-r from-[#00a884] to-[#018f70] text-white px-5 md:px-8 py-3 rounded-full font-semibold text-sm">Send</button>
         </form>
       </div>
     </main>
 
     <!-- RIGHT DIRECTORY -->
-    <aside id="directory-drawer" class="fixed md:static inset-y-0 right-0 w-72 bg-white border-l border-[#E2E8F0] flex flex-col z-40 transform translate-x-full md:translate-x-0 drawer-right">
-      <div class="p-5 border-b border-[#F1F5F9] flex justify-between items-center">
-        <div>
-          <h4 class="text-[11px] font-bold uppercase tracking-wider text-[#64748B]">Online Users</h4>
-          <p class="text-[10px] text-[#94A3B8] mt-0.5" id="online-subtitle">Active now</p>
-        </div>
-        <button onclick="toggleMobileDirectory()" class="md:hidden text-[#64748B] font-bold p-2 rounded-xl hover:bg-[#F8FAFC]">✕</button>
+    <aside id="directory-drawer" class="fixed md:static inset-y-0 right-0 w-72 bg-white/95 backdrop-blur-xl border-l border-[#e9eef3] flex flex-col z-40 transform translate-x-full md:translate-x-0 drawer-right">
+      <div class="p-4 border-b border-[#e9eef3] flex justify-between items-center">
+        <h4 class="text-[11px] font-bold uppercase text-[#5e6f82]">Online Users</h4>
+        <button onclick="toggleMobileDirectory()" class="md:hidden text-[#5e6f82] font-bold p-1.5">✕</button>
       </div>
       <div class="p-3 flex-1 overflow-y-auto space-y-1.5" id="active-members-list"></div>
     </aside>
@@ -442,7 +391,6 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
   </div>
 
   <script>
-    // ===== SUPABASE =====
     const SUPABASE_URL = 'https://bmhjltwabzmtyvrfaoeq.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_toqaL-nV0vmTlb27Sh6_xA_3fb5Mebb';
     const { createClient } = supabase;
@@ -456,71 +404,56 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
     let currentChannel = 'Chautari-Lounge';
     let globalMessagesSub = null;
     let presenceChannel = null;
-    let signalChannel = null;
-
+    
     let onlineUsersMap = new Map();
     let unreadCounts = new Map();
-    let knownUserNames = new Map();
-    let activeDMUsers = new Set();
-    let userAvatars = new Map();
+    let knownUserNames = new Map(); 
+    let activeDMUsers = new Set(); 
 
-    // WebRTC state
-    let localStream = null;
-    let peerConnection = null;
-    let isMuted = false;
-    let isCameraOff = false;
-    let isCallActive = false;
-    let callPeerId = null;
-
-    const ICE_SERVERS = {
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
-      ]
-    };
-
-    // ===== SHOW SETUP PANEL ON FIRST LOAD =====
-    window.addEventListener('DOMContentLoaded', () => {
-      if (!localStorage.getItem('chitchat-setup-dismissed')) {
-        document.getElementById('setup-panel').classList.add('show');
-        localStorage.setItem('chitchat-setup-dismissed', '1');
-      }
-    });
-
-    // ===== AUTH =====
     function handleAuthKeydown(event) {
       if (event.key === 'Enter') {
         event.preventDefault();
         if (document.getElementById('auth-email').value && document.getElementById('auth-password').value) handleLogin();
       }
     }
+
     function togglePasswordVisibility() {
       const input = document.getElementById('auth-password');
       const on = document.getElementById('eye-icon');
       const off = document.getElementById('eye-off-icon');
-      if (input.type === 'password') { input.type='text'; on.classList.add('hidden'); off.classList.remove('hidden'); }
-      else { input.type='password'; on.classList.remove('hidden'); off.classList.add('hidden'); }
+      if (input.type === 'password') {
+        input.type = 'text'; on.classList.add('hidden'); off.classList.remove('hidden');
+      } else {
+        input.type = 'password'; on.classList.remove('hidden'); off.classList.add('hidden');
+      }
     }
 
-    // ===== SOUND =====
-    let audioContext = null, soundEnabled = true;
+    let audioContext = null;
+    let soundEnabled = true;
     function initAudioContext() {
       if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
       if (audioContext.state === 'suspended') audioContext.resume().catch(()=>{});
     }
     document.addEventListener('click', initAudioContext);
     document.addEventListener('touchstart', initAudioContext);
+
     function playNotificationSound() {
       if (!soundEnabled) return;
       try {
         initAudioContext();
         const t = audioContext.currentTime;
-        const osc = audioContext.createOscillator(), gain = audioContext.createGain();
-        osc.type = 'sine'; osc.frequency.setValueAtTime(880, t); osc.frequency.setValueAtTime(1174.66, t+0.08);
-        gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.001, t+0.25);
-        osc.connect(gain); gain.connect(audioContext.destination); osc.start(t); osc.stop(t+0.3);
-      } catch(e) {}
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, t);
+        osc.frequency.setValueAtTime(1174.66, t + 0.08);
+        gain.gain.setValueAtTime(0.1, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+        osc.connect(gain); gain.connect(audioContext.destination);
+        osc.start(t); osc.stop(t + 0.3);
+      } catch (e) {}
     }
+
     function toggleSound() {
       soundEnabled = !soundEnabled;
       document.getElementById('sound-icon-on').classList.toggle('hidden', !soundEnabled);
@@ -528,8 +461,9 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
       document.getElementById('sound-toggle').classList.toggle('muted', !soundEnabled);
     }
 
-    // ===== TOAST =====
-    let toastTimer = null, toastTargetChannel = null;
+    let toastTimer = null;
+    let toastTargetChannel = null;
+
     function showNotificationToast(title, text, channelId) {
       if (!title || title === 'User' || title === 'Chat') title = 'New message';
       document.getElementById('toast-title').textContent = title;
@@ -539,16 +473,31 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => { document.getElementById('notification-toast').classList.remove('show'); }, 4000);
     }
+
+    // --- SAFELY EXTRACT THE OTHER USER'S ID FROM A DM CHANNEL ID ---
+    function getDmPartnerId(channelId) {
+      if (!channelId || !channelId.startsWith('dm-') || !currentUser) return null;
+      const rest = channelId.slice(3); // remove "dm-"
+      if (rest.includes(currentUser.id)) {
+        const cleaned = rest.replace(currentUser.id, '').replace(/^-+|-+$/g, '');
+        return cleaned || null;
+      }
+      // Fallback: first UUID chunk is 36 chars
+      return rest.slice(0, 36) || null;
+    }
+
     function handleToastClick() {
       if (!toastTargetChannel) return;
       const channelId = toastTargetChannel;
       document.getElementById('notification-toast').classList.remove('show');
       clearTimeout(toastTimer);
       toastTargetChannel = null;
+
       if (channelId === currentChannel) { showChatOnMobile(); loadMessages(); return; }
+
       if (channelId.startsWith('dm-')) {
-        const parts = channelId.split('-');
-        const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
+        const otherId = getDmPartnerId(channelId);
+        if (!otherId) return;
         const otherName = knownUserNames.get(otherId) || 'Chat';
         openExactDM(otherId, otherName);
       } else {
@@ -559,27 +508,46 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
       }
     }
 
-    // ===== DM =====
-    function openExactDM(recipientId, recipientName) {
-      const ids = [currentUser.id, recipientId].sort();
-      const dmChannel = `dm-${ids[0]}-${ids[1]}`;
+    async function openExactDM(recipientId, recipientName) {
+      // Try both possible orderings, then pick whichever actually has messages
+      const a = `dm-${currentUser.id}-${recipientId}`;
+      const b = `dm-${recipientId}-${currentUser.id}`;
+
+      let dmChannel = a;
+      try {
+        const { data } = await db.from('messages')
+          .select('channel_id')
+          .in('channel_id', [a, b])
+          .limit(1);
+        if (data && data.length > 0) dmChannel = data[0].channel_id;
+      } catch (e) {}
+
       currentChannel = dmChannel;
+
       let displayName = recipientName;
-      if (!displayName || displayName === 'User' || displayName === 'Chat') displayName = knownUserNames.get(recipientId) || 'Chat';
+      if (!displayName || displayName === 'User' || displayName === 'Chat') {
+        displayName = knownUserNames.get(recipientId) || 'Chat';
+      }
+      knownUserNames.set(recipientId, displayName); // cache so it never falls back again
+
       document.getElementById('channel-name').textContent = `💬 @${displayName}`;
       document.getElementById('channel-status').textContent = 'Direct message';
-      document.getElementById('channel-type').textContent = 'DM';
-      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#F1F5F9]'));
+
+      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
       const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
-      if (activeBtn) activeBtn.classList.add('bg-[#F1F5F9]');
+      if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
+
       if (!activeDMUsers.has(recipientId)) {
         activeDMUsers.add(recipientId);
-        if (displayName !== 'Chat') knownUserNames.set(recipientId, displayName);
         renderUI();
       }
-      closeSidebarOnMobile(); closeDirectoryOnMobile();
-      unreadCounts.delete(dmChannel); updateUnreadBadges();
-      loadMessages(); showChatOnMobile();
+
+      closeSidebarOnMobile();
+      closeDirectoryOnMobile();
+      unreadCounts.delete(dmChannel);
+      updateUnreadBadges();
+      loadMessages();
+      showChatOnMobile();
     }
 
     function showChatOnMobile() {
@@ -590,28 +558,34 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
         document.getElementById('directory-backdrop').classList.add('hidden');
       }
     }
+
     function formatEmail(input) { return input.includes('@') ? input : `${input.trim().toLowerCase()}@chitchat.np`; }
 
     async function ensureProfileExists(user, customName) {
       if (!user) return;
       currentDisplayName = customName || (user.email ? user.email.split('@')[0] : 'Guest');
-      try {
-        const { data } = await db.from('profiles').select('avatar_url').eq('id', user.id).single();
-        if (data?.avatar_url) userAvatars.set(user.id, data.avatar_url);
-      } catch(e) {}
       await db.from('profiles').upsert({ id: user.id, username: currentDisplayName, display_name: currentDisplayName, updated_at: new Date().toISOString() }, { onConflict: 'id' });
     }
 
-    function openSidebarOnMobile() { document.getElementById('sidebar-panel').classList.remove('-translate-x-full'); document.getElementById('sidebar-backdrop').classList.remove('hidden'); document.getElementById('menu-notification-dot').style.display='none'; }
+    function openSidebarOnMobile() { 
+      document.getElementById('sidebar-panel').classList.remove('-translate-x-full'); 
+      document.getElementById('sidebar-backdrop').classList.remove('hidden'); 
+      document.getElementById('menu-notification-dot').style.display = 'none';
+    }
     function closeSidebarOnMobile() { document.getElementById('sidebar-panel').classList.add('-translate-x-full'); document.getElementById('sidebar-backdrop').classList.add('hidden'); }
-    function toggleMobileDirectory() { const d=document.getElementById('directory-drawer'), b=document.getElementById('directory-backdrop'); d.classList.toggle('translate-x-full'); b.classList.toggle('hidden'); }
+    
+    function toggleMobileDirectory() {
+      const drawer = document.getElementById('directory-drawer');
+      const backdrop = document.getElementById('directory-backdrop');
+      drawer.classList.toggle('translate-x-full');
+      backdrop.classList.toggle('hidden');
+    }
     function closeDirectoryOnMobile() { document.getElementById('directory-drawer').classList.add('translate-x-full'); document.getElementById('directory-backdrop').classList.add('hidden'); }
 
     function toggleLoungeDropdown(e) {
       e.stopPropagation();
-      const dd = document.getElementById('lounge-dropdown');
-      dd.classList.toggle('show');
-      document.getElementById('lounge-chevron').style.transform = dd.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+      document.getElementById('lounge-dropdown').classList.toggle('show');
+      document.getElementById('lounge-chevron').style.transform = document.getElementById('lounge-dropdown').classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
     }
     document.addEventListener('click', (e) => {
       const wrapper = document.getElementById('lounge-selector-wrapper');
@@ -637,6 +611,7 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
       document.getElementById('guest-username-input').focus();
     }
     function closeGuestModal() { document.getElementById('guest-modal').classList.add('hidden'); }
+    
     async function confirmGuestLogin() {
       const guestInput = document.getElementById('guest-username-input').value;
       if (!guestInput) return;
@@ -651,18 +626,24 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
     async function handleSignup() {
       const rawInput = document.getElementById('auth-email').value;
       const password = document.getElementById('auth-password').value;
-      const errorEl = document.getElementById('auth-error'), successEl = document.getElementById('auth-success');
+      const errorEl = document.getElementById('auth-error');
+      const successEl = document.getElementById('auth-success');
       if (!rawInput || !password) return;
       errorEl.classList.add('hidden'); successEl.classList.add('hidden');
       const { data, error } = await db.auth.signUp({ email: formatEmail(rawInput), password });
       if (error) { errorEl.textContent = error.message; errorEl.classList.remove('hidden'); return; }
-      if (data?.user) { successEl.classList.remove('hidden'); document.getElementById('auth-password').value=''; document.getElementById('auth-email').focus(); }
+      if (data?.user) {
+        successEl.classList.remove('hidden');
+        document.getElementById('auth-password').value = '';
+        document.getElementById('auth-email').focus();
+      }
     }
 
     async function handleLogin() {
       const rawInput = document.getElementById('auth-email').value;
       const password = document.getElementById('auth-password').value;
-      const errorEl = document.getElementById('auth-error'), successEl = document.getElementById('auth-success');
+      const errorEl = document.getElementById('auth-error');
+      const successEl = document.getElementById('auth-success');
       if (!rawInput || !password) return;
       errorEl.classList.add('hidden'); successEl.classList.add('hidden');
       const { data, error } = await db.auth.signInWithPassword({ email: formatEmail(rawInput), password });
@@ -675,9 +656,7 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
     async function handleLogout() {
       if (presenceChannel) presenceChannel.untrack();
       await db.auth.signOut();
-      currentUser = null;
-      if (globalMessagesSub) db.removeChannel(globalMessagesSub);
-      if (signalChannel) db.removeChannel(signalChannel);
+      currentUser = null; if (globalMessagesSub) db.removeChannel(globalMessagesSub);
       document.getElementById('auth-screen').classList.remove('hidden');
       document.getElementById('chat-screen').classList.add('hidden');
       closeSidebarOnMobile();
@@ -688,42 +667,39 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
       currentDisplayName = fallbackName || 'User';
       knownUserNames.set(user.id, currentDisplayName);
       await ensureProfileExists(user, currentDisplayName);
+      
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('chat-screen').classList.remove('hidden');
       document.getElementById('user-display').textContent = currentDisplayName;
-      const { data: profile } = await db.from('profiles').select('avatar_url').eq('id', user.id).single();
-      if (profile?.avatar_url) userAvatars.set(user.id, profile.avatar_url);
-      updateAvatarUI();
+
       await fetchRecentDMs();
       loadMessages();
       subscribeToAllMessages();
       setupPresence();
-      setupSignalListener();
-      if (window.innerWidth < 768) {
-        closeSidebarOnMobile();
+      
+      if (window.innerWidth < 768) { 
+        closeSidebarOnMobile(); 
         setTimeout(() => {
-          const drawer = document.getElementById('directory-drawer'), backdrop = document.getElementById('directory-backdrop');
-          if (drawer.classList.contains('translate-x-full')) { drawer.classList.remove('translate-x-full'); backdrop.classList.remove('hidden'); }
+          const drawer = document.getElementById('directory-drawer');
+          const backdrop = document.getElementById('directory-backdrop');
+          if (drawer.classList.contains('translate-x-full')) {
+            drawer.classList.remove('translate-x-full');
+            backdrop.classList.remove('hidden');
+          }
         }, 500);
       }
-    }
-
-    function updateAvatarUI() {
-      const avatarUrl = userAvatars.get(currentUser?.id);
-      const sidebarImg = document.getElementById('sidebar-avatar-img'), sidebarInit = document.getElementById('sidebar-avatar-initials');
-      if (avatarUrl) { sidebarImg.src = avatarUrl; sidebarImg.classList.remove('hidden'); sidebarInit.classList.add('hidden'); }
-      else { sidebarImg.classList.add('hidden'); sidebarInit.classList.remove('hidden'); sidebarInit.textContent = currentDisplayName.substring(0,2).toUpperCase(); }
-      const profileImg = document.getElementById('profile-avatar-img'), profileInit = document.getElementById('profile-avatar-initials');
-      if (avatarUrl) { profileImg.src = avatarUrl; profileImg.classList.remove('hidden'); profileInit.classList.add('hidden'); }
-      else { profileImg.classList.add('hidden'); profileInit.classList.remove('hidden'); profileInit.textContent = currentDisplayName.substring(0,2).toUpperCase(); }
     }
 
     async function fetchMissingNames(userIds) {
       if (!userIds || userIds.length === 0) return;
       try {
-        const { data, error } = await db.from('profiles').select('id, username, avatar_url').in('id', userIds);
-        if (!error && data) { data.forEach(p => { if (p.username) knownUserNames.set(p.id, p.username); if (p.avatar_url) userAvatars.set(p.id, p.avatar_url); }); }
-      } catch(e) { console.warn(e); }
+        const { data, error } = await db.from('profiles').select('id, username').in('id', userIds);
+        if (!error && data) {
+          data.forEach(p => {
+            if (p.username) knownUserNames.set(p.id, p.username);
+          });
+        }
+      } catch (e) { console.warn('Error fetching names:', e); }
     }
 
     async function fetchRecentDMs() {
@@ -731,24 +707,33 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
         const { data, error } = await db.from('messages').select('channel_id, sender_id, sender_name').like('channel_id', `dm-%${currentUser.id}%`);
         if (!error && data) {
           const missingIds = new Set();
+          
           data.forEach(msg => {
             if (msg.channel_id.startsWith('dm-')) {
-              const parts = msg.channel_id.split('-');
-              if (parts.length < 3) return;
-              const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
+              const otherId = getDmPartnerId(msg.channel_id);
               if (otherId && otherId !== currentUser.id) {
-                if (msg.sender_id === otherId && msg.sender_name) { knownUserNames.set(otherId, msg.sender_name); activeDMUsers.add(otherId); }
-                else if (!knownUserNames.has(otherId)) missingIds.add(otherId);
+                if (msg.sender_id === otherId && msg.sender_name) {
+                  knownUserNames.set(otherId, msg.sender_name);
+                  activeDMUsers.add(otherId);
+                } else if (!knownUserNames.has(otherId)) {
+                  missingIds.add(otherId);
+                }
               }
             }
           });
+          
           if (missingIds.size > 0) {
             await fetchMissingNames(Array.from(missingIds));
-            missingIds.forEach(id => { if (knownUserNames.has(id)) activeDMUsers.add(id); });
+            missingIds.forEach(id => {
+              if (knownUserNames.has(id)) {
+                activeDMUsers.add(id);
+              }
+            });
           }
+          
           renderUI();
         }
-      } catch(e) { console.warn(e); }
+      } catch (e) { console.warn(e); }
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
@@ -775,103 +760,75 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
       });
     }
 
-    // ===== SIGNALING (video call offer/answer/ice) =====
-    function setupSignalListener() {
-      if (signalChannel) db.removeChannel(signalChannel);
-      signalChannel = db.channel('video-signals')
-        .on('broadcast', { event: 'webrtc-signal' }, ({ payload }) => handleWebRTCSignal(payload))
-        .subscribe();
-    }
-
-    function sendSignal(type, data) {
-      if (!signalChannel) return;
-      signalChannel.send({
-        type: 'broadcast',
-        event: 'webrtc-signal',
-        payload: { type, from: currentUser.id, fromName: currentDisplayName, channel: currentChannel, data }
-      });
-    }
-
-    async function handleWebRTCSignal(payload) {
-      if (!payload || payload.from === currentUser?.id) return;
-      if (payload.channel !== currentChannel) return;
-
-      const { type, data } = payload;
-      callPeerId = payload.from;
-      const peerName = knownUserNames.get(payload.from) || payload.fromName || 'User';
-
-      if (type === 'offer') {
-        document.getElementById('incoming-call-name').textContent = peerName;
-        document.getElementById('incoming-call-banner').classList.add('show');
-        window._pendingOffer = { from: payload.from, sdp: data };
-      } else if (type === 'answer' && peerConnection) {
-        try { await peerConnection.setRemoteDescription(new RTCSessionDescription(data)); }
-        catch(e) { console.warn('answer error', e); }
-      } else if (type === 'ice' && peerConnection) {
-        try { await peerConnection.addIceCandidate(new RTCIceCandidate(data)); }
-        catch(e) { console.warn('ice error', e); }
-      } else if (type === 'hangup') {
-        endVideoCall();
-        showNotificationToast('Call ended', peerName + ' ended the call', currentChannel);
-      }
-    }
-
-    // ===== RENDER UI =====
     function renderUI() {
       const sidebarList = document.getElementById('users-sidebar-list');
       const activeList = document.getElementById('active-members-list');
       sidebarList.innerHTML = ''; activeList.innerHTML = '';
+      
       document.getElementById('active-count').textContent = onlineUsersMap.size;
       document.getElementById('active-count-mobile').textContent = onlineUsersMap.size;
-      document.getElementById('online-subtitle').textContent = `${onlineUsersMap.size} active now`;
 
+      // RIGHT DRAWER (Online Users)
       let onlineOthers = 0;
       onlineUsersMap.forEach((name, id) => {
         if (id !== currentUser.id) {
           onlineOthers++;
-          const initials = name.substring(0,2).toUpperCase();
-          const avatarUrl = userAvatars.get(id);
-          const avatarHtml = avatarUrl ? `<img src="${avatarUrl}" class="w-8 h-8 rounded-xl object-cover shrink-0">` : `<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white text-[10px] font-bold shrink-0">${initials}</div>`;
           activeList.insertAdjacentHTML('beforeend', `
-            <div onclick="openExactDM('${id}', '${name}')" class="ripple ripple-dark flex items-center justify-between px-3.5 py-3 bg-[#F8FAFC] hover:bg-[#F1F5F9] rounded-xl cursor-pointer text-xs text-[#0F172A] border border-[#F1F5F9]">
-              <div class="flex items-center gap-2.5 truncate">${avatarHtml}<div class="truncate"><p class="truncate font-semibold text-[#0F172A]">@${name}</p><p class="text-[10px] text-[#22C55E] font-medium">Online</p></div></div>
-              <svg class="w-4 h-4 text-[#94A3B8] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <div onclick="openExactDM('${id}', '${name}')" class="flex items-center justify-between px-3.5 py-2.5 bg-white hover:bg-[#f8fafc] rounded-2xl cursor-pointer text-xs text-[#0b1a2b] border border-[#f1f5f9]">
+              <div class="flex items-center gap-2.5 truncate">
+                <img src="${BRAND_ICON_URL}" class="w-6 h-6 rounded-full">
+                <span class="truncate font-medium">@${name}</span>
+              </div>
             </div>
           `);
         }
       });
-      if (onlineOthers === 0) activeList.innerHTML = `<div class="flex flex-col items-center justify-center py-10 text-center"><div class="w-12 h-12 rounded-2xl bg-[#F1F5F9] flex items-center justify-center mb-3"><svg class="w-6 h-6 text-[#94A3B8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><p class="text-xs text-[#94A3B8] font-medium">You're the only one online</p></div>`;
+      if (onlineOthers === 0) activeList.innerHTML = `<p class="text-xs text-[#94a3b8] p-2 text-center">You are the only one online</p>`;
 
+      // LEFT SIDEBAR (Recent DMs)
       let dmCount = 0;
       activeDMUsers.forEach(id => {
         let name = knownUserNames.get(id);
-        if (!name || name === 'User' || name === 'Chat') return;
+        if (!name || name === 'User' || name === 'Chat') {
+          return;
+        }
+        
         const isOnline = onlineUsersMap.has(id);
         const dmChannel = `dm-${[currentUser.id, id].sort().join('-')}`;
-        const initials = name.substring(0,2).toUpperCase();
-        const avatarUrl = userAvatars.get(id);
-        const avatarHtml = avatarUrl ? `<img src="${avatarUrl}" class="w-9 h-9 rounded-xl object-cover shrink-0">` : `<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white text-[10px] font-bold shrink-0">${initials}</div>`;
         dmCount++;
+        
         sidebarList.insertAdjacentHTML('beforeend', `
-          <button onclick="openExactDM('${id}', '${name}')" class="ripple ripple-dark channel-btn w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#F8FAFC] flex items-center justify-between" data-id="dm-${id}" data-channel-id="${dmChannel}">
+          <button onclick="openExactDM('${id}', '${name}')" class="channel-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-sm transition-soft hover:bg-[#f1f5f9] flex items-center justify-between" data-id="dm-${id}" data-channel-id="${dmChannel}">
             <div class="flex items-center gap-3 truncate">
-              <div class="relative">${avatarHtml}${isOnline ? `<span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#22C55E] border-2 border-white"></span>` : ''}</div>
-              <div class="truncate"><p class="font-semibold text-xs text-[#0F172A] truncate">@${name}</p><p class="text-[10px] ${isOnline ? 'text-[#22C55E]' : 'text-[#94A3B8]'} font-medium">${isOnline ? 'Online' : 'Offline'}</p></div>
+              <div class="relative">
+                <img src="${BRAND_ICON_URL}" class="w-8 h-8 rounded-full">
+                ${isOnline ? `<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#00a884] border-2 border-white"></span>` : ''}
+              </div>
+              <div class="truncate">
+                <p class="font-semibold text-xs text-[#0b1a2b]">@${name}</p>
+                <p class="text-[10px] ${isOnline ? 'text-[#00a884]' : 'text-[#94a3b8]'}">${isOnline ? 'Online' : 'Offline'}</p>
+              </div>
             </div>
           </button>
         `);
       });
-      if (dmCount === 0) sidebarList.innerHTML = `<div class="flex flex-col items-center justify-center py-6 text-center"><div class="w-10 h-10 rounded-xl bg-[#F1F5F9] flex items-center justify-center mb-2"><svg class="w-5 h-5 text-[#94A3B8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><p class="text-[11px] text-[#94A3B8] font-medium">No recent chats</p></div>`;
+      if (dmCount === 0) sidebarList.innerHTML = `<p class="text-xs text-[#94a3b8] p-3 text-center">No recent chats</p>`;
+      
       updateUnreadBadges();
     }
 
     async function loadMessages() {
-      const { data, error } = await db.from('messages').select('*').eq('channel_id', currentChannel).order('created_at', { ascending: true });
+      const { data, error } = await db.from('messages').select('*')
+        .eq('channel_id', currentChannel).order('created_at', { ascending: true });
       if (error) return;
       const container = document.getElementById('messages-container');
       container.innerHTML = '';
-      (data || []).forEach(renderMessage);
-      container.scrollTop = container.scrollHeight;
+      if (!data || data.length === 0) {
+        container.innerHTML = `<p class="text-center text-xs text-[#94a3b8] py-10">No messages yet. Say hi 👋</p>`;
+      } else {
+        data.forEach(renderMessage);
+        container.scrollTop = container.scrollHeight;
+      }
       unreadCounts.delete(currentChannel);
       updateUnreadBadges();
     }
@@ -882,27 +839,36 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
         const msg = payload.new;
         if (!msg || !currentUser) return;
         const isMe = msg.sender_id === currentUser.id;
+
         if (msg.sender_id && msg.sender_name) knownUserNames.set(msg.sender_id, msg.sender_name);
+
+        // Add new messages to recent DMs
         if (msg.channel_id.startsWith('dm-') && !isMe) {
-          const parts = msg.channel_id.split('-');
-          const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
-          if (!activeDMUsers.has(otherId) && msg.sender_name && msg.sender_name !== 'User' && msg.sender_name !== 'Chat') {
+          const otherId = getDmPartnerId(msg.channel_id);
+          if (otherId && !activeDMUsers.has(otherId) && msg.sender_name && msg.sender_name !== 'User' && msg.sender_name !== 'Chat') {
             activeDMUsers.add(otherId);
             renderUI();
           }
         }
+
         if (msg.channel_id === currentChannel) {
+          const container = document.getElementById('messages-container');
+          if (container.querySelector('p.text-center')) container.innerHTML = '';
           renderMessage(msg);
-          document.getElementById('messages-container').scrollTop = 999999;
+          container.scrollTop = 999999;
         } else if (!isMe) {
           unreadCounts.set(msg.channel_id, (unreadCounts.get(msg.channel_id) || 0) + 1);
           updateUnreadBadges();
-          if (window.innerWidth < 768) document.getElementById('menu-notification-dot').style.display = 'block';
+          
+          if (window.innerWidth < 768) {
+            document.getElementById('menu-notification-dot').style.display = 'block';
+          }
         }
+
         if (!isMe) {
           playNotificationSound();
           if (document.hidden || window.innerWidth < 768 || msg.channel_id !== currentChannel) {
-            showNotificationToast(msg.channel_id.startsWith('dm-') ? msg.sender_name : `#${msg.channel_id}`, msg.text || '📷 Image', msg.channel_id);
+            showNotificationToast(msg.channel_id.startsWith('dm-') ? msg.sender_name : `#${msg.channel_id}`, msg.text, msg.channel_id);
           }
         }
       }).subscribe();
@@ -926,8 +892,7 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
       const input = document.getElementById('message-input');
       if (!input.value.trim() || !currentUser) return;
       const text = input.value.trim(); input.value = '';
-      const { error } = await db.from('messages').insert([{ channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text }]);
-      if (error) showNotificationToast('Send failed', error.message, currentChannel);
+      await db.from('messages').insert([{ channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text }]);
     }
 
     async function sendQuickMessage(text) {
@@ -939,307 +904,24 @@ CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.u
       currentChannel = channel;
       document.getElementById('channel-name').textContent = channel.startsWith('dm-') ? channel : `#${channel}`;
       document.getElementById('channel-status').textContent = channel.startsWith('dm-') ? 'Direct message' : 'Public community chat';
-      document.getElementById('channel-type').textContent = channel.startsWith('dm-') ? 'DM' : 'PUBLIC';
-      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#F1F5F9]'));
-      const activeBtn = document.querySelector(`[data-id="${channel}"]`); if (activeBtn) activeBtn.classList.add('bg-[#F1F5F9]');
+      document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
+      const activeBtn = document.querySelector(`[data-id="${channel}"]`); if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
       unreadCounts.delete(channel); updateUnreadBadges(); loadMessages(); showChatOnMobile();
     }
 
     function renderMessage(msg) {
       const isMe = currentUser && msg.sender_id === currentUser.id;
       const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const initials = msg.sender_name ? msg.sender_name.substring(0,2).toUpperCase() : '?';
-      const avatarUrl = userAvatars.get(msg.sender_id);
-
-      let contentHtml;
-      if (msg.image_url) {
-        contentHtml = `<img src="${msg.image_url}" class="message-image" onclick="openImageViewer('${msg.image_url}')" alt="Shared image" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<p class=\\'text-xs text-red-400 mt-1\\'>⚠ Image failed to load</p>')">${msg.text ? `<p class="mt-2 break-words leading-relaxed">${msg.text}</p>` : ''}`;
-      } else {
-        contentHtml = `<p class="break-words leading-relaxed">${msg.text}</p>`;
-      }
-
-      let avatarHtml;
-      if (isMe) avatarHtml = `<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white text-[9px] font-bold shrink-0 mb-0.5">You</div>`;
-      else if (avatarUrl) avatarHtml = `<img src="${avatarUrl}" class="w-7 h-7 rounded-lg object-cover shrink-0 mb-0.5">`;
-      else avatarHtml = `<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#94A3B8] to-[#64748B] flex items-center justify-center text-white text-[9px] font-bold shrink-0 mb-0.5">${initials}</div>`;
-
       document.getElementById('messages-container').insertAdjacentHTML('beforeend', `
-        <div class="flex ${isMe ? 'justify-end' : 'justify-start'} mb-2 message-in">
-          <div class="flex items-end gap-2 max-w-[85%] sm:max-w-md ${isMe ? 'flex-row-reverse' : ''}">
-            ${avatarHtml}
-            <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-              <div class="flex items-center gap-2 mb-1 px-1 ${isMe ? 'flex-row-reverse' : ''}"><span class="text-[10px] text-[#64748B] font-medium">${isMe ? 'You' : msg.sender_name}</span></div>
-              <div class="px-4 py-2.5 text-sm relative ${isMe ? 'bubble-me' : 'bubble-other'}">
-                ${contentHtml}
-                <div class="flex items-center justify-end gap-1.5 mt-1 text-[9px] ${isMe ? 'text-white/70' : 'text-[#94A3B8]'}"><span>${timeStr}</span>${isMe ? '<span class="font-bold">✓✓</span>' : ''}</div>
-              </div>
-            </div>
+        <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-1.5 message-in">
+          <div class="flex items-center gap-2 mb-1 px-2"><span class="text-[10px] text-[#5e6f82]">${msg.sender_name}</span></div>
+          <div class="max-w-[85%] sm:max-w-md px-4 py-2.5 text-sm relative ${isMe ? 'bubble-me' : 'bubble-other'}">
+            <p class="break-words">${msg.text}</p>
+            <div class="flex items-center justify-end gap-1.5 mt-1.5 text-[9px] text-[#5e6f82] opacity-80"><span>${timeStr}</span>${isMe ? '<span class="text-[#53bdeb] font-bold">✓✓</span>' : ''}</div>
           </div>
         </div>
       `);
-    }
-
-    // ===== IMAGE UPLOAD (with real error surfacing) =====
-    async function uploadImage(event) {
-      const file = event.target.files[0];
-      if (!file || !currentUser) return;
-      event.target.value = '';
-
-      if (file.size > 5 * 1024 * 1024) {
-        showNotificationToast('File too large', 'Please choose an image under 5MB.', currentChannel);
-        return;
-      }
-
-      const container = document.getElementById('messages-container');
-      const tempId = 'temp-img-' + Date.now();
-      container.insertAdjacentHTML('beforeend', `
-        <div id="${tempId}" class="flex justify-end mb-2">
-          <div class="flex items-end gap-2 max-w-[85%] flex-row-reverse">
-            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white text-[9px] font-bold shrink-0">You</div>
-            <div class="px-4 py-2.5 text-sm bubble-me relative overflow-hidden">
-              <div class="flex items-center gap-2"><svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg><span>Uploading...</span></div>
-            </div>
-          </div>
-        </div>
-      `);
-      container.scrollTop = 999999;
-
-      try {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${currentUser.id}/${Date.now()}.${fileExt}`;
-
-        const { error: uploadError } = await db.storage
-          .from('chat-images')
-          .upload(fileName, file, { cacheControl: '3600', upsert: false, contentType: file.type });
-
-        if (uploadError) throw new Error('Upload: ' + uploadError.message);
-
-        const { data: urlData } = db.storage.from('chat-images').getPublicUrl(fileName);
-        if (!urlData?.publicUrl) throw new Error('Could not get public URL');
-
-        const { error: insertError } = await db.from('messages').insert([{
-          channel_id: currentChannel,
-          sender_id: currentUser.id,
-          sender_name: currentDisplayName,
-          text: '',
-          image_url: urlData.publicUrl
-        }]);
-
-        if (insertError) throw new Error('DB insert: ' + insertError.message);
-
-        document.getElementById(tempId)?.remove();
-      } catch (err) {
-        console.error('Image upload failed:', err);
-        document.getElementById(tempId)?.remove();
-        showNotificationToast('Upload failed', err.message + ' — Check the setup panel.', currentChannel);
-      }
-    }
-
-    function openImageViewer(url) {
-      document.getElementById('image-viewer-img').src = url;
-      document.getElementById('image-viewer').classList.add('show');
-    }
-    function closeImageViewer(e) {
-      if (e && e.target !== e.currentTarget) return;
-      document.getElementById('image-viewer').classList.remove('show');
-    }
-
-    // ===== PROFILE =====
-    function openProfileModal() {
-      document.getElementById('profile-name-input').value = currentDisplayName;
-      updateAvatarUI();
-      document.getElementById('profile-modal').classList.add('show');
-    }
-    function closeProfileModal() { document.getElementById('profile-modal').classList.remove('show'); }
-
-    async function uploadProfilePicture(event) {
-      const file = event.target.files[0];
-      if (!file || !currentUser) return;
-      event.target.value = '';
-
-      if (file.size > 3 * 1024 * 1024) {
-        showNotificationToast('File too large', 'Choose a picture under 3MB.', currentChannel);
-        return;
-      }
-
-      try {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `avatars/${currentUser.id}.${fileExt}`;
-        const { error: uploadError } = await db.storage
-          .from('chat-images')
-          .upload(fileName, file, { cacheControl: '3600', upsert: true, contentType: file.type });
-        if (uploadError) throw new Error('Upload: ' + uploadError.message);
-
-        const { data: urlData } = db.storage.from('chat-images').getPublicUrl(fileName);
-        const avatarUrl = urlData.publicUrl + '?t=' + Date.now();
-
-        const { error: upError } = await db.from('profiles').upsert({
-          id: currentUser.id,
-          avatar_url: avatarUrl,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'id' });
-        if (upError) throw new Error('Profile: ' + upError.message);
-
-        userAvatars.set(currentUser.id, avatarUrl);
-        updateAvatarUI();
-        renderUI();
-        showNotificationToast('Profile updated', 'Your profile picture has been changed.', currentChannel);
-      } catch (err) {
-        console.error('Avatar upload error:', err);
-        showNotificationToast('Upload failed', err.message + ' — Check the setup panel.', currentChannel);
-      }
-    }
-
-    async function saveProfileName() {
-      const newName = document.getElementById('profile-name-input').value.trim();
-      if (!newName || !currentUser) return;
-      currentDisplayName = newName;
-      knownUserNames.set(currentUser.id, newName);
-      document.getElementById('user-display').textContent = newName;
-      await db.from('profiles').upsert({
-        id: currentUser.id, username: newName, display_name: newName, updated_at: new Date().toISOString()
-      }, { onConflict: 'id' });
-      if (presenceChannel) await presenceChannel.track({ id: currentUser.id, username: newName });
-      updateAvatarUI();
-      closeProfileModal();
-      showNotificationToast('Profile updated', 'Your display name has been changed.', currentChannel);
-    }
-
-    // ===== VIDEO CALL (real WebRTC) =====
-    async function startVideoCall() {
-      if (!currentUser) return;
-      if (!currentChannel.startsWith('dm-')) {
-        showNotificationToast('Video call', 'Video calls are only available in direct messages.', currentChannel);
-        return;
-      }
-
-      const parts = currentChannel.split('-');
-      const peerId = parts[1] === currentUser.id ? parts[2] : parts[1];
-      const peerName = knownUserNames.get(peerId) || 'User';
-
-      try {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        document.getElementById('local-video').srcObject = localStream;
-      } catch (err) {
-        showNotificationToast('Camera error', 'Could not access camera/mic: ' + err.message, currentChannel);
-        return;
-      }
-
-      isCallActive = true;
-      callPeerId = peerId;
-      document.getElementById('call-remote-name').textContent = peerName;
-      document.getElementById('call-avatar').textContent = peerName.substring(0,2).toUpperCase();
-      document.getElementById('call-status').textContent = 'Calling...';
-      document.getElementById('video-call-modal').classList.add('show');
-
-      createPeerConnection();
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
-      sendSignal('offer', offer);
-
-      // Timeout
-      setTimeout(() => {
-        if (isCallActive && peerConnection && !peerConnection.remoteDescription) {
-          document.getElementById('call-status').textContent = 'No answer';
-        }
-      }, 15000);
-    }
-
-    function createPeerConnection() {
-      if (peerConnection) peerConnection.close();
-      peerConnection = new RTCPeerConnection(ICE_SERVERS);
-
-      if (localStream) {
-        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-      }
-
-      peerConnection.ontrack = (event) => {
-        document.getElementById('remote-video').srcObject = event.streams[0];
-        document.getElementById('call-status').textContent = 'Connected';
-      };
-
-      peerConnection.onicecandidate = (event) => {
-        if (event.candidate) sendSignal('ice', event.candidate);
-      };
-
-      peerConnection.onconnectionstatechange = () => {
-        const state = peerConnection.connectionState;
-        if (state === 'connected') document.getElementById('call-status').textContent = 'Connected';
-        else if (state === 'disconnected' || state === 'failed' || state === 'closed') document.getElementById('call-status').textContent = 'Disconnected';
-      };
-    }
-
-    async function acceptIncomingCall() {
-      document.getElementById('incoming-call-banner').classList.remove('show');
-      const offer = window._pendingOffer;
-      if (!offer) return;
-
-      try {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        document.getElementById('local-video').srcObject = localStream;
-      } catch (err) {
-        showNotificationToast('Camera error', 'Could not access camera/mic.', currentChannel);
-        return;
-      }
-
-      isCallActive = true;
-      callPeerId = offer.from;
-      const peerName = knownUserNames.get(offer.from) || 'User';
-      document.getElementById('call-remote-name').textContent = peerName;
-      document.getElementById('call-avatar').textContent = peerName.substring(0,2).toUpperCase();
-      document.getElementById('call-status').textContent = 'Connecting...';
-      document.getElementById('video-call-modal').classList.add('show');
-
-      createPeerConnection();
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(offer.sdp));
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-      sendSignal('answer', answer);
-      window._pendingOffer = null;
-    }
-
-    function declineIncomingCall() {
-      document.getElementById('incoming-call-banner').classList.remove('show');
-      const offer = window._pendingOffer;
-      if (offer) sendSignal('hangup', {});
-      window._pendingOffer = null;
-    }
-
-    function endVideoCall() {
-      if (isCallActive && currentUser) sendSignal('hangup', {});
-      isCallActive = false;
-      document.getElementById('video-call-modal').classList.remove('show');
-      if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-      if (peerConnection) { peerConnection.close(); peerConnection = null; }
-      document.getElementById('local-video').srcObject = null;
-      document.getElementById('remote-video').srcObject = null;
-      isMuted = false; isCameraOff = false;
-      document.getElementById('mute-icon-on').classList.remove('hidden');
-      document.getElementById('mute-icon-off').classList.add('hidden');
-      document.getElementById('camera-icon-on').classList.remove('hidden');
-      document.getElementById('camera-icon-off').classList.add('hidden');
-      document.getElementById('mute-btn').classList.remove('muted');
-      document.getElementById('camera-btn').classList.remove('off');
-    }
-
-    function toggleMute() {
-      if (!localStream) return;
-      isMuted = !isMuted;
-      localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
-      document.getElementById('mute-icon-on').classList.toggle('hidden', isMuted);
-      document.getElementById('mute-icon-off').classList.toggle('hidden', !isMuted);
-      document.getElementById('mute-btn').classList.toggle('muted', isMuted);
-    }
-
-    function toggleCamera() {
-      if (!localStream) return;
-      isCameraOff = !isCameraOff;
-      localStream.getVideoTracks().forEach(t => t.enabled = !isCameraOff);
-      document.getElementById('camera-icon-on').classList.toggle('hidden', isCameraOff);
-      document.getElementById('camera-icon-off').classList.toggle('hidden', !isCameraOff);
-      document.getElementById('camera-btn').classList.toggle('off', isCameraOff);
     }
   </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"87327fcf53be41f08c37151b64e8f4d9","r":1,"spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
