@@ -5,608 +5,163 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Chitchat Nepal · International</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
-  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* ===== INTERNATIONAL MODERN UI ===== */
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
-    * {
-      -webkit-tap-highlight-color: transparent;
-      -webkit-touch-callout: none;
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      height: 100%;
-      height: 100dvh;
-      overflow: hidden;
-      background: #F8FAFC;
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      color: #0F172A;
-    }
-
-    ::-webkit-scrollbar { width: 3px; height: 3px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 20px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
-
-    .ripple {
-      position: relative;
-      overflow: hidden;
-      transform: translate3d(0, 0, 0);
-    }
-    .ripple:after {
-      content: "";
-      display: block;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.35) 10%, transparent 10.01%);
-      background-repeat: no-repeat;
-      background-position: 50%;
-      transform: scale(10, 10);
-      opacity: 0;
-      transition: transform .35s, opacity .7s;
-    }
-    .ripple:active:after {
-      transform: scale(0, 0);
-      opacity: .35;
-      transition: 0s;
-    }
-    .ripple-dark:after {
-      background-image: radial-gradient(circle, rgba(15,23,42,0.12) 10%, transparent 10.01%);
-    }
-
-    .shadow-soft { box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03); }
-    .shadow-float { box-shadow: 0 8px 32px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.02); }
-    .shadow-pill { box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02); }
-
-    .bubble-me {
-      background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
-      border-radius: 20px 20px 4px 20px;
-      box-shadow: 0 2px 8px rgba(99,102,241,0.2);
-      color: #FFFFFF;
-    }
-    .bubble-other {
-      background: #FFFFFF;
-      border-radius: 20px 20px 20px 4px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-      border: 1px solid #F1F5F9;
-      color: #0F172A;
-    }
-
-    .transition-soft { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
-    .active-scale:active { transform: scale(0.96); }
-
-    .drawer-left { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
-    .drawer-right { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
-
-    .glass {
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-    }
-
-    input:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
-      border-color: #6366F1;
-    }
-
-    .lounge-pill {
-      background: #FFFFFF;
-      border: 1px solid #E2E8F0;
-      border-radius: 16px;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #0F172A;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-      width: 100%;
-    }
-    .lounge-pill:hover { border-color: #CBD5E1; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-    .lounge-pill .emoji { font-size: 16px; line-height: 1; }
-
-    .lounge-dropdown {
-      position: absolute;
-      top: calc(100% + 6px);
-      left: 0;
-      right: 0;
-      background: #FFFFFF;
-      border: 1px solid #E2E8F0;
-      border-radius: 20px;
-      padding: 6px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.04);
-      z-index: 50;
-      display: none;
-      transform-origin: top center;
-      animation: dropdownFade 0.18s ease-out;
-    }
-    .lounge-dropdown.show { display: block; }
-    @keyframes dropdownFade {
-      from { opacity: 0; transform: scale(0.96) translateY(-4px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    .lounge-option {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      font-size: 13px;
-      font-weight: 500;
-      color: #334155;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      width: 100%;
-      text-align: left;
-      border: none;
-      background: transparent;
-    }
-    .lounge-option:hover { background: #F8FAFC; }
-    .lounge-option.active { background: #EEF2FF; color: #4F46E5; font-weight: 600; }
-    .lounge-option .emoji { font-size: 18px; }
-
-    @keyframes messageIn {
-      from { opacity: 0; transform: translateY(6px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .message-in { animation: messageIn 0.25s ease-out; }
-
-    @keyframes pulseSoft {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-    .pulse-dot { animation: pulseSoft 2s infinite; }
-
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-    .notification-toast {
-      position: fixed;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-120%);
-      background: #FFFFFF;
-      border: 1px solid #E2E8F0;
-      border-radius: 18px;
-      padding: 12px 16px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.04);
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      max-width: 380px;
-      width: calc(100% - 32px);
-      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
-      opacity: 0;
-      pointer-events: none;
-      cursor: pointer;
-    }
-    .notification-toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .notification-toast .toast-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #6366F1, #4F46E5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      overflow: hidden;
-    }
-    .notification-toast .toast-icon img { width: 100%; height: 100%; object-fit: cover; }
-    .notification-toast .toast-content { flex: 1; min-width: 0; }
-    .notification-toast .toast-title { font-size: 13px; font-weight: 700; color: #0F172A; margin-bottom: 1px; }
-    .notification-toast .toast-text { font-size: 12px; color: #64748B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .notification-toast .toast-action {
-      font-size: 10px; font-weight: 700; color: #6366F1; background: #EEF2FF;
-      padding: 5px 10px; border-radius: 10px; flex-shrink: 0; text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .sound-toggle {
-      width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center;
-      justify-content: center; background: #FFFFFF; border: 1px solid #E2E8F0;
-      cursor: pointer; transition: all 0.2s ease; color: #64748B;
-      flex-shrink: 0;
-    }
-    .sound-toggle:hover { background: #F8FAFC; color: #6366F1; border-color: #C7D2FE; }
-    .sound-toggle.muted { color: #EF4444; border-color: #FECACA; background: #FEF2F2; }
-
-    .unread-badge {
-      display: inline-flex; align-items: center; justify-content: center;
-      min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px;
-      background: #6366F1; color: white; font-size: 10px; font-weight: 700;
-    }
-
-    .menu-notification-dot {
-      position: absolute;
-      top: -2px;
-      right: -2px;
-      width: 10px;
-      height: 10px;
-      background-color: #EF4444;
-      border-radius: 50%;
-      border: 2px solid #FFFFFF;
-      display: none;
-    }
-
-    .brand-icon {
-      width: 52px; height: 52px; border-radius: 18px; object-fit: cover;
-      box-shadow: 0 8px 24px rgba(99,102,241,0.25);
-    }
-    .channel-icon-img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-
-    .password-toggle {
-      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-      background: transparent; border: none; cursor: pointer; color: #94A3B8;
-      padding: 6px; display: flex; align-items: center; justify-content: center;
-      transition: color 0.2s ease; border-radius: 10px;
-    }
-    .password-toggle:hover { color: #6366F1; background: #EEF2FF; }
-
-    .auth-success {
-      background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534;
-      padding: 14px 16px; border-radius: 16px; font-size: 13px; font-weight: 500;
-      display: flex; align-items: center; gap: 10px; animation: slideDown 0.3s ease-out;
-    }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    body {
-      padding-top: env(safe-area-inset-top, 0px);
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-      padding-left: env(safe-area-inset-left, 0px);
-      padding-right: env(safe-area-inset-right, 0px);
-    }
-
-    .channel-chip {
-      background: #EEF2FF;
-      border-radius: 10px;
-      padding: 4px 10px;
-      font-size: 10px;
-      font-weight: 700;
-      color: #4F46E5;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    /* ===== PROFILE PICTURE ===== */
-    .avatar-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: inherit;
-    }
-    .avatar-initials {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      color: #FFFFFF;
-      border-radius: inherit;
-    }
-
-    /* ===== IMAGE MESSAGE ===== */
-    .message-image {
-      max-width: 240px;
-      max-height: 240px;
-      border-radius: 12px;
-      object-fit: cover;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .message-image:hover { transform: scale(1.02); }
-
-    /* ===== IMAGE VIEWER ===== */
-    .image-viewer {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.92);
-      z-index: 300;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      backdrop-filter: blur(8px);
-    }
-    .image-viewer.show { display: flex; }
-    .image-viewer img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      border-radius: 8px;
-    }
-    .image-viewer .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: white;
-      border: none;
-      backdrop-filter: blur(8px);
-    }
-
-    /* ===== VIDEO CALL MODAL ===== */
-    .video-call-modal {
-      position: fixed;
-      inset: 0;
-      background: #0F172A;
-      z-index: 300;
-      display: none;
-      flex-direction: column;
-    }
-    .video-call-modal.show { display: flex; }
-    .video-container {
-      flex: 1;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      background: #000;
-    }
-    .remote-video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      background: #1E293B;
-    }
-    .local-video {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 120px;
-      height: 160px;
-      border-radius: 16px;
-      object-fit: cover;
-      background: #1E293B;
-      border: 2px solid rgba(255,255,255,0.2);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    }
-    .video-controls {
-      position: absolute;
-      bottom: 30px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      padding: 0 20px;
-    }
-    .video-control-btn {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: white;
-    }
-    .video-control-btn:hover { transform: scale(1.08); }
-    .video-control-btn:active { transform: scale(0.95); }
-    .video-control-btn.end-call {
-      background: #EF4444;
-    }
-    .video-control-btn.mute-btn {
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(8px);
-    }
-    .video-control-btn.mute-btn.muted {
-      background: #EF4444;
-    }
-    .video-control-btn.camera-btn {
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(8px);
-    }
-    .video-control-btn.camera-btn.off {
-      background: #EF4444;
-    }
-    .video-caller-info {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: white;
-      z-index: 5;
-    }
-    .video-caller-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #6366F1, #4F46E5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 12px;
-      color: white;
-    }
-    .video-caller-name {
-      font-size: 14px;
-      font-weight: 600;
-    }
-    .video-caller-status {
-      font-size: 11px;
-      opacity: 0.7;
-    }
-
-    /* ===== PROFILE MODAL ===== */
-    .profile-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,0.5);
-      backdrop-filter: blur(4px);
-      z-index: 250;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .profile-modal.show { display: flex; }
-    .profile-card {
-      background: white;
-      border-radius: 28px;
-      max-width: 380px;
-      width: 100%;
-      padding: 32px;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.15);
-      animation: modalIn 0.3s ease-out;
-    }
-    @keyframes modalIn {
-      from { opacity: 0; transform: scale(0.94) translateY(10px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    .profile-avatar-large {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      margin: 0 auto 16px;
-      position: relative;
-      cursor: pointer;
-      overflow: hidden;
-      background: linear-gradient(135deg, #6366F1, #4F46E5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 24px rgba(99,102,241,0.3);
-    }
-    .profile-avatar-large .avatar-initials {
-      font-size: 32px;
-    }
-    .profile-avatar-large .avatar-img {
-      border-radius: 50%;
-    }
-    .profile-avatar-large .edit-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      color: white;
-      font-size: 11px;
-      font-weight: 600;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .profile-avatar-large:hover .edit-overlay { opacity: 1; }
-
-    /* ===== VIDEO CALL INCOMING ===== */
-    .incoming-call-banner {
-      position: fixed;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-120%);
-      background: #FFFFFF;
-      border: 1px solid #E2E8F0;
-      border-radius: 18px;
-      padding: 14px 18px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.12);
-      z-index: 210;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      max-width: 380px;
-      width: calc(100% - 32px);
-      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-      opacity: 0;
-      pointer-events: none;
-    }
-    .incoming-call-banner.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .incoming-call-banner .call-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #6366F1, #4F46E5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      flex-shrink: 0;
-      animation: ringPulse 1.5s infinite;
-    }
-    @keyframes ringPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.4); }
-      50% { box-shadow: 0 0 0 12px rgba(99,102,241,0); }
-    }
-    .incoming-call-banner .call-info { flex: 1; min-width: 0; }
-    .incoming-call-banner .call-name { font-size: 13px; font-weight: 700; color: #0F172A; }
-    .incoming-call-banner .call-text { font-size: 11px; color: #64748B; }
-    .incoming-call-banner .call-actions { display: flex; gap: 8px; flex-shrink: 0; }
-    .incoming-call-banner .call-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .incoming-call-banner .call-btn.accept { background: #22C55E; color: white; }
-    .incoming-call-banner .call-btn.decline { background: #EF4444; color: white; }
-    .incoming-call-banner .call-btn:hover { transform: scale(1.1); }
-
-    /* ===== FILE INPUT HIDDEN ===== */
-    .hidden-input { display: none; }
-
-    /* ===== UPLOAD PROGRESS ===== */
-    .upload-progress {
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      height: 3px;
-      background: #6366F1;
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
+    * { -webkit-tap-highlight-color: transparent; margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; height:100dvh; overflow:hidden; background:#F8FAFC; font-family:'Plus Jakarta Sans',system-ui,sans-serif; -webkit-font-smoothing:antialiased; color:#0F172A; }
+    ::-webkit-scrollbar { width:3px; height:3px; } ::-webkit-scrollbar-thumb { background:#CBD5E1; border-radius:20px; }
+    .ripple { position:relative; overflow:hidden; transform:translate3d(0,0,0); }
+    .ripple:after { content:""; display:block; position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none; background-image:radial-gradient(circle, rgba(255,255,255,0.35) 10%, transparent 10.01%); background-repeat:no-repeat; background-position:50%; transform:scale(10,10); opacity:0; transition:transform .35s, opacity .7s; }
+    .ripple:active:after { transform:scale(0,0); opacity:.35; transition:0s; }
+    .ripple-dark:after { background-image:radial-gradient(circle, rgba(15,23,42,0.12) 10%, transparent 10.01%); }
+    .shadow-soft { box-shadow:0 1px 2px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03); }
+    .shadow-float { box-shadow:0 8px 32px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.02); }
+    .shadow-pill { box-shadow:0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02); }
+    .bubble-me { background:linear-gradient(135deg,#6366F1 0%,#4F46E5 100%); border-radius:20px 20px 4px 20px; box-shadow:0 2px 8px rgba(99,102,241,0.2); color:#FFF; }
+    .bubble-other { background:#FFF; border-radius:20px 20px 20px 4px; box-shadow:0 1px 3px rgba(0,0,0,0.03); border:1px solid #F1F5F9; color:#0F172A; }
+    .transition-soft { transition:all .25s cubic-bezier(.4,0,.2,1); }
+    .drawer-left { transition:transform .35s cubic-bezier(.22,1,.36,1); }
+    .drawer-right { transition:transform .35s cubic-bezier(.22,1,.36,1); }
+    .glass { background:rgba(255,255,255,0.85); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); }
+    input:focus { outline:none; box-shadow:0 0 0 3px rgba(99,102,241,0.12); border-color:#6366F1; }
+    .lounge-pill { background:#FFF; border:1px solid #E2E8F0; border-radius:16px; padding:10px 14px; font-size:13px; font-weight:600; color:#0F172A; display:flex; align-items:center; justify-content:space-between; gap:8px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.02); width:100%; }
+    .lounge-dropdown { position:absolute; top:calc(100% + 6px); left:0; right:0; background:#FFF; border:1px solid #E2E8F0; border-radius:20px; padding:6px; box-shadow:0 16px 48px rgba(0,0,0,0.1); z-index:50; display:none; }
+    .lounge-dropdown.show { display:block; }
+    .lounge-option { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:14px; font-size:13px; font-weight:500; color:#334155; cursor:pointer; width:100%; text-align:left; border:none; background:transparent; }
+    .lounge-option:hover { background:#F8FAFC; }
+    .lounge-option.active { background:#EEF2FF; color:#4F46E5; font-weight:600; }
+    .lounge-option .emoji { font-size:18px; }
+    @keyframes messageIn { from { opacity:0; transform:translateY(6px) scale(0.98);} to { opacity:1; transform:translateY(0) scale(1);} }
+    .message-in { animation:messageIn .25s ease-out; }
+    @keyframes pulseSoft { 0%,100% { opacity:1;} 50% { opacity:0.4;} }
+    .pulse-dot { animation:pulseSoft 2s infinite; }
+    .no-scrollbar::-webkit-scrollbar { display:none; } .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+    .notification-toast { position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-120%); background:#FFF; border:1px solid #E2E8F0; border-radius:18px; padding:12px 16px; box-shadow:0 16px 48px rgba(0,0,0,0.1); z-index:400; display:flex; align-items:center; gap:10px; max-width:380px; width:calc(100% - 32px); transition:transform .4s cubic-bezier(.22,1,.36,1), opacity .3s ease; opacity:0; pointer-events:none; cursor:pointer; }
+    .notification-toast.show { transform:translateX(-50%) translateY(0); opacity:1; pointer-events:auto; }
+    .notification-toast .toast-icon { width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,#6366F1,#4F46E5); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; }
+    .notification-toast .toast-icon img { width:100%; height:100%; object-fit:cover; }
+    .notification-toast .toast-content { flex:1; min-width:0; }
+    .notification-toast .toast-title { font-size:13px; font-weight:700; color:#0F172A; margin-bottom:1px; }
+    .notification-toast .toast-text { font-size:12px; color:#64748B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .notification-toast .toast-action { font-size:10px; font-weight:700; color:#6366F1; background:#EEF2FF; padding:5px 10px; border-radius:10px; flex-shrink:0; text-transform:uppercase; }
+    .sound-toggle { width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:#FFF; border:1px solid #E2E8F0; cursor:pointer; color:#64748B; flex-shrink:0; }
+    .sound-toggle:hover { background:#F8FAFC; color:#6366F1; border-color:#C7D2FE; }
+    .sound-toggle.muted { color:#EF4444; border-color:#FECACA; background:#FEF2F2; }
+    .unread-badge { display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; padding:0 6px; border-radius:10px; background:#6366F1; color:white; font-size:10px; font-weight:700; }
+    .menu-notification-dot { position:absolute; top:-2px; right:-2px; width:10px; height:10px; background-color:#EF4444; border-radius:50%; border:2px solid #FFF; display:none; }
+    .brand-icon { width:52px; height:52px; border-radius:18px; object-fit:cover; box-shadow:0 8px 24px rgba(99,102,241,0.25); }
+    .channel-icon-img { width:100%; height:100%; object-fit:cover; border-radius:12px; }
+    .password-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:transparent; border:none; cursor:pointer; color:#94A3B8; padding:6px; display:flex; align-items:center; justify-content:center; border-radius:10px; }
+    .password-toggle:hover { color:#6366F1; background:#EEF2FF; }
+    .auth-success { background:#F0FDF4; border:1px solid #BBF7D0; color:#166534; padding:14px 16px; border-radius:16px; font-size:13px; font-weight:500; display:flex; align-items:center; gap:10px; }
+    .channel-chip { background:#EEF2FF; border-radius:10px; padding:4px 10px; font-size:10px; font-weight:700; color:#4F46E5; text-transform:uppercase; letter-spacing:.3px; }
+    .avatar-img { width:100%; height:100%; object-fit:cover; border-radius:inherit; }
+    .avatar-initials { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:700; color:#FFF; border-radius:inherit; }
+    .message-image { max-width:240px; max-height:240px; border-radius:12px; object-fit:cover; cursor:pointer; }
+    .image-viewer { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:500; display:none; align-items:center; justify-content:center; padding:20px; }
+    .image-viewer.show { display:flex; }
+    .image-viewer img { max-width:100%; max-height:100%; object-fit:contain; border-radius:8px; }
+    .image-viewer .close-btn { position:absolute; top:20px; right:20px; width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; cursor:pointer; color:white; border:none; }
+    .video-call-modal { position:fixed; inset:0; background:#0F172A; z-index:500; display:none; flex-direction:column; }
+    .video-call-modal.show { display:flex; }
+    .video-container { flex:1; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#000; }
+    .remote-video { width:100%; height:100%; object-fit:cover; background:#1E293B; }
+    .local-video { position:absolute; top:16px; right:16px; width:120px; height:160px; border-radius:16px; object-fit:cover; background:#1E293B; border:2px solid rgba(255,255,255,0.2); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+    .video-controls { position:absolute; bottom:30px; left:0; right:0; display:flex; justify-content:center; gap:16px; padding:0 20px; }
+    .video-control-btn { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; color:white; }
+    .video-control-btn.end-call { background:#EF4444; }
+    .video-control-btn.mute-btn, .video-control-btn.camera-btn { background:rgba(255,255,255,0.15); backdrop-filter:blur(8px); }
+    .video-control-btn.mute-btn.muted, .video-control-btn.camera-btn.off { background:#EF4444; }
+    .video-caller-info { position:absolute; top:20px; left:20px; display:flex; align-items:center; gap:10px; color:white; z-index:5; }
+    .video-caller-avatar { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#6366F1,#4F46E5); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; }
+    .video-caller-name { font-size:14px; font-weight:600; }
+    .video-caller-status { font-size:11px; opacity:.7; }
+    .profile-modal { position:fixed; inset:0; background:rgba(15,23,42,0.5); backdrop-filter:blur(4px); z-index:450; display:none; align-items:center; justify-content:center; padding:20px; }
+    .profile-modal.show { display:flex; }
+    .profile-card { background:#FFF; border-radius:28px; max-width:380px; width:100%; padding:32px; box-shadow:0 24px 64px rgba(0,0,0,0.15); }
+    .profile-avatar-large { width:100px; height:100px; border-radius:50%; margin:0 auto 16px; position:relative; cursor:pointer; overflow:hidden; background:linear-gradient(135deg,#6366F1,#4F46E5); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(99,102,241,0.3); }
+    .profile-avatar-large .avatar-initials { font-size:32px; }
+    .profile-avatar-large .avatar-img { border-radius:50%; }
+    .profile-avatar-large .edit-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .2s; color:white; font-size:11px; font-weight:600; flex-direction:column; gap:4px; }
+    .profile-avatar-large:hover .edit-overlay { opacity:1; }
+    .incoming-call-banner { position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-120%); background:#FFF; border:1px solid #E2E8F0; border-radius:18px; padding:14px 18px; box-shadow:0 16px 48px rgba(0,0,0,0.12); z-index:410; display:flex; align-items:center; gap:12px; max-width:380px; width:calc(100% - 32px); transition:transform .4s cubic-bezier(.22,1,.36,1), opacity .3s; opacity:0; pointer-events:none; }
+    .incoming-call-banner.show { transform:translateX(-50%) translateY(0); opacity:1; pointer-events:auto; }
+    .incoming-call-banner .call-icon { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#6366F1,#4F46E5); display:flex; align-items:center; justify-content:center; color:white; flex-shrink:0; animation:ringPulse 1.5s infinite; }
+    @keyframes ringPulse { 0%,100% { box-shadow:0 0 0 0 rgba(99,102,241,0.4);} 50% { box-shadow:0 0 0 12px rgba(99,102,241,0);} }
+    .incoming-call-banner .call-info { flex:1; min-width:0; }
+    .incoming-call-banner .call-name { font-size:13px; font-weight:700; color:#0F172A; }
+    .incoming-call-banner .call-text { font-size:11px; color:#64748B; }
+    .incoming-call-banner .call-actions { display:flex; gap:8px; flex-shrink:0; }
+    .incoming-call-banner .call-btn { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; }
+    .incoming-call-banner .call-btn.accept { background:#22C55E; color:white; }
+    .incoming-call-banner .call-btn.decline { background:#EF4444; color:white; }
+    .hidden-input { display:none; }
+    .upload-progress { position:absolute; bottom:0; left:0; height:3px; background:#FFF; border-radius:2px; transition:width .3s ease; }
+    .setup-panel { position:fixed; inset:0; background:rgba(15,23,42,0.6); backdrop-filter:blur(6px); z-index:600; display:none; align-items:center; justify-content:center; padding:20px; overflow-y:auto; }
+    .setup-panel.show { display:flex; }
+    .setup-card { background:#FFF; border-radius:24px; max-width:560px; width:100%; padding:28px; box-shadow:0 24px 64px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; }
+    .setup-card h3 { font-size:20px; font-weight:800; color:#0F172A; margin-bottom:8px; }
+    .setup-card p { font-size:13px; color:#64748B; margin-bottom:16px; line-height:1.6; }
+    .setup-card h4 { font-size:13px; font-weight:700; color:#0F172A; margin:16px 0 6px; }
+    .setup-card pre { background:#0F172A; color:#E2E8F0; padding:14px; border-radius:12px; font-size:11px; overflow-x:auto; line-height:1.5; margin-bottom:8px; font-family:monospace; }
+    .setup-card code { background:#F1F5F9; padding:2px 6px; border-radius:6px; font-size:11px; color:#4F46E5; }
+    .setup-card ul { list-style:disc; padding-left:20px; font-size:12px; color:#475569; line-height:1.8; }
+    .setup-card .btn { background:linear-gradient(135deg,#6366F1,#4F46E5); color:white; font-weight:600; padding:12px; border-radius:14px; width:100%; border:none; cursor:pointer; font-size:13px; margin-top:16px; }
   </style>
 </head>
 <body class="h-[100dvh] w-screen flex flex-col overflow-hidden select-none">
+
+  <!-- ===== SETUP INSTRUCTIONS PANEL ===== -->
+  <div id="setup-panel" class="setup-panel">
+    <div class="setup-card">
+      <h3>⚠️ Setup Required</h3>
+      <p>Images and video calls need a few things configured in your Supabase project. Follow these steps <strong>once</strong>, then reload.</p>
+
+      <h4>1. Add <code>image_url</code> column to <code>messages</code></h4>
+      <pre>ALTER TABLE messages ADD COLUMN image_url TEXT;</pre>
+
+      <h4>2. Create a storage bucket named <code>chat-images</code></h4>
+      <p style="margin-bottom:8px;">In Supabase Dashboard → Storage → New bucket → name it <code>chat-images</code> → toggle <strong>Public bucket</strong> ON.</p>
+
+      <h4>3. Add storage policies (SQL editor)</h4>
+      <pre>-- Allow anyone to read images
+CREATE POLICY "Public read" ON storage.objects
+  FOR SELECT USING (bucket_id = 'chat-images');
+
+-- Allow authenticated users to upload
+CREATE POLICY "Auth upload" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'chat-images' AND auth.role() = 'authenticated');
+
+-- Allow users to update their own files
+CREATE POLICY "Auth update" ON storage.objects
+  FOR UPDATE USING (bucket_id = 'chat-images' AND auth.role() = 'authenticated');</pre>
+
+      <h4>4. Enable Realtime for video signaling</h4>
+      <p>In Supabase Dashboard → Database → Replication → enable replication for a new table called <code>call_signals</code>:</p>
+      <pre>CREATE TABLE call_signals (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  channel_id TEXT NOT NULL,
+  sender_id UUID NOT NULL,
+  signal_type TEXT NOT NULL,  -- 'offer' | 'answer' | 'ice' | 'hangup'
+  payload JSONB,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+ALTER TABLE call_signals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "read all signals" ON call_signals FOR SELECT USING (true);
+CREATE POLICY "insert own signals" ON call_signals FOR INSERT WITH CHECK (auth.uid() = sender_id);
+-- Enable realtime on this table in Dashboard → Database → Replication</pre>
+
+      <h4>5. Enable video call signaling (optional but needed for real calls)</h4>
+      <ul>
+        <li>Camera/mic requires <strong>HTTPS</strong> (or localhost).</li>
+        <li>Both users must be in the same DM conversation.</li>
+      </ul>
+
+      <button class="btn" onclick="document.getElementById('setup-panel').classList.remove('show')">Got it, continue</button>
+    </div>
+  </div>
 
   <!-- ===== TOAST ===== -->
   <div id="notification-toast" class="notification-toast" onclick="handleToastClick()">
@@ -682,8 +237,6 @@
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
-
-      <!-- Avatar -->
       <div class="profile-avatar-large" id="profile-avatar" onclick="document.getElementById('profile-pic-input').click()">
         <div class="avatar-initials" id="profile-avatar-initials">U</div>
         <img id="profile-avatar-img" class="avatar-img hidden" src="" alt="Profile">
@@ -693,16 +246,11 @@
         </div>
       </div>
       <input type="file" id="profile-pic-input" class="hidden-input" accept="image/*" onchange="uploadProfilePicture(event)">
-
-      <!-- Username -->
       <div class="space-y-1.5 mb-5">
         <label class="text-[11px] font-bold text-[#64748B] uppercase tracking-wider block ml-1">Display Name</label>
-        <input id="profile-name-input" type="text" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-3.5 text-sm text-[#0F172A] transition-soft focus:bg-white" placeholder="Your name">
+        <input id="profile-name-input" type="text" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-3.5 text-sm text-[#0F172A] focus:bg-white" placeholder="Your name">
       </div>
-
-      <!-- Save -->
-      <button onclick="saveProfileName()" class="ripple w-full bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white font-semibold py-3.5 rounded-2xl transition-soft shadow-lg text-sm">Save Changes</button>
-
+      <button onclick="saveProfileName()" class="ripple w-full bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white font-semibold py-3.5 rounded-2xl text-sm">Save Changes</button>
       <div class="mt-4 p-3 bg-[#F8FAFC] rounded-xl">
         <div class="flex items-center gap-2 text-[11px] text-[#64748B]">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -722,21 +270,19 @@
           <p class="text-xs font-medium text-[#64748B]">Connect · Chat · Belong</p>
         </div>
       </div>
-
       <div id="auth-success" class="auth-success hidden">
         <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <span>Registration successful! Please log in.</span>
       </div>
-
       <div class="space-y-4">
         <div class="space-y-1.5">
           <label class="text-[11px] font-bold text-[#64748B] uppercase tracking-wider block ml-1">Username or Email</label>
-          <input id="auth-email" type="text" placeholder="e.g. ayushacharya" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-4 text-sm text-[#0F172A] transition-soft focus:bg-white placeholder:text-[#94A3B8]">
+          <input id="auth-email" type="text" placeholder="e.g. ayushacharya" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-4 text-sm text-[#0F172A] focus:bg-white placeholder:text-[#94A3B8]">
         </div>
         <div class="space-y-1.5">
           <label class="text-[11px] font-bold text-[#64748B] uppercase tracking-wider block ml-1">Password</label>
           <div class="relative">
-            <input id="auth-password" type="password" placeholder="••••••••" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-4 pr-12 text-sm text-[#0F172A] transition-soft focus:bg-white placeholder:text-[#94A3B8]">
+            <input id="auth-password" type="password" placeholder="••••••••" onkeydown="handleAuthKeydown(event)" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-4 pr-12 text-sm text-[#0F172A] focus:bg-white placeholder:text-[#94A3B8]">
             <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
               <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               <svg id="eye-off-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
@@ -744,18 +290,12 @@
           </div>
         </div>
       </div>
-
       <div class="flex gap-3 pt-1">
-        <button onclick="handleLogin()" class="ripple flex-1 bg-gradient-to-r from-[#6366F1] to-[#4F46E5] hover:brightness-105 active:scale-[0.97] text-white font-semibold py-4 rounded-2xl transition-soft shadow-lg text-sm">Log In</button>
-        <button onclick="handleSignup()" class="ripple ripple-dark flex-1 bg-white hover:bg-[#F8FAFC] active:scale-[0.97] text-[#0F172A] font-semibold py-4 rounded-2xl transition-soft border border-[#E2E8F0] text-sm">Sign Up</button>
+        <button onclick="handleLogin()" class="ripple flex-1 bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white font-semibold py-4 rounded-2xl text-sm">Log In</button>
+        <button onclick="handleSignup()" class="ripple ripple-dark flex-1 bg-white text-[#0F172A] font-semibold py-4 rounded-2xl border border-[#E2E8F0] text-sm">Sign Up</button>
       </div>
-
       <div class="relative flex py-1 items-center"><div class="flex-grow border-t border-[#E2E8F0]"></div><span class="flex-shrink mx-4 text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider">or</span><div class="flex-grow border-t border-[#E2E8F0]"></div></div>
-
-      <button onclick="openGuestModal()" class="ripple ripple-dark w-full bg-[#F8FAFC] hover:bg-[#F1F5F9] active:scale-[0.97] text-[#6366F1] border border-[#E2E8F0] font-semibold py-4 rounded-2xl transition-soft text-sm flex items-center justify-center gap-3">
-        <span class="text-lg">⚡</span> Quick Chat as Guest
-      </button>
-
+      <button onclick="openGuestModal()" class="ripple ripple-dark w-full bg-[#F8FAFC] text-[#6366F1] border border-[#E2E8F0] font-semibold py-4 rounded-2xl text-sm flex items-center justify-center gap-3"><span class="text-lg">⚡</span> Quick Chat as Guest</button>
       <p id="auth-error" class="text-xs text-red-500 text-center hidden font-medium"></p>
     </div>
   </div>
@@ -767,12 +307,10 @@
         <h3 class="text-xl font-bold text-[#0F172A]">Choose guest username</h3>
         <p class="text-xs text-[#64748B]">Enter a display name to join instantly.</p>
       </div>
-      <div>
-        <input id="guest-username-input" type="text" placeholder="e.g. chitchatnpuser_123" onkeydown="if(event.key==='Enter') confirmGuestLogin()" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-4 text-sm text-[#0F172A] focus:bg-white transition-soft placeholder:text-[#94A3B8]">
-      </div>
+      <div><input id="guest-username-input" type="text" placeholder="e.g. chitchatnpuser_123" onkeydown="if(event.key==='Enter') confirmGuestLogin()" class="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl px-4 py-4 text-sm text-[#0F172A] focus:bg-white placeholder:text-[#94A3B8]"></div>
       <div class="flex gap-3 pt-1">
-        <button onclick="closeGuestModal()" class="ripple ripple-dark flex-1 bg-white hover:bg-[#F8FAFC] text-[#64748B] font-semibold py-3.5 rounded-2xl transition-soft border border-[#E2E8F0] text-xs">Cancel</button>
-        <button onclick="confirmGuestLogin()" class="ripple flex-1 bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white font-semibold py-3.5 rounded-2xl transition-soft shadow-lg text-xs">Join Chat</button>
+        <button onclick="closeGuestModal()" class="ripple ripple-dark flex-1 bg-white text-[#64748B] font-semibold py-3.5 rounded-2xl border border-[#E2E8F0] text-xs">Cancel</button>
+        <button onclick="confirmGuestLogin()" class="ripple flex-1 bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white font-semibold py-3.5 rounded-2xl text-xs">Join Chat</button>
       </div>
     </div>
   </div>
@@ -780,7 +318,7 @@
   <!-- ===== MAIN APP ===== -->
   <div id="chat-screen" class="hidden flex-1 flex h-[100dvh] w-full overflow-hidden">
 
-    <!-- ===== LEFT SIDEBAR ===== -->
+    <!-- LEFT SIDEBAR -->
     <aside id="sidebar-panel" class="fixed md:static inset-y-0 left-0 z-40 w-[300px] bg-white border-r border-[#E2E8F0] flex flex-col h-full shrink-0 drawer-left transform -translate-x-full md:translate-x-0">
       <div class="p-5 border-b border-[#F1F5F9] flex justify-between items-center">
         <div class="flex items-center gap-3">
@@ -793,37 +331,30 @@
           </div>
           <div>
             <h4 class="text-sm font-bold text-[#0F172A]" id="user-display">User</h4>
-            <p class="text-[10px] text-[#22C55E] font-semibold flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#22C55E] pulse-dot"></span> Online
-            </p>
+            <p class="text-[10px] text-[#22C55E] font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#22C55E] pulse-dot"></span> Online</p>
           </div>
         </div>
-        <button onclick="closeSidebarOnMobile()" class="md:hidden text-[#64748B] p-2 rounded-xl hover:bg-[#F8FAFC]">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-        <button onclick="handleLogout()" class="text-[11px] bg-white hover:bg-[#F8FAFC] text-[#64748B] px-3.5 py-2 rounded-xl border border-[#E2E8F0] hidden md:block font-semibold">Logout</button>
+        <button onclick="closeSidebarOnMobile()" class="md:hidden text-[#64748B] p-2 rounded-xl hover:bg-[#F8FAFC]"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        <button onclick="handleLogout()" class="text-[11px] bg-white text-[#64748B] px-3.5 py-2 rounded-xl border border-[#E2E8F0] hidden md:block font-semibold">Logout</button>
       </div>
-
       <div class="flex-1 overflow-y-auto">
         <div class="p-4 pb-2 relative" id="lounge-selector-wrapper">
           <p class="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider px-1 mb-2">Public Lounges</p>
           <button id="lounge-pill" class="lounge-pill ripple ripple-dark" onclick="toggleLoungeDropdown(event)">
             <span class="flex items-center gap-2.5"><span class="emoji">💬</span><span id="lounge-pill-label">#Chautari-Lounge</span></span>
-            <svg class="w-4 h-4 text-[#94A3B8] transition-transform" id="lounge-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+            <svg class="w-4 h-4 text-[#94A3B8]" id="lounge-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div id="lounge-dropdown" class="lounge-dropdown">
-            <button class="lounge-option ripple ripple-dark active" data-channel="Chautari-Lounge" onclick="selectLounge('Chautari-Lounge', '💬', 'Chautari-Lounge')"><span class="emoji">💬</span><div><div>#Chautari-Lounge</div></div></button>
-            <button class="lounge-option ripple ripple-dark" data-channel="Tech-Nepal" onclick="selectLounge('Tech-Nepal', '💻', 'Tech-Nepal')"><span class="emoji">💻</span><div><div>#Tech-Nepal</div></div></button>
-            <button class="lounge-option ripple ripple-dark" data-channel="Gaff-Saff" onclick="selectLounge('Gaff-Saff', '☕', 'Gaff-Saff')"><span class="emoji">☕</span><div><div>#Gaff-Saff</div></div></button>
+            <button class="lounge-option ripple ripple-dark active" data-channel="Chautari-Lounge" onclick="selectLounge('Chautari-Lounge', '💬', 'Chautari-Lounge')"><span class="emoji">💬</span><div>#Chautari-Lounge</div></button>
+            <button class="lounge-option ripple ripple-dark" data-channel="Tech-Nepal" onclick="selectLounge('Tech-Nepal', '💻', 'Tech-Nepal')"><span class="emoji">💻</span><div>#Tech-Nepal</div></button>
+            <button class="lounge-option ripple ripple-dark" data-channel="Gaff-Saff" onclick="selectLounge('Gaff-Saff', '☕', 'Gaff-Saff')"><span class="emoji">☕</span><div>#Gaff-Saff</div></button>
           </div>
         </div>
-
         <div class="p-4 pt-2 space-y-1">
           <p class="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider px-1 mb-2">Direct Messages</p>
           <div id="users-sidebar-list" class="space-y-0.5"></div>
         </div>
       </div>
-
       <div class="p-4 border-t border-[#F1F5F9]">
         <div class="flex items-center gap-2 text-[10px] text-[#94A3B8]">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
@@ -834,16 +365,14 @@
 
     <div id="sidebar-backdrop" class="fixed inset-0 bg-black/30 z-30 hidden md:hidden" onclick="closeSidebarOnMobile()"></div>
 
-    <!-- ===== MAIN CHAT ===== -->
+    <!-- MAIN CHAT -->
     <main id="chat-panel" class="flex flex-1 flex-col justify-between bg-[#F8FAFC] h-full w-full relative overflow-hidden">
-
       <div class="glass border-b border-[#E2E8F0] px-3 md:px-5 py-3 flex justify-between items-center shrink-0 z-20">
         <div class="flex items-center gap-2.5 md:gap-3.5 min-w-0">
           <button onclick="openSidebarOnMobile()" class="md:hidden text-[#0F172A] p-2 -ml-1 rounded-xl hover:bg-[#F1F5F9] relative">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             <span id="menu-notification-dot" class="menu-notification-dot"></span>
           </button>
-
           <div class="w-10 h-10 rounded-xl bg-[#EEF2FF] flex items-center justify-center shrink-0 overflow-hidden" id="channel-icon">
             <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" class="channel-icon-img">
           </div>
@@ -855,9 +384,7 @@
             <p class="text-[9px] md:text-[10px] text-[#64748B] truncate" id="channel-status">Public community chat</p>
           </div>
         </div>
-
         <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
-          <!-- Video call button -->
           <button id="video-call-btn" onclick="startVideoCall()" class="sound-toggle" title="Video call">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
           </button>
@@ -870,9 +397,7 @@
             <strong id="active-count-mobile" class="text-[#6366F1]">1</strong>
           </button>
           <button onclick="toggleMobileDirectory()" class="hidden md:flex text-xs bg-white border border-[#E2E8F0] px-4 py-2 rounded-xl items-center gap-2 font-semibold shadow-pill">
-            <span class="w-2 h-2 rounded-full bg-[#22C55E] pulse-dot"></span>
-            <span class="text-[#64748B]">Online</span>
-            <strong id="active-count" class="text-[#6366F1]">1</strong>
+            <span class="w-2 h-2 rounded-full bg-[#22C55E] pulse-dot"></span><span class="text-[#64748B]">Online</span><strong id="active-count" class="text-[#6366F1]">1</strong>
           </button>
         </div>
       </div>
@@ -885,31 +410,24 @@
           <button onclick="sendQuickMessage('Namaste 🙏')" class="ripple ripple-dark px-3.5 py-1.5 bg-white border border-[#E2E8F0] rounded-full text-xs shrink-0 font-medium text-[#334155] shadow-pill">Namaste 🙏</button>
           <button onclick="sendQuickMessage('Hello')" class="ripple ripple-dark px-3.5 py-1.5 bg-white border border-[#E2E8F0] rounded-full text-xs shrink-0 font-medium text-[#334155] shadow-pill">Hello</button>
           <button onclick="sendQuickMessage('Hi')" class="ripple ripple-dark px-3.5 py-1.5 bg-white border border-[#E2E8F0] rounded-full text-xs shrink-0 font-medium text-[#334155] shadow-pill">Hi</button>
-          <button onclick="sendQuickMessage('How are you?')" class="ripple ripple-dark px-3.5 py-1.5 bg-white border border-[#E2E8F0] rounded-full text-xs shrink-0 font-medium text-[#334155] shadow-pill">How are you?</button>
         </div>
-
         <form onsubmit="handleSendMessage(event)" class="p-2.5 md:p-4 flex items-center gap-2">
-          <!-- Image upload button -->
-          <button type="button" onclick="document.getElementById('image-input').click()" class="ripple ripple-dark w-10 h-10 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-center shrink-0 text-[#64748B] hover:text-[#6366F1] hover:border-[#C7D2FE] transition-soft shadow-pill" title="Send image">
+          <button type="button" onclick="document.getElementById('image-input').click()" class="ripple ripple-dark w-10 h-10 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-center shrink-0 text-[#64748B] hover:text-[#6366F1] shadow-pill" title="Send image">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           </button>
           <input type="file" id="image-input" class="hidden-input" accept="image/*" onchange="uploadImage(event)">
-
           <div class="flex-1 relative">
-            <input id="message-input" type="text" placeholder="Type a message..." class="w-full bg-white border border-[#E2E8F0] rounded-2xl px-4 py-3.5 text-sm transition-soft focus:bg-white placeholder:text-[#94A3B8] pr-12">
-            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#6366F1] transition-colors p-1" onclick="document.getElementById('message-input').focus()">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </button>
+            <input id="message-input" type="text" placeholder="Type a message..." class="w-full bg-white border border-[#E2E8F0] rounded-2xl px-4 py-3.5 text-sm focus:bg-white placeholder:text-[#94A3B8]">
           </div>
-          <button type="submit" class="ripple bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white px-5 md:px-7 py-3.5 rounded-2xl font-semibold text-sm shadow-lg active:scale-[0.97] transition-soft">
-            <svg class="w-5 h-5 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          <button type="submit" class="ripple bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white px-5 md:px-7 py-3.5 rounded-2xl font-semibold text-sm shadow-lg active:scale-[0.97]">
             <span class="hidden md:inline">Send</span>
+            <svg class="w-5 h-5 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
           </button>
         </form>
       </div>
     </main>
 
-    <!-- ===== RIGHT DIRECTORY ===== -->
+    <!-- RIGHT DIRECTORY -->
     <aside id="directory-drawer" class="fixed md:static inset-y-0 right-0 w-72 bg-white border-l border-[#E2E8F0] flex flex-col z-40 transform translate-x-full md:translate-x-0 drawer-right">
       <div class="p-5 border-b border-[#F1F5F9] flex justify-between items-center">
         <div>
@@ -919,12 +437,6 @@
         <button onclick="toggleMobileDirectory()" class="md:hidden text-[#64748B] font-bold p-2 rounded-xl hover:bg-[#F8FAFC]">✕</button>
       </div>
       <div class="p-3 flex-1 overflow-y-auto space-y-1.5" id="active-members-list"></div>
-      <div class="p-4 border-t border-[#F1F5F9]">
-        <div class="flex items-center gap-2 text-[10px] text-[#94A3B8]">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          <span>Community members</span>
-        </div>
-      </div>
     </aside>
     <div id="directory-backdrop" class="fixed inset-0 bg-black/30 z-30 hidden md:hidden" onclick="toggleMobileDirectory()"></div>
   </div>
@@ -944,20 +456,36 @@
     let currentChannel = 'Chautari-Lounge';
     let globalMessagesSub = null;
     let presenceChannel = null;
+    let signalChannel = null;
 
     let onlineUsersMap = new Map();
     let unreadCounts = new Map();
     let knownUserNames = new Map();
     let activeDMUsers = new Set();
-    let userAvatars = new Map(); // userId -> avatar URL
+    let userAvatars = new Map();
 
-    // ===== MEDIA STATE =====
+    // WebRTC state
     let localStream = null;
-    let remoteStream = null;
     let peerConnection = null;
     let isMuted = false;
     let isCameraOff = false;
-    let pendingCallChannel = null;
+    let isCallActive = false;
+    let callPeerId = null;
+
+    const ICE_SERVERS = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    };
+
+    // ===== SHOW SETUP PANEL ON FIRST LOAD =====
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!localStorage.getItem('chitchat-setup-dismissed')) {
+        document.getElementById('setup-panel').classList.add('show');
+        localStorage.setItem('chitchat-setup-dismissed', '1');
+      }
+    });
 
     // ===== AUTH =====
     function handleAuthKeydown(event) {
@@ -966,45 +494,33 @@
         if (document.getElementById('auth-email').value && document.getElementById('auth-password').value) handleLogin();
       }
     }
-
     function togglePasswordVisibility() {
       const input = document.getElementById('auth-password');
       const on = document.getElementById('eye-icon');
       const off = document.getElementById('eye-off-icon');
-      if (input.type === 'password') {
-        input.type = 'text'; on.classList.add('hidden'); off.classList.remove('hidden');
-      } else {
-        input.type = 'password'; on.classList.remove('hidden'); off.classList.add('hidden');
-      }
+      if (input.type === 'password') { input.type='text'; on.classList.add('hidden'); off.classList.remove('hidden'); }
+      else { input.type='password'; on.classList.remove('hidden'); off.classList.add('hidden'); }
     }
 
     // ===== SOUND =====
-    let audioContext = null;
-    let soundEnabled = true;
+    let audioContext = null, soundEnabled = true;
     function initAudioContext() {
       if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
       if (audioContext.state === 'suspended') audioContext.resume().catch(()=>{});
     }
     document.addEventListener('click', initAudioContext);
     document.addEventListener('touchstart', initAudioContext);
-
     function playNotificationSound() {
       if (!soundEnabled) return;
       try {
         initAudioContext();
         const t = audioContext.currentTime;
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, t);
-        osc.frequency.setValueAtTime(1174.66, t + 0.08);
-        gain.gain.setValueAtTime(0.1, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-        osc.connect(gain); gain.connect(audioContext.destination);
-        osc.start(t); osc.stop(t + 0.3);
-      } catch (e) {}
+        const osc = audioContext.createOscillator(), gain = audioContext.createGain();
+        osc.type = 'sine'; osc.frequency.setValueAtTime(880, t); osc.frequency.setValueAtTime(1174.66, t+0.08);
+        gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.001, t+0.25);
+        osc.connect(gain); gain.connect(audioContext.destination); osc.start(t); osc.stop(t+0.3);
+      } catch(e) {}
     }
-
     function toggleSound() {
       soundEnabled = !soundEnabled;
       document.getElementById('sound-icon-on').classList.toggle('hidden', !soundEnabled);
@@ -1013,9 +529,7 @@
     }
 
     // ===== TOAST =====
-    let toastTimer = null;
-    let toastTargetChannel = null;
-
+    let toastTimer = null, toastTargetChannel = null;
     function showNotificationToast(title, text, channelId) {
       if (!title || title === 'User' || title === 'Chat') title = 'New message';
       document.getElementById('toast-title').textContent = title;
@@ -1025,16 +539,13 @@
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => { document.getElementById('notification-toast').classList.remove('show'); }, 4000);
     }
-
     function handleToastClick() {
       if (!toastTargetChannel) return;
       const channelId = toastTargetChannel;
       document.getElementById('notification-toast').classList.remove('show');
       clearTimeout(toastTimer);
       toastTargetChannel = null;
-
       if (channelId === currentChannel) { showChatOnMobile(); loadMessages(); return; }
-
       if (channelId.startsWith('dm-')) {
         const parts = channelId.split('-');
         const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
@@ -1053,33 +564,22 @@
       const ids = [currentUser.id, recipientId].sort();
       const dmChannel = `dm-${ids[0]}-${ids[1]}`;
       currentChannel = dmChannel;
-
       let displayName = recipientName;
-      if (!displayName || displayName === 'User' || displayName === 'Chat') {
-          displayName = knownUserNames.get(recipientId) || 'Chat';
-      }
-
+      if (!displayName || displayName === 'User' || displayName === 'Chat') displayName = knownUserNames.get(recipientId) || 'Chat';
       document.getElementById('channel-name').textContent = `💬 @${displayName}`;
       document.getElementById('channel-status').textContent = 'Direct message';
       document.getElementById('channel-type').textContent = 'DM';
-
       document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#F1F5F9]'));
       const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
       if (activeBtn) activeBtn.classList.add('bg-[#F1F5F9]');
-
       if (!activeDMUsers.has(recipientId)) {
-         activeDMUsers.add(recipientId);
-         if (displayName !== 'Chat') knownUserNames.set(recipientId, displayName);
-         renderUI();
+        activeDMUsers.add(recipientId);
+        if (displayName !== 'Chat') knownUserNames.set(recipientId, displayName);
+        renderUI();
       }
-
-      closeSidebarOnMobile();
-      closeDirectoryOnMobile();
-      unreadCounts.delete(dmChannel);
-      updateUnreadBadges();
-
-      loadMessages();
-      showChatOnMobile();
+      closeSidebarOnMobile(); closeDirectoryOnMobile();
+      unreadCounts.delete(dmChannel); updateUnreadBadges();
+      loadMessages(); showChatOnMobile();
     }
 
     function showChatOnMobile() {
@@ -1090,35 +590,23 @@
         document.getElementById('directory-backdrop').classList.add('hidden');
       }
     }
-
     function formatEmail(input) { return input.includes('@') ? input : `${input.trim().toLowerCase()}@chitchat.np`; }
 
     async function ensureProfileExists(user, customName) {
       if (!user) return;
       currentDisplayName = customName || (user.email ? user.email.split('@')[0] : 'Guest');
-      const { data } = await db.from('profiles').select('avatar_url').eq('id', user.id).single();
-      if (data?.avatar_url) {
-        userAvatars.set(user.id, data.avatar_url);
-      }
+      try {
+        const { data } = await db.from('profiles').select('avatar_url').eq('id', user.id).single();
+        if (data?.avatar_url) userAvatars.set(user.id, data.avatar_url);
+      } catch(e) {}
       await db.from('profiles').upsert({ id: user.id, username: currentDisplayName, display_name: currentDisplayName, updated_at: new Date().toISOString() }, { onConflict: 'id' });
     }
 
-    function openSidebarOnMobile() {
-      document.getElementById('sidebar-panel').classList.remove('-translate-x-full');
-      document.getElementById('sidebar-backdrop').classList.remove('hidden');
-      document.getElementById('menu-notification-dot').style.display = 'none';
-    }
+    function openSidebarOnMobile() { document.getElementById('sidebar-panel').classList.remove('-translate-x-full'); document.getElementById('sidebar-backdrop').classList.remove('hidden'); document.getElementById('menu-notification-dot').style.display='none'; }
     function closeSidebarOnMobile() { document.getElementById('sidebar-panel').classList.add('-translate-x-full'); document.getElementById('sidebar-backdrop').classList.add('hidden'); }
-
-    function toggleMobileDirectory() {
-      const drawer = document.getElementById('directory-drawer');
-      const backdrop = document.getElementById('directory-backdrop');
-      drawer.classList.toggle('translate-x-full');
-      backdrop.classList.toggle('hidden');
-    }
+    function toggleMobileDirectory() { const d=document.getElementById('directory-drawer'), b=document.getElementById('directory-backdrop'); d.classList.toggle('translate-x-full'); b.classList.toggle('hidden'); }
     function closeDirectoryOnMobile() { document.getElementById('directory-drawer').classList.add('translate-x-full'); document.getElementById('directory-backdrop').classList.add('hidden'); }
 
-    // ===== LOUNGE =====
     function toggleLoungeDropdown(e) {
       e.stopPropagation();
       const dd = document.getElementById('lounge-dropdown');
@@ -1143,14 +631,12 @@
       closeSidebarOnMobile();
     }
 
-    // ===== GUEST =====
     function openGuestModal() {
       document.getElementById('guest-modal').classList.remove('hidden');
       document.getElementById('guest-username-input').value = GUEST_PREFIX + Math.floor(100 + Math.random() * 900);
       document.getElementById('guest-username-input').focus();
     }
     function closeGuestModal() { document.getElementById('guest-modal').classList.add('hidden'); }
-
     async function confirmGuestLogin() {
       const guestInput = document.getElementById('guest-username-input').value;
       if (!guestInput) return;
@@ -1162,28 +648,21 @@
       if (data?.user) { knownUserNames.set(data.user.id, guestName); await ensureProfileExists(data.user, guestName); initSession(data.user, guestName); }
     }
 
-    // ===== AUTH HANDLERS =====
     async function handleSignup() {
       const rawInput = document.getElementById('auth-email').value;
       const password = document.getElementById('auth-password').value;
-      const errorEl = document.getElementById('auth-error');
-      const successEl = document.getElementById('auth-success');
+      const errorEl = document.getElementById('auth-error'), successEl = document.getElementById('auth-success');
       if (!rawInput || !password) return;
       errorEl.classList.add('hidden'); successEl.classList.add('hidden');
       const { data, error } = await db.auth.signUp({ email: formatEmail(rawInput), password });
       if (error) { errorEl.textContent = error.message; errorEl.classList.remove('hidden'); return; }
-      if (data?.user) {
-        successEl.classList.remove('hidden');
-        document.getElementById('auth-password').value = '';
-        document.getElementById('auth-email').focus();
-      }
+      if (data?.user) { successEl.classList.remove('hidden'); document.getElementById('auth-password').value=''; document.getElementById('auth-email').focus(); }
     }
 
     async function handleLogin() {
       const rawInput = document.getElementById('auth-email').value;
       const password = document.getElementById('auth-password').value;
-      const errorEl = document.getElementById('auth-error');
-      const successEl = document.getElementById('auth-success');
+      const errorEl = document.getElementById('auth-error'), successEl = document.getElementById('auth-success');
       if (!rawInput || !password) return;
       errorEl.classList.add('hidden'); successEl.classList.add('hidden');
       const { data, error } = await db.auth.signInWithPassword({ email: formatEmail(rawInput), password });
@@ -1196,87 +675,55 @@
     async function handleLogout() {
       if (presenceChannel) presenceChannel.untrack();
       await db.auth.signOut();
-      currentUser = null; if (globalMessagesSub) db.removeChannel(globalMessagesSub);
+      currentUser = null;
+      if (globalMessagesSub) db.removeChannel(globalMessagesSub);
+      if (signalChannel) db.removeChannel(signalChannel);
       document.getElementById('auth-screen').classList.remove('hidden');
       document.getElementById('chat-screen').classList.add('hidden');
       closeSidebarOnMobile();
     }
 
-    // ===== SESSION =====
     async function initSession(user, fallbackName) {
       currentUser = user;
       currentDisplayName = fallbackName || 'User';
       knownUserNames.set(user.id, currentDisplayName);
       await ensureProfileExists(user, currentDisplayName);
-
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('chat-screen').classList.remove('hidden');
       document.getElementById('user-display').textContent = currentDisplayName;
-
-      // Load avatar
       const { data: profile } = await db.from('profiles').select('avatar_url').eq('id', user.id).single();
-      if (profile?.avatar_url) {
-        userAvatars.set(user.id, profile.avatar_url);
-      }
+      if (profile?.avatar_url) userAvatars.set(user.id, profile.avatar_url);
       updateAvatarUI();
-
       await fetchRecentDMs();
       loadMessages();
       subscribeToAllMessages();
       setupPresence();
-
+      setupSignalListener();
       if (window.innerWidth < 768) {
         closeSidebarOnMobile();
         setTimeout(() => {
-          const drawer = document.getElementById('directory-drawer');
-          const backdrop = document.getElementById('directory-backdrop');
-          if (drawer.classList.contains('translate-x-full')) {
-            drawer.classList.remove('translate-x-full');
-            backdrop.classList.remove('hidden');
-          }
+          const drawer = document.getElementById('directory-drawer'), backdrop = document.getElementById('directory-backdrop');
+          if (drawer.classList.contains('translate-x-full')) { drawer.classList.remove('translate-x-full'); backdrop.classList.remove('hidden'); }
         }, 500);
       }
     }
 
     function updateAvatarUI() {
       const avatarUrl = userAvatars.get(currentUser?.id);
-      // Sidebar
-      const sidebarImg = document.getElementById('sidebar-avatar-img');
-      const sidebarInit = document.getElementById('sidebar-avatar-initials');
-      if (avatarUrl) {
-        sidebarImg.src = avatarUrl;
-        sidebarImg.classList.remove('hidden');
-        sidebarInit.classList.add('hidden');
-      } else {
-        sidebarImg.classList.add('hidden');
-        sidebarInit.classList.remove('hidden');
-        sidebarInit.textContent = currentDisplayName.substring(0, 2).toUpperCase();
-      }
-      // Profile modal
-      const profileImg = document.getElementById('profile-avatar-img');
-      const profileInit = document.getElementById('profile-avatar-initials');
-      if (avatarUrl) {
-        profileImg.src = avatarUrl;
-        profileImg.classList.remove('hidden');
-        profileInit.classList.add('hidden');
-      } else {
-        profileImg.classList.add('hidden');
-        profileInit.classList.remove('hidden');
-        profileInit.textContent = currentDisplayName.substring(0, 2).toUpperCase();
-      }
+      const sidebarImg = document.getElementById('sidebar-avatar-img'), sidebarInit = document.getElementById('sidebar-avatar-initials');
+      if (avatarUrl) { sidebarImg.src = avatarUrl; sidebarImg.classList.remove('hidden'); sidebarInit.classList.add('hidden'); }
+      else { sidebarImg.classList.add('hidden'); sidebarInit.classList.remove('hidden'); sidebarInit.textContent = currentDisplayName.substring(0,2).toUpperCase(); }
+      const profileImg = document.getElementById('profile-avatar-img'), profileInit = document.getElementById('profile-avatar-initials');
+      if (avatarUrl) { profileImg.src = avatarUrl; profileImg.classList.remove('hidden'); profileInit.classList.add('hidden'); }
+      else { profileImg.classList.add('hidden'); profileInit.classList.remove('hidden'); profileInit.textContent = currentDisplayName.substring(0,2).toUpperCase(); }
     }
 
     async function fetchMissingNames(userIds) {
       if (!userIds || userIds.length === 0) return;
       try {
         const { data, error } = await db.from('profiles').select('id, username, avatar_url').in('id', userIds);
-        if (!error && data) {
-          data.forEach(p => {
-            if (p.username) knownUserNames.set(p.id, p.username);
-            if (p.avatar_url) userAvatars.set(p.id, p.avatar_url);
-          });
-        }
-      } catch (e) { console.warn('Error fetching names:', e); }
+        if (!error && data) { data.forEach(p => { if (p.username) knownUserNames.set(p.id, p.username); if (p.avatar_url) userAvatars.set(p.id, p.avatar_url); }); }
+      } catch(e) { console.warn(e); }
     }
 
     async function fetchRecentDMs() {
@@ -1284,36 +731,24 @@
         const { data, error } = await db.from('messages').select('channel_id, sender_id, sender_name').like('channel_id', `dm-%${currentUser.id}%`);
         if (!error && data) {
           const missingIds = new Set();
-
           data.forEach(msg => {
             if (msg.channel_id.startsWith('dm-')) {
               const parts = msg.channel_id.split('-');
               if (parts.length < 3) return;
-
               const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
               if (otherId && otherId !== currentUser.id) {
-                if (msg.sender_id === otherId && msg.sender_name) {
-                  knownUserNames.set(otherId, msg.sender_name);
-                  activeDMUsers.add(otherId);
-                } else if (!knownUserNames.has(otherId)) {
-                  missingIds.add(otherId);
-                }
+                if (msg.sender_id === otherId && msg.sender_name) { knownUserNames.set(otherId, msg.sender_name); activeDMUsers.add(otherId); }
+                else if (!knownUserNames.has(otherId)) missingIds.add(otherId);
               }
             }
           });
-
           if (missingIds.size > 0) {
             await fetchMissingNames(Array.from(missingIds));
-            missingIds.forEach(id => {
-              if (knownUserNames.has(id)) {
-                activeDMUsers.add(id);
-              }
-            });
+            missingIds.forEach(id => { if (knownUserNames.has(id)) activeDMUsers.add(id); });
           }
-
           renderUI();
         }
-      } catch (e) { console.warn(e); }
+      } catch(e) { console.warn(e); }
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
@@ -1325,7 +760,6 @@
       }
     });
 
-    // ===== PRESENCE =====
     function setupPresence() {
       if (presenceChannel) db.removeChannel(presenceChannel);
       presenceChannel = db.channel('online-presence', { config: { presence: { key: currentUser.id } } });
@@ -1341,35 +775,66 @@
       });
     }
 
+    // ===== SIGNALING (video call offer/answer/ice) =====
+    function setupSignalListener() {
+      if (signalChannel) db.removeChannel(signalChannel);
+      signalChannel = db.channel('video-signals')
+        .on('broadcast', { event: 'webrtc-signal' }, ({ payload }) => handleWebRTCSignal(payload))
+        .subscribe();
+    }
+
+    function sendSignal(type, data) {
+      if (!signalChannel) return;
+      signalChannel.send({
+        type: 'broadcast',
+        event: 'webrtc-signal',
+        payload: { type, from: currentUser.id, fromName: currentDisplayName, channel: currentChannel, data }
+      });
+    }
+
+    async function handleWebRTCSignal(payload) {
+      if (!payload || payload.from === currentUser?.id) return;
+      if (payload.channel !== currentChannel) return;
+
+      const { type, data } = payload;
+      callPeerId = payload.from;
+      const peerName = knownUserNames.get(payload.from) || payload.fromName || 'User';
+
+      if (type === 'offer') {
+        document.getElementById('incoming-call-name').textContent = peerName;
+        document.getElementById('incoming-call-banner').classList.add('show');
+        window._pendingOffer = { from: payload.from, sdp: data };
+      } else if (type === 'answer' && peerConnection) {
+        try { await peerConnection.setRemoteDescription(new RTCSessionDescription(data)); }
+        catch(e) { console.warn('answer error', e); }
+      } else if (type === 'ice' && peerConnection) {
+        try { await peerConnection.addIceCandidate(new RTCIceCandidate(data)); }
+        catch(e) { console.warn('ice error', e); }
+      } else if (type === 'hangup') {
+        endVideoCall();
+        showNotificationToast('Call ended', peerName + ' ended the call', currentChannel);
+      }
+    }
+
     // ===== RENDER UI =====
     function renderUI() {
       const sidebarList = document.getElementById('users-sidebar-list');
       const activeList = document.getElementById('active-members-list');
       sidebarList.innerHTML = ''; activeList.innerHTML = '';
-
       document.getElementById('active-count').textContent = onlineUsersMap.size;
       document.getElementById('active-count-mobile').textContent = onlineUsersMap.size;
       document.getElementById('online-subtitle').textContent = `${onlineUsersMap.size} active now`;
 
-      // Right drawer
       let onlineOthers = 0;
       onlineUsersMap.forEach((name, id) => {
         if (id !== currentUser.id) {
           onlineOthers++;
-          const initials = name.substring(0, 2).toUpperCase();
+          const initials = name.substring(0,2).toUpperCase();
           const avatarUrl = userAvatars.get(id);
-          const avatarHtml = avatarUrl
-            ? `<img src="${avatarUrl}" class="w-8 h-8 rounded-xl object-cover shrink-0">`
-            : `<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white text-[10px] font-bold shrink-0">${initials}</div>`;
+          const avatarHtml = avatarUrl ? `<img src="${avatarUrl}" class="w-8 h-8 rounded-xl object-cover shrink-0">` : `<div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white text-[10px] font-bold shrink-0">${initials}</div>`;
           activeList.insertAdjacentHTML('beforeend', `
-            <div onclick="openExactDM('${id}', '${name}')" class="ripple ripple-dark flex items-center justify-between px-3.5 py-3 bg-[#F8FAFC] hover:bg-[#F1F5F9] rounded-xl cursor-pointer text-xs text-[#0F172A] border border-[#F1F5F9] transition-soft">
-              <div class="flex items-center gap-2.5 truncate">
-                ${avatarHtml}
-                <div class="truncate">
-                  <p class="truncate font-semibold text-[#0F172A]">@${name}</p>
-                  <p class="text-[10px] text-[#22C55E] font-medium">Online</p>
-                </div>
-              </div>
+            <div onclick="openExactDM('${id}', '${name}')" class="ripple ripple-dark flex items-center justify-between px-3.5 py-3 bg-[#F8FAFC] hover:bg-[#F1F5F9] rounded-xl cursor-pointer text-xs text-[#0F172A] border border-[#F1F5F9]">
+              <div class="flex items-center gap-2.5 truncate">${avatarHtml}<div class="truncate"><p class="truncate font-semibold text-[#0F172A]">@${name}</p><p class="text-[10px] text-[#22C55E] font-medium">Online</p></div></div>
               <svg class="w-4 h-4 text-[#94A3B8] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </div>
           `);
@@ -1377,44 +842,29 @@
       });
       if (onlineOthers === 0) activeList.innerHTML = `<div class="flex flex-col items-center justify-center py-10 text-center"><div class="w-12 h-12 rounded-2xl bg-[#F1F5F9] flex items-center justify-center mb-3"><svg class="w-6 h-6 text-[#94A3B8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><p class="text-xs text-[#94A3B8] font-medium">You're the only one online</p></div>`;
 
-      // Left sidebar DMs
       let dmCount = 0;
       activeDMUsers.forEach(id => {
         let name = knownUserNames.get(id);
-        if (!name || name === 'User' || name === 'Chat') {
-          return;
-        }
-
+        if (!name || name === 'User' || name === 'Chat') return;
         const isOnline = onlineUsersMap.has(id);
         const dmChannel = `dm-${[currentUser.id, id].sort().join('-')}`;
-        const initials = name.substring(0, 2).toUpperCase();
+        const initials = name.substring(0,2).toUpperCase();
         const avatarUrl = userAvatars.get(id);
-        const avatarHtml = avatarUrl
-          ? `<img src="${avatarUrl}" class="w-9 h-9 rounded-xl object-cover shrink-0">`
-          : `<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white text-[10px] font-bold shrink-0">${initials}</div>`;
+        const avatarHtml = avatarUrl ? `<img src="${avatarUrl}" class="w-9 h-9 rounded-xl object-cover shrink-0">` : `<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white text-[10px] font-bold shrink-0">${initials}</div>`;
         dmCount++;
-
         sidebarList.insertAdjacentHTML('beforeend', `
-          <button onclick="openExactDM('${id}', '${name}')" class="ripple ripple-dark channel-btn w-full text-left px-3 py-2.5 rounded-xl text-sm transition-soft hover:bg-[#F8FAFC] flex items-center justify-between" data-id="dm-${id}" data-channel-id="${dmChannel}">
+          <button onclick="openExactDM('${id}', '${name}')" class="ripple ripple-dark channel-btn w-full text-left px-3 py-2.5 rounded-xl text-sm hover:bg-[#F8FAFC] flex items-center justify-between" data-id="dm-${id}" data-channel-id="${dmChannel}">
             <div class="flex items-center gap-3 truncate">
-              <div class="relative">
-                ${avatarHtml}
-                ${isOnline ? `<span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#22C55E] border-2 border-white"></span>` : ''}
-              </div>
-              <div class="truncate">
-                <p class="font-semibold text-xs text-[#0F172A] truncate">@${name}</p>
-                <p class="text-[10px] ${isOnline ? 'text-[#22C55E]' : 'text-[#94A3B8]'} font-medium">${isOnline ? 'Online' : 'Offline'}</p>
-              </div>
+              <div class="relative">${avatarHtml}${isOnline ? `<span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#22C55E] border-2 border-white"></span>` : ''}</div>
+              <div class="truncate"><p class="font-semibold text-xs text-[#0F172A] truncate">@${name}</p><p class="text-[10px] ${isOnline ? 'text-[#22C55E]' : 'text-[#94A3B8]'} font-medium">${isOnline ? 'Online' : 'Offline'}</p></div>
             </div>
           </button>
         `);
       });
-      if (dmCount === 0) sidebarList.innerHTML = `<div class="flex flex-col items-center justify-center py-6 text-center"><div class="w-10 h-10 rounded-xl bg-[#F1F5F9] flex items-center justify-center mb-2"><svg class="w-5 h-5 text-[#94A3B8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><p class="text-[11px] text-[#94A3B8] font-medium">No recent chats</p><p class="text-[10px] text-[#CBD5E1] mt-0.5">Start a conversation</p></div>`;
-
+      if (dmCount === 0) sidebarList.innerHTML = `<div class="flex flex-col items-center justify-center py-6 text-center"><div class="w-10 h-10 rounded-xl bg-[#F1F5F9] flex items-center justify-center mb-2"><svg class="w-5 h-5 text-[#94A3B8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><p class="text-[11px] text-[#94A3B8] font-medium">No recent chats</p></div>`;
       updateUnreadBadges();
     }
 
-    // ===== MESSAGES =====
     async function loadMessages() {
       const { data, error } = await db.from('messages').select('*').eq('channel_id', currentChannel).order('created_at', { ascending: true });
       if (error) return;
@@ -1432,9 +882,7 @@
         const msg = payload.new;
         if (!msg || !currentUser) return;
         const isMe = msg.sender_id === currentUser.id;
-
         if (msg.sender_id && msg.sender_name) knownUserNames.set(msg.sender_id, msg.sender_name);
-
         if (msg.channel_id.startsWith('dm-') && !isMe) {
           const parts = msg.channel_id.split('-');
           const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
@@ -1443,19 +891,14 @@
             renderUI();
           }
         }
-
         if (msg.channel_id === currentChannel) {
           renderMessage(msg);
           document.getElementById('messages-container').scrollTop = 999999;
         } else if (!isMe) {
           unreadCounts.set(msg.channel_id, (unreadCounts.get(msg.channel_id) || 0) + 1);
           updateUnreadBadges();
-
-          if (window.innerWidth < 768) {
-            document.getElementById('menu-notification-dot').style.display = 'block';
-          }
+          if (window.innerWidth < 768) document.getElementById('menu-notification-dot').style.display = 'block';
         }
-
         if (!isMe) {
           playNotificationSound();
           if (document.hidden || window.innerWidth < 768 || msg.channel_id !== currentChannel) {
@@ -1478,13 +921,13 @@
       });
     }
 
-    // ===== SEND =====
     async function handleSendMessage(e) {
       e.preventDefault();
       const input = document.getElementById('message-input');
       if (!input.value.trim() || !currentUser) return;
       const text = input.value.trim(); input.value = '';
-      await db.from('messages').insert([{ channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text }]);
+      const { error } = await db.from('messages').insert([{ channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text }]);
+      if (error) showNotificationToast('Send failed', error.message, currentChannel);
     }
 
     async function sendQuickMessage(text) {
@@ -1502,46 +945,33 @@
       unreadCounts.delete(channel); updateUnreadBadges(); loadMessages(); showChatOnMobile();
     }
 
-    // ===== MESSAGE RENDER =====
     function renderMessage(msg) {
       const isMe = currentUser && msg.sender_id === currentUser.id;
       const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const initials = msg.sender_name ? msg.sender_name.substring(0, 2).toUpperCase() : '?';
+      const initials = msg.sender_name ? msg.sender_name.substring(0,2).toUpperCase() : '?';
       const avatarUrl = userAvatars.get(msg.sender_id);
 
-      let contentHtml = '';
+      let contentHtml;
       if (msg.image_url) {
-        contentHtml = `
-          <img src="${msg.image_url}" class="message-image" onclick="openImageViewer('${msg.image_url}')" alt="Shared image">
-          ${msg.text ? `<p class="mt-2 break-words leading-relaxed">${msg.text}</p>` : ''}
-        `;
+        contentHtml = `<img src="${msg.image_url}" class="message-image" onclick="openImageViewer('${msg.image_url}')" alt="Shared image" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<p class=\\'text-xs text-red-400 mt-1\\'>⚠ Image failed to load</p>')">${msg.text ? `<p class="mt-2 break-words leading-relaxed">${msg.text}</p>` : ''}`;
       } else {
         contentHtml = `<p class="break-words leading-relaxed">${msg.text}</p>`;
       }
 
       let avatarHtml;
-      if (isMe) {
-        avatarHtml = `<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white text-[9px] font-bold shrink-0 mb-0.5">You</div>`;
-      } else if (avatarUrl) {
-        avatarHtml = `<img src="${avatarUrl}" class="w-7 h-7 rounded-lg object-cover shrink-0 mb-0.5">`;
-      } else {
-        avatarHtml = `<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#94A3B8] to-[#64748B] flex items-center justify-center text-white text-[9px] font-bold shrink-0 mb-0.5">${initials}</div>`;
-      }
+      if (isMe) avatarHtml = `<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white text-[9px] font-bold shrink-0 mb-0.5">You</div>`;
+      else if (avatarUrl) avatarHtml = `<img src="${avatarUrl}" class="w-7 h-7 rounded-lg object-cover shrink-0 mb-0.5">`;
+      else avatarHtml = `<div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#94A3B8] to-[#64748B] flex items-center justify-center text-white text-[9px] font-bold shrink-0 mb-0.5">${initials}</div>`;
 
       document.getElementById('messages-container').insertAdjacentHTML('beforeend', `
         <div class="flex ${isMe ? 'justify-end' : 'justify-start'} mb-2 message-in">
           <div class="flex items-end gap-2 max-w-[85%] sm:max-w-md ${isMe ? 'flex-row-reverse' : ''}">
             ${avatarHtml}
             <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-              <div class="flex items-center gap-2 mb-1 px-1 ${isMe ? 'flex-row-reverse' : ''}">
-                <span class="text-[10px] text-[#64748B] font-medium">${isMe ? 'You' : msg.sender_name}</span>
-              </div>
+              <div class="flex items-center gap-2 mb-1 px-1 ${isMe ? 'flex-row-reverse' : ''}"><span class="text-[10px] text-[#64748B] font-medium">${isMe ? 'You' : msg.sender_name}</span></div>
               <div class="px-4 py-2.5 text-sm relative ${isMe ? 'bubble-me' : 'bubble-other'}">
                 ${contentHtml}
-                <div class="flex items-center justify-end gap-1.5 mt-1 text-[9px] ${isMe ? 'text-white/70' : 'text-[#94A3B8]'}">
-                  <span>${timeStr}</span>
-                  ${isMe ? '<span class="font-bold">✓✓</span>' : ''}
-                </div>
+                <div class="flex items-center justify-end gap-1.5 mt-1 text-[9px] ${isMe ? 'text-white/70' : 'text-[#94A3B8]'}"><span>${timeStr}</span>${isMe ? '<span class="font-bold">✓✓</span>' : ''}</div>
               </div>
             </div>
           </div>
@@ -1549,13 +979,17 @@
       `);
     }
 
-    // ===== IMAGE UPLOAD =====
+    // ===== IMAGE UPLOAD (with real error surfacing) =====
     async function uploadImage(event) {
       const file = event.target.files[0];
       if (!file || !currentUser) return;
       event.target.value = '';
 
-      // Show temporary loading message
+      if (file.size > 5 * 1024 * 1024) {
+        showNotificationToast('File too large', 'Please choose an image under 5MB.', currentChannel);
+        return;
+      }
+
       const container = document.getElementById('messages-container');
       const tempId = 'temp-img-' + Date.now();
       container.insertAdjacentHTML('beforeend', `
@@ -1563,11 +997,7 @@
           <div class="flex items-end gap-2 max-w-[85%] flex-row-reverse">
             <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#4F46E5] flex items-center justify-center text-white text-[9px] font-bold shrink-0">You</div>
             <div class="px-4 py-2.5 text-sm bubble-me relative overflow-hidden">
-              <div class="flex items-center gap-2">
-                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
-                <span>Uploading image...</span>
-              </div>
-              <div class="upload-progress" id="progress-${tempId}" style="width: 0%"></div>
+              <div class="flex items-center gap-2"><svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg><span>Uploading...</span></div>
             </div>
           </div>
         </div>
@@ -1577,29 +1007,31 @@
       try {
         const fileExt = file.name.split('.').pop();
         const fileName = `${currentUser.id}/${Date.now()}.${fileExt}`;
-        
-        const { data: uploadData, error: uploadError } = await db.storage
-          .from('chat-images')
-          .upload(fileName, file, { cacheControl: '3600', upsert: false });
 
-        if (uploadError) throw uploadError;
+        const { error: uploadError } = await db.storage
+          .from('chat-images')
+          .upload(fileName, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+
+        if (uploadError) throw new Error('Upload: ' + uploadError.message);
 
         const { data: urlData } = db.storage.from('chat-images').getPublicUrl(fileName);
-        
-        // Remove temp and send message
-        document.getElementById(tempId)?.remove();
-        
-        await db.from('messages').insert([{
+        if (!urlData?.publicUrl) throw new Error('Could not get public URL');
+
+        const { error: insertError } = await db.from('messages').insert([{
           channel_id: currentChannel,
           sender_id: currentUser.id,
           sender_name: currentDisplayName,
           text: '',
           image_url: urlData.publicUrl
         }]);
-      } catch (err) {
-        console.error('Upload error:', err);
+
+        if (insertError) throw new Error('DB insert: ' + insertError.message);
+
         document.getElementById(tempId)?.remove();
-        showNotificationToast('Upload failed', 'Could not upload image. Please try again.', currentChannel);
+      } catch (err) {
+        console.error('Image upload failed:', err);
+        document.getElementById(tempId)?.remove();
+        showNotificationToast('Upload failed', err.message + ' — Check the setup panel.', currentChannel);
       }
     }
 
@@ -1607,7 +1039,6 @@
       document.getElementById('image-viewer-img').src = url;
       document.getElementById('image-viewer').classList.add('show');
     }
-
     function closeImageViewer(e) {
       if (e && e.target !== e.currentTarget) return;
       document.getElementById('image-viewer').classList.remove('show');
@@ -1619,34 +1050,35 @@
       updateAvatarUI();
       document.getElementById('profile-modal').classList.add('show');
     }
-
-    function closeProfileModal() {
-      document.getElementById('profile-modal').classList.remove('show');
-    }
+    function closeProfileModal() { document.getElementById('profile-modal').classList.remove('show'); }
 
     async function uploadProfilePicture(event) {
       const file = event.target.files[0];
       if (!file || !currentUser) return;
       event.target.value = '';
 
+      if (file.size > 3 * 1024 * 1024) {
+        showNotificationToast('File too large', 'Choose a picture under 3MB.', currentChannel);
+        return;
+      }
+
       try {
         const fileExt = file.name.split('.').pop();
         const fileName = `avatars/${currentUser.id}.${fileExt}`;
-
-        const { data: uploadData, error: uploadError } = await db.storage
+        const { error: uploadError } = await db.storage
           .from('chat-images')
-          .upload(fileName, file, { cacheControl: '3600', upsert: true });
-
-        if (uploadError) throw uploadError;
+          .upload(fileName, file, { cacheControl: '3600', upsert: true, contentType: file.type });
+        if (uploadError) throw new Error('Upload: ' + uploadError.message);
 
         const { data: urlData } = db.storage.from('chat-images').getPublicUrl(fileName);
-        const avatarUrl = urlData.publicUrl;
+        const avatarUrl = urlData.publicUrl + '?t=' + Date.now();
 
-        await db.from('profiles').upsert({
+        const { error: upError } = await db.from('profiles').upsert({
           id: currentUser.id,
           avatar_url: avatarUrl,
           updated_at: new Date().toISOString()
         }, { onConflict: 'id' });
+        if (upError) throw new Error('Profile: ' + upError.message);
 
         userAvatars.set(currentUser.id, avatarUrl);
         updateAvatarUI();
@@ -1654,82 +1086,134 @@
         showNotificationToast('Profile updated', 'Your profile picture has been changed.', currentChannel);
       } catch (err) {
         console.error('Avatar upload error:', err);
-        showNotificationToast('Upload failed', 'Could not upload profile picture.', currentChannel);
+        showNotificationToast('Upload failed', err.message + ' — Check the setup panel.', currentChannel);
       }
     }
 
     async function saveProfileName() {
       const newName = document.getElementById('profile-name-input').value.trim();
       if (!newName || !currentUser) return;
-      
       currentDisplayName = newName;
       knownUserNames.set(currentUser.id, newName);
       document.getElementById('user-display').textContent = newName;
-      
       await db.from('profiles').upsert({
-        id: currentUser.id,
-        username: newName,
-        display_name: newName,
-        updated_at: new Date().toISOString()
+        id: currentUser.id, username: newName, display_name: newName, updated_at: new Date().toISOString()
       }, { onConflict: 'id' });
-
-      // Re-track presence with new name
-      if (presenceChannel) {
-        await presenceChannel.track({ id: currentUser.id, username: newName });
-      }
-
+      if (presenceChannel) await presenceChannel.track({ id: currentUser.id, username: newName });
       updateAvatarUI();
       closeProfileModal();
       showNotificationToast('Profile updated', 'Your display name has been changed.', currentChannel);
     }
 
-    // ===== VIDEO CALL (WebRTC Simulation) =====
+    // ===== VIDEO CALL (real WebRTC) =====
     async function startVideoCall() {
       if (!currentUser) return;
-      
-      // For DM channels, get the other user
-      if (currentChannel.startsWith('dm-')) {
-        const parts = currentChannel.split('-');
-        const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
-        const otherName = knownUserNames.get(otherId) || 'User';
-        
-        // Show video call modal
-        document.getElementById('call-remote-name').textContent = otherName;
-        document.getElementById('call-avatar').textContent = otherName.substring(0, 2).toUpperCase();
-        document.getElementById('call-status').textContent = 'Calling...';
-        document.getElementById('video-call-modal').classList.add('show');
-        
-        // Try to get local camera/mic
-        try {
-          localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-          document.getElementById('local-video').srcObject = localStream;
-        } catch (err) {
-          console.warn('Camera/mic access denied:', err);
-          document.getElementById('call-status').textContent = 'Camera access denied';
-        }
-        
-        // Simulate connecting after 2 seconds
-        setTimeout(() => {
-          if (document.getElementById('video-call-modal').classList.contains('show')) {
-            document.getElementById('call-status').textContent = 'Connected';
-            // Simulate remote video with local stream in a real app this would be the peer's stream
-          }
-        }, 2000);
-      } else {
-        showNotificationToast('Video call', 'Video calls are available in direct messages only.', currentChannel);
+      if (!currentChannel.startsWith('dm-')) {
+        showNotificationToast('Video call', 'Video calls are only available in direct messages.', currentChannel);
+        return;
       }
+
+      const parts = currentChannel.split('-');
+      const peerId = parts[1] === currentUser.id ? parts[2] : parts[1];
+      const peerName = knownUserNames.get(peerId) || 'User';
+
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        document.getElementById('local-video').srcObject = localStream;
+      } catch (err) {
+        showNotificationToast('Camera error', 'Could not access camera/mic: ' + err.message, currentChannel);
+        return;
+      }
+
+      isCallActive = true;
+      callPeerId = peerId;
+      document.getElementById('call-remote-name').textContent = peerName;
+      document.getElementById('call-avatar').textContent = peerName.substring(0,2).toUpperCase();
+      document.getElementById('call-status').textContent = 'Calling...';
+      document.getElementById('video-call-modal').classList.add('show');
+
+      createPeerConnection();
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+      sendSignal('offer', offer);
+
+      // Timeout
+      setTimeout(() => {
+        if (isCallActive && peerConnection && !peerConnection.remoteDescription) {
+          document.getElementById('call-status').textContent = 'No answer';
+        }
+      }, 15000);
+    }
+
+    function createPeerConnection() {
+      if (peerConnection) peerConnection.close();
+      peerConnection = new RTCPeerConnection(ICE_SERVERS);
+
+      if (localStream) {
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+      }
+
+      peerConnection.ontrack = (event) => {
+        document.getElementById('remote-video').srcObject = event.streams[0];
+        document.getElementById('call-status').textContent = 'Connected';
+      };
+
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate) sendSignal('ice', event.candidate);
+      };
+
+      peerConnection.onconnectionstatechange = () => {
+        const state = peerConnection.connectionState;
+        if (state === 'connected') document.getElementById('call-status').textContent = 'Connected';
+        else if (state === 'disconnected' || state === 'failed' || state === 'closed') document.getElementById('call-status').textContent = 'Disconnected';
+      };
+    }
+
+    async function acceptIncomingCall() {
+      document.getElementById('incoming-call-banner').classList.remove('show');
+      const offer = window._pendingOffer;
+      if (!offer) return;
+
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        document.getElementById('local-video').srcObject = localStream;
+      } catch (err) {
+        showNotificationToast('Camera error', 'Could not access camera/mic.', currentChannel);
+        return;
+      }
+
+      isCallActive = true;
+      callPeerId = offer.from;
+      const peerName = knownUserNames.get(offer.from) || 'User';
+      document.getElementById('call-remote-name').textContent = peerName;
+      document.getElementById('call-avatar').textContent = peerName.substring(0,2).toUpperCase();
+      document.getElementById('call-status').textContent = 'Connecting...';
+      document.getElementById('video-call-modal').classList.add('show');
+
+      createPeerConnection();
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(offer.sdp));
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+      sendSignal('answer', answer);
+      window._pendingOffer = null;
+    }
+
+    function declineIncomingCall() {
+      document.getElementById('incoming-call-banner').classList.remove('show');
+      const offer = window._pendingOffer;
+      if (offer) sendSignal('hangup', {});
+      window._pendingOffer = null;
     }
 
     function endVideoCall() {
+      if (isCallActive && currentUser) sendSignal('hangup', {});
+      isCallActive = false;
       document.getElementById('video-call-modal').classList.remove('show');
-      if (localStream) {
-        localStream.getTracks().forEach(t => t.stop());
-        localStream = null;
-      }
+      if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+      if (peerConnection) { peerConnection.close(); peerConnection = null; }
       document.getElementById('local-video').srcObject = null;
       document.getElementById('remote-video').srcObject = null;
-      isMuted = false;
-      isCameraOff = false;
+      isMuted = false; isCameraOff = false;
       document.getElementById('mute-icon-on').classList.remove('hidden');
       document.getElementById('mute-icon-off').classList.add('hidden');
       document.getElementById('camera-icon-on').classList.remove('hidden');
@@ -1754,34 +1238,6 @@
       document.getElementById('camera-icon-on').classList.toggle('hidden', isCameraOff);
       document.getElementById('camera-icon-off').classList.toggle('hidden', !isCameraOff);
       document.getElementById('camera-btn').classList.toggle('off', isCameraOff);
-    }
-
-    // ===== INCOMING CALL (Simulated via broadcast) =====
-    // In a real app this would use WebRTC signaling
-    // For demo, we listen for a custom broadcast event
-    
-    function simulateIncomingCall(callerName) {
-      document.getElementById('incoming-call-name').textContent = callerName;
-      document.getElementById('incoming-call-banner').classList.add('show');
-      playNotificationSound();
-    }
-
-    function acceptIncomingCall() {
-      document.getElementById('incoming-call-banner').classList.remove('show');
-      // Open video call modal
-      document.getElementById('video-call-modal').classList.add('show');
-      document.getElementById('call-status').textContent = 'Connected';
-      document.getElementById('call-remote-name').textContent = document.getElementById('incoming-call-name').textContent;
-      document.getElementById('call-avatar').textContent = document.getElementById('incoming-call-name').textContent.substring(0, 2).toUpperCase();
-      
-      navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-        localStream = stream;
-        document.getElementById('local-video').srcObject = stream;
-      }).catch(() => {});
-    }
-
-    function declineIncomingCall() {
-      document.getElementById('incoming-call-banner').classList.remove('show');
     }
   </script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"87327fcf53be41f08c37151b64e8f4d9","r":1,"spa":2}' crossorigin="anonymous"></script>
