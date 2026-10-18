@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Chitchat Nepal- Nepali Chat Room</title>
+  <title>Chitchat Nepal - IRC · Connect · Chat · Belong</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -1931,10 +1931,10 @@
         </div>
         <div class="relative max-w-[85%] sm:max-w-md">
           <div class="msg-actions">
+            <!-- Changed to vertical dots (⋮) -->
             <button class="dots-btn" title="More options"
-              onclick="openMsgContextMenu(event, '${msg.id}', this.closest('.msg-row').querySelector('.msg-copy-src').textContent, '${msg.sender_id}', this.closest('.msg-row'))">⋯</button>
+              onclick="openMsgContextMenu(event, '${msg.id}', this.closest('.msg-row').querySelector('.msg-copy-src').textContent, '${msg.sender_id}', this.closest('.msg-row'))">⋮</button>
           </div>
-          <!-- Added break-words and overflow-hidden here to fix text overflow -->
           <div class="px-4 py-2.5 text-sm relative ${isMe ? 'bubble-me' : 'bubble-other'} break-words overflow-hidden">
             ${contentHtml}
             <div class="flex items-center justify-end gap-1.5 mt-1.5 text-[9px] text-[#5e6f82] opacity-80">
