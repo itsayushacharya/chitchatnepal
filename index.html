@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
- <title>Chitchat Nepal- Nepali Chat Room</title>
+  <title>Chitchat Nepal - IRC · Connect · Chat · Belong</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -562,6 +562,22 @@
       height: 14px;
       border-width: 2px;
     }
+
+    /* ---- IMAGE SIZE ERROR ---- */
+    .image-size-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 12px 8px;
+      animation: slideDown 0.25s ease-out;
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -729,10 +745,16 @@
 
       <!-- CHAT INPUT AREA -->
       <div class="shrink-0 bg-white/80 backdrop-blur-xl border-t border-[#e9eef3] z-20 relative">
+        <!-- image size error -->
+        <div id="image-size-error" class="image-size-error hidden">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          <span id="image-size-error-text">Image is too large. Max size is 2 MB.</span>
+        </div>
+
         <!-- image preview -->
         <div id="image-preview-container" class="image-preview-bar hidden">
           <img id="image-preview-thumb" src="" alt="preview">
-          <span class="text-xs text-[#5e6f82] flex-1">Image ready to send</span>
+          <span class="text-xs text-[#5e6f82] flex-1" id="image-preview-info">Image ready to send</span>
           <button class="remove-preview" onclick="clearImagePreview()">✕</button>
         </div>
 
@@ -816,6 +838,14 @@
     const BRAND_ICON_URL = 'https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png';
     const GUEST_PREFIX = 'chitchatnpuser_';
 
+    // ================================================================
+    //  IMAGE SIZE LIMIT (2 MB)
+    //  Base64 data URL length must stay under Supabase text limit.
+    //  2 MB base64 ≈ 2.7 MB of characters, safe under 4 MB request limit.
+    // ================================================================
+    const MAX_IMAGE_BYTES = 2 * 1024 * 1024; // 2 MB
+    const MAX_IMAGE_MB = (MAX_IMAGE_BYTES / (1024 * 1024)).toFixed(1);
+
     let currentUser = null;
     let currentDisplayName = 'User';
     let currentChannel = 'Community-Home';
@@ -830,6 +860,7 @@
     // image upload / gif state
     let pendingImageDataUrl = null;
     let pendingImageMime = 'image/png';
+    let pendingImageBytes = 0;
     let isSendingImage = false;
 
     // context menu state
@@ -888,6 +919,26 @@
         sendSpinner.classList.add('hidden');
         hideSendStatus(200);
       }
+    }
+
+    // ================================================================
+    //  IMAGE SIZE ERROR HELPERS
+    // ================================================================
+    let imageErrorTimer = null;
+
+    function showImageSizeError(text) {
+      const el = document.getElementById('image-size-error');
+      document.getElementById('image-size-error-text').textContent = text;
+      el.classList.remove('hidden');
+      clearTimeout(imageErrorTimer);
+      imageErrorTimer = setTimeout(() => {
+        el.classList.add('hidden');
+      }, 5000);
+    }
+
+    function hideImageSizeError() {
+      clearTimeout(imageErrorTimer);
+      document.getElementById('image-size-error').classList.add('hidden');
     }
 
     // ================================================================
@@ -1097,28 +1148,63 @@
     // ================================================================
     //  IMAGE / GIF FEATURES
     // ================================================================
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
     function handleImageUpload(event) {
+      hideImageSizeError();
       const file = event.target.files[0];
       if (!file) return;
-      if (!file.type.startsWith('image/')) { alert('Please select an image file'); return; }
+      event.target.value = '';
+
+      if (!file.type.startsWith('image/')) {
+        showImageSizeError('Please select an image file.');
+        return;
+      }
+
+      // ---- SIZE CHECK (before reading) ----
+      if (file.size > MAX_IMAGE_BYTES) {
+        showImageSizeError(`Image is too large (${formatBytes(file.size)}). Max size is ${formatBytes(MAX_IMAGE_BYTES)}. Please choose a smaller image.`);
+        return;
+      }
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        pendingImageDataUrl = e.target.result;
+        const dataUrl = e.target.result;
+
+        // ---- SIZE CHECK (base64 string length) ----
+        const dataUrlBytes = new Blob([dataUrl]).size;
+        if (dataUrlBytes > MAX_IMAGE_BYTES * 1.4) {
+          showImageSizeError(`Image is too large after encoding (${formatBytes(dataUrlBytes)}). Max allowed is about ${formatBytes(MAX_IMAGE_BYTES)}. Please choose a smaller image.`);
+          return;
+        }
+
+        pendingImageDataUrl = dataUrl;
         pendingImageMime = file.type;
-        document.getElementById('image-preview-thumb').src = pendingImageDataUrl;
+        pendingImageBytes = file.size;
+
+        document.getElementById('image-preview-thumb').src = dataUrl;
+        document.getElementById('image-preview-info').textContent = `Image ready (${formatBytes(file.size)})`;
         document.getElementById('image-preview-container').classList.remove('hidden');
+        hideImageSizeError();
+      };
+      reader.onerror = () => {
+        showImageSizeError('Failed to read the image. Please try again.');
       };
       reader.readAsDataURL(file);
-      event.target.value = '';
     }
 
     function clearImagePreview() {
       pendingImageDataUrl = null;
       pendingImageMime = 'image/png';
+      pendingImageBytes = 0;
       document.getElementById('image-preview-thumb').src = '';
       document.getElementById('image-preview-container').classList.add('hidden');
       document.getElementById('image-upload-input').value = '';
+      hideImageSizeError();
     }
 
     function toggleGifEmojiPanel() {
@@ -1601,7 +1687,7 @@
     }
 
     // ================================================================
-    //  SEND MESSAGE (with image sending state)
+    //  SEND MESSAGE (with image sending state + size guard)
     // ================================================================
     async function handleSendMessage(e) {
       e.preventDefault();
@@ -1612,6 +1698,13 @@
       const text = input.value.trim();
 
       if (pendingImageDataUrl) {
+        // Double-check size right before sending
+        const dataUrlBytes = new Blob([pendingImageDataUrl]).size;
+        if (dataUrlBytes > MAX_IMAGE_BYTES * 1.4) {
+          showImageSizeError(`Image is too large to send (${formatBytes(dataUrlBytes)}). Max allowed is about ${formatBytes(MAX_IMAGE_BYTES)}.`);
+          return;
+        }
+
         // ---- IMAGE SENDING ----
         const imageToSend = pendingImageDataUrl;
         const textToSend = text;
@@ -1650,7 +1743,12 @@
           console.warn('Image send failed:', err);
           removeSendingPreview(tempId);
           setSendingState(false);
-          showSendStatusError('Failed to send image');
+          const msg = String(err?.message || '');
+          if (msg.toLowerCase().includes('too large') || msg.toLowerCase().includes('payload') || msg.toLowerCase().includes('size')) {
+            showSendStatusError('Image too large for server');
+          } else {
+            showSendStatusError('Failed to send image');
+          }
         }
         return;
       }
@@ -1712,7 +1810,6 @@
       clearTimeout(sendStatusTimer);
       sendStatusTimer = setTimeout(() => {
         bar.classList.remove('show');
-        // reset for next time
         setTimeout(() => {
           bar.style.background = 'rgba(11,26,43,0.92)';
           if (spinner) spinner.style.display = '';
