@@ -314,13 +314,13 @@
       <div class="flex-1 overflow-y-auto">
         <!-- Lounges -->
         <div class="p-3 pb-1 relative" id="lounge-selector-wrapper">
-          <p class="text-[10px] font-bold text-[#94a3b8] uppercase px-2 mb-1.5">Public Lounges</p>
+          <p class="text-[10px] font-bold text-[#94a3b8] uppercase px-2 mb-1.5">Community Chat</p>
           <button id="lounge-pill" class="lounge-pill w-full justify-between" onclick="toggleLoungeDropdown(event)">
-            <span class="flex items-center gap-2"><span class="emoji">💬</span><span id="lounge-pill-label">#Chautari-Lounge</span></span>
+            <span class="flex items-center gap-2"><span class="emoji">💬</span><span id="lounge-pill-label">#Community-Home</span></span>
             <svg class="w-3.5 h-3.5 text-[#94a3b8]" id="lounge-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div id="lounge-dropdown" class="lounge-dropdown">
-            <button class="lounge-option active" data-channel="Chautari-Lounge" onclick="selectLounge('Chautari-Lounge', '💬', 'Chautari-Lounge')"><span class="emoji">💬</span><div><div>#Chautari-Lounge</div></div></button>
+            <button class="lounge-option active" data-channel="Community-Home" onclick="selectLounge('Community-Home', '💬', 'Community-Home')"><span class="emoji">💬</span><div><div>#Community-Home</div></div></button>
             <button class="lounge-option" data-channel="Tech-Nepal" onclick="selectLounge('Tech-Nepal', '💻', 'Tech-Nepal')"><span class="emoji">💻</span><div><div>#Tech-Nepal</div></div></button>
             <button class="lounge-option" data-channel="Gaff-Saff" onclick="selectLounge('Gaff-Saff', '☕', 'Gaff-Saff')"><span class="emoji">☕</span><div><div>#Gaff-Saff</div></div></button>
           </div>
@@ -349,7 +349,7 @@
             <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" class="channel-icon-img">
           </div>
           <div class="min-w-0">
-            <h3 class="text-xs md:text-sm font-bold text-[#0b1a2b] truncate" id="channel-name">#Chautari-Lounge</h3>
+            <h3 class="text-xs md:text-sm font-bold text-[#0b1a2b] truncate" id="channel-name">#Community-Home</h3>
             <p class="text-[9px] md:text-[10px] text-[#5e6f82] truncate" id="channel-status">Public community chat</p>
           </div>
         </div>
@@ -401,7 +401,7 @@
 
     let currentUser = null;
     let currentDisplayName = 'User';
-    let currentChannel = 'Chautari-Lounge';
+    let currentChannel = 'Community-Home';
     let globalMessagesSub = null;
     let presenceChannel = null;
     
@@ -923,6 +923,7 @@
       `);
     }
   </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"87327fcf53be41f08c37151b64e8f4d9","r":1,"spa":2}' crossorigin="anonymous"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"87327fcf53be41f08c37151b64e8f4d9","r":1,"spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
