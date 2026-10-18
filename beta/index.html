@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Chitchat Nepal · modern social</title>
+  <title>Chitchat Nepal - IRC · Connect · Chat · Belong</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -231,6 +231,198 @@
       display: flex; align-items: center; gap: 8px; animation: slideDown 0.3s ease-out;
     }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ---- IMAGE / LINK STYLES ---- */
+    .msg-image {
+      max-width: 100%;
+      max-height: 220px;
+      border-radius: 14px;
+      object-fit: cover;
+      cursor: pointer;
+      display: block;
+      border: 1px solid rgba(0,0,0,0.04);
+      background: #eef2f6;
+    }
+    .msg-image:hover { opacity: 0.92; }
+
+    .msg-link {
+      color: #00a884;
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      word-break: break-all;
+    }
+    .msg-link:hover { color: #018f70; }
+
+    .image-preview-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: #f1f5f9;
+      border-top: 1px solid #e2e8f0;
+    }
+    .image-preview-bar img {
+      height: 48px;
+      width: auto;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .image-preview-bar .remove-preview {
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .emoji-gif-panel {
+      position: absolute;
+      bottom: 70px;
+      left: 8px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      z-index: 60;
+      max-width: 280px;
+      display: none;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .emoji-gif-panel.show { display: flex; }
+    .gif-item {
+      width: 64px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 1px solid #e2e8f0;
+    }
+    .gif-item:hover { border-color: #00a884; }
+
+    .image-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .image-modal.show { display: flex; }
+    .image-modal img {
+      max-width: 95vw;
+      max-height: 90vh;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+    .image-modal .close-modal {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      color: white;
+      font-size: 32px;
+      cursor: pointer;
+      font-weight: 300;
+      line-height: 1;
+    }
+    .image-modal .close-modal:hover { color: #ccc; }
+
+    /* ---- THREE-DOT MENU STYLES ---- */
+    .msg-row { position: relative; }
+    .msg-row .msg-actions {
+      position: absolute;
+      top: 6px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.15s ease, visibility 0.15s ease;
+      z-index: 10;
+      display: flex;
+      gap: 2px;
+    }
+    .msg-row.me .msg-actions { right: 6px; }
+    .msg-row.other .msg-actions { left: 6px; }
+    .msg-row:hover .msg-actions,
+    .msg-row.menu-open .msg-actions {
+      opacity: 1;
+      visibility: visible;
+    }
+    .msg-row .dots-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #5e6f82;
+      font-size: 16px;
+      line-height: 1;
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .msg-row .dots-btn:hover {
+      background: white;
+      color: #00a884;
+      border-color: #a7f3d0;
+    }
+
+    .msg-context-menu {
+      position: fixed;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 5px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.06);
+      z-index: 250;
+      min-width: 140px;
+      display: none;
+      animation: ctxFade 0.14s ease-out;
+      transform-origin: top;
+    }
+    .msg-context-menu.show { display: block; }
+    @keyframes ctxFade {
+      from { opacity: 0; transform: scale(0.95) translateY(-4px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .msg-context-menu button {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      padding: 9px 12px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1e2b3c;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.12s ease;
+    }
+    .msg-context-menu button:hover { background: #f1f5f9; }
+    .msg-context-menu button.danger { color: #ef4444; }
+    .msg-context-menu button.danger:hover { background: #fef2f2; }
+    .msg-context-menu button .ctx-icon { font-size: 15px; line-height: 1; width: 16px; text-align: center; }
+    .msg-context-menu .ctx-divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 4px 6px;
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -244,6 +436,23 @@
       <div class="toast-text" id="toast-text">Someone sent a message</div>
     </div>
     <div class="toast-action">Open</div>
+  </div>
+
+  <!-- IMAGE MODAL -->
+  <div id="image-modal" class="image-modal" onclick="if(event.target===this)closeImageModal()">
+    <span class="close-modal" onclick="closeImageModal()">×</span>
+    <img id="image-modal-img" src="" alt="Preview">
+  </div>
+
+  <!-- MESSAGE CONTEXT MENU -->
+  <div id="msg-context-menu" class="msg-context-menu">
+    <button id="ctx-copy-btn" onclick="ctxCopyMessage()">
+      <span class="ctx-icon">📋</span> Copy
+    </button>
+    <div class="ctx-divider" id="ctx-delete-divider" style="display:none;"></div>
+    <button id="ctx-delete-btn" class="danger" onclick="ctxDeleteMessage()" style="display:none;">
+      <span class="ctx-icon">🗑️</span> Delete
+    </button>
   </div>
 
   <!-- AUTH SCREEN -->
@@ -314,13 +523,13 @@
       <div class="flex-1 overflow-y-auto">
         <!-- Lounges -->
         <div class="p-3 pb-1 relative" id="lounge-selector-wrapper">
-          <p class="text-[10px] font-bold text-[#94a3b8] uppercase px-2 mb-1.5">Public Lounges</p>
+          <p class="text-[10px] font-bold text-[#94a3b8] uppercase px-2 mb-1.5">Community Chat</p>
           <button id="lounge-pill" class="lounge-pill w-full justify-between" onclick="toggleLoungeDropdown(event)">
-            <span class="flex items-center gap-2"><span class="emoji">💬</span><span id="lounge-pill-label">#Chautari-Lounge</span></span>
+            <span class="flex items-center gap-2"><span class="emoji">💬</span><span id="lounge-pill-label">#Community-Home</span></span>
             <svg class="w-3.5 h-3.5 text-[#94a3b8]" id="lounge-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div id="lounge-dropdown" class="lounge-dropdown">
-            <button class="lounge-option active" data-channel="Chautari-Lounge" onclick="selectLounge('Chautari-Lounge', '💬', 'Chautari-Lounge')"><span class="emoji">💬</span><div><div>#Chautari-Lounge</div></div></button>
+            <button class="lounge-option active" data-channel="Community-Home" onclick="selectLounge('Community-Home', '💬', 'Community-Home')"><span class="emoji">💬</span><div><div>#Community-Home</div></div></button>
             <button class="lounge-option" data-channel="Tech-Nepal" onclick="selectLounge('Tech-Nepal', '💻', 'Tech-Nepal')"><span class="emoji">💻</span><div><div>#Tech-Nepal</div></div></button>
             <button class="lounge-option" data-channel="Gaff-Saff" onclick="selectLounge('Gaff-Saff', '☕', 'Gaff-Saff')"><span class="emoji">☕</span><div><div>#Gaff-Saff</div></div></button>
           </div>
@@ -349,7 +558,7 @@
             <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" class="channel-icon-img">
           </div>
           <div class="min-w-0">
-            <h3 class="text-xs md:text-sm font-bold text-[#0b1a2b] truncate" id="channel-name">#Chautari-Lounge</h3>
+            <h3 class="text-xs md:text-sm font-bold text-[#0b1a2b] truncate" id="channel-name">#Community-Home</h3>
             <p class="text-[9px] md:text-[10px] text-[#5e6f82] truncate" id="channel-status">Public community chat</p>
           </div>
         </div>
@@ -365,15 +574,55 @@
 
       <div id="messages-container" class="flex-1 overflow-y-auto p-3 md:p-4 lg:p-6 space-y-3 pb-32 md:pb-6"></div>
 
-      <div class="shrink-0 bg-white/80 backdrop-blur-xl border-t border-[#e9eef3] z-20">
+      <!-- IMAGE / EMOJI / GIF QUICK BAR -->
+      <div class="shrink-0 bg-white/80 backdrop-blur-xl border-t border-[#e9eef3] z-20 relative">
+        <!-- image preview (hidden by default) -->
+        <div id="image-preview-container" class="image-preview-bar hidden">
+          <img id="image-preview-thumb" src="" alt="preview">
+          <span class="text-xs text-[#5e6f82] flex-1">Image ready to send</span>
+          <button class="remove-preview" onclick="clearImagePreview()">✕</button>
+        </div>
+
+        <!-- gif / emoji panel -->
+        <div id="gif-emoji-panel" class="emoji-gif-panel">
+          <div style="width:100%; font-size:10px; color:#94a3b8; padding:0 0 4px 2px;">Quick GIFs</div>
+          <img class="gif-item" src="https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif" onclick="sendGif('https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif')" alt="gif1">
+          <img class="gif-item" src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" onclick="sendGif('https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif')" alt="gif2">
+          <img class="gif-item" src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" onclick="sendGif('https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif')" alt="gif3">
+          <img class="gif-item" src="https://media.giphy.com/media/3o6Zt6ML6BklcajjsA/giphy.gif" onclick="sendGif('https://media.giphy.com/media/3o6Zt6ML6BklcajjsA/giphy.gif')" alt="gif4">
+          <img class="gif-item" src="https://media.giphy.com/media/26tOZ42Mg6pbTUPHW/giphy.gif" onclick="sendGif('https://media.giphy.com/media/26tOZ42Mg6pbTUPHW/giphy.gif')" alt="gif5">
+          <img class="gif-item" src="https://media.giphy.com/media/3o7aCSPqXE5C6T8tBC/giphy.gif" onclick="sendGif('https://media.giphy.com/media/3o7aCSPqXE5C6T8tBC/giphy.gif')" alt="gif6">
+          <div style="width:100%; font-size:10px; color:#94a3b8; padding:4px 0 4px 2px;">Emojis</div>
+          <div style="display:flex; flex-wrap:wrap; gap:4px; font-size:22px;">
+            <span onclick="insertEmoji('😀')" style="cursor:pointer;">😀</span>
+            <span onclick="insertEmoji('😂')" style="cursor:pointer;">😂</span>
+            <span onclick="insertEmoji('❤️')" style="cursor:pointer;">❤️</span>
+            <span onclick="insertEmoji('👍')" style="cursor:pointer;">👍</span>
+            <span onclick="insertEmoji('🙏')" style="cursor:pointer;">🙏</span>
+            <span onclick="insertEmoji('🔥')" style="cursor:pointer;">🔥</span>
+            <span onclick="insertEmoji('😍')" style="cursor:pointer;">😍</span>
+            <span onclick="insertEmoji('🎉')" style="cursor:pointer;">🎉</span>
+            <span onclick="insertEmoji('😎')" style="cursor:pointer;">😎</span>
+            <span onclick="insertEmoji('🤔')" style="cursor:pointer;">🤔</span>
+          </div>
+        </div>
+
+        <!-- quick message bar -->
         <div class="px-3 md:px-4 pt-2.5 pb-1 flex items-center gap-2 overflow-x-auto no-scrollbar">
           <span class="text-[10px] font-bold text-[#94a3b8] uppercase">Quick</span>
           <button onclick="sendQuickMessage('Namaste 🙏')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Namaste 🙏</button>
           <button onclick="sendQuickMessage('Hello')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Hello</button>
           <button onclick="sendQuickMessage('Hi')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Hi</button>
+          <!-- gif/emoji toggle -->
+          <button onclick="toggleGifEmojiPanel()" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0 flex items-center gap-1"><span>🎨</span> GIF/Emoji</button>
+          <!-- image upload button -->
+          <button onclick="document.getElementById('image-upload-input').click()" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0 flex items-center gap-1"><span>🖼️</span> Image</button>
+          <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
         </div>
+
+        <!-- message form -->
         <form onsubmit="handleSendMessage(event)" class="p-2.5 md:p-4 flex items-center gap-2">
-          <input id="message-input" type="text" placeholder="Type a message..." class="flex-1 bg-white border border-[#e2e8f0] rounded-full px-4 py-3 text-sm transition-soft focus:bg-white">
+          <input id="message-input" type="text" placeholder="Type a message or paste a link..." class="flex-1 bg-white border border-[#e2e8f0] rounded-full px-4 py-3 text-sm transition-soft focus:bg-white">
           <button type="submit" class="bg-gradient-to-r from-[#00a884] to-[#018f70] text-white px-5 md:px-8 py-3 rounded-full font-semibold text-sm">Send</button>
         </form>
       </div>
@@ -391,6 +640,9 @@
   </div>
 
   <script>
+    // ================================================================
+    //  SUPABASE CONFIG
+    // ================================================================
     const SUPABASE_URL = 'https://bmhjltwabzmtyvrfaoeq.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_toqaL-nV0vmTlb27Sh6_xA_3fb5Mebb';
     const { createClient } = supabase;
@@ -401,7 +653,7 @@
 
     let currentUser = null;
     let currentDisplayName = 'User';
-    let currentChannel = 'Chautari-Lounge';
+    let currentChannel = 'Community-Home';
     let globalMessagesSub = null;
     let presenceChannel = null;
     
@@ -410,6 +662,19 @@
     let knownUserNames = new Map(); 
     let activeDMUsers = new Set(); 
 
+    // image upload / gif state
+    let pendingImageDataUrl = null;
+    let pendingImageMime = 'image/png';
+
+    // context menu state
+    let ctxMessageId = null;
+    let ctxMessageText = null;
+    let ctxMessageSenderId = null;
+    let ctxMessageElement = null;
+
+    // ================================================================
+    //  AUTH HELPERS
+    // ================================================================
     function handleAuthKeydown(event) {
       if (event.key === 'Enter') {
         event.preventDefault();
@@ -428,6 +693,9 @@
       }
     }
 
+    // ================================================================
+    //  SOUND
+    // ================================================================
     let audioContext = null;
     let soundEnabled = true;
     function initAudioContext() {
@@ -461,6 +729,9 @@
       document.getElementById('sound-toggle').classList.toggle('muted', !soundEnabled);
     }
 
+    // ================================================================
+    //  TOAST
+    // ================================================================
     let toastTimer = null;
     let toastTargetChannel = null;
 
@@ -474,15 +745,13 @@
       toastTimer = setTimeout(() => { document.getElementById('notification-toast').classList.remove('show'); }, 4000);
     }
 
-    // --- SAFELY EXTRACT THE OTHER USER'S ID FROM A DM CHANNEL ID ---
     function getDmPartnerId(channelId) {
       if (!channelId || !channelId.startsWith('dm-') || !currentUser) return null;
-      const rest = channelId.slice(3); // remove "dm-"
+      const rest = channelId.slice(3);
       if (rest.includes(currentUser.id)) {
         const cleaned = rest.replace(currentUser.id, '').replace(/^-+|-+$/g, '');
         return cleaned || null;
       }
-      // Fallback: first UUID chunk is 36 chars
       return rest.slice(0, 36) || null;
     }
 
@@ -508,8 +777,10 @@
       }
     }
 
+    // ================================================================
+    //  DM / CHANNEL NAVIGATION
+    // ================================================================
     async function openExactDM(recipientId, recipientName) {
-      // Try both possible orderings, then pick whichever actually has messages
       const a = `dm-${currentUser.id}-${recipientId}`;
       const b = `dm-${recipientId}-${currentUser.id}`;
 
@@ -528,7 +799,7 @@
       if (!displayName || displayName === 'User' || displayName === 'Chat') {
         displayName = knownUserNames.get(recipientId) || 'Chat';
       }
-      knownUserNames.set(recipientId, displayName); // cache so it never falls back again
+      knownUserNames.set(recipientId, displayName);
 
       document.getElementById('channel-name').textContent = `💬 @${displayName}`;
       document.getElementById('channel-status').textContent = 'Direct message';
@@ -605,6 +876,213 @@
       closeSidebarOnMobile();
     }
 
+    // ================================================================
+    //  IMAGE / GIF FEATURES
+    // ================================================================
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) { alert('Please select an image file'); return; }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        pendingImageDataUrl = e.target.result;
+        pendingImageMime = file.type;
+        document.getElementById('image-preview-thumb').src = pendingImageDataUrl;
+        document.getElementById('image-preview-container').classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+      event.target.value = '';
+    }
+
+    function clearImagePreview() {
+      pendingImageDataUrl = null;
+      pendingImageMime = 'image/png';
+      document.getElementById('image-preview-thumb').src = '';
+      document.getElementById('image-preview-container').classList.add('hidden');
+      document.getElementById('image-upload-input').value = '';
+    }
+
+    function toggleGifEmojiPanel() {
+      document.getElementById('gif-emoji-panel').classList.toggle('show');
+    }
+
+    function insertEmoji(emoji) {
+      const input = document.getElementById('message-input');
+      input.value += emoji;
+      input.focus();
+      document.getElementById('gif-emoji-panel').classList.remove('show');
+    }
+
+    async function sendGif(url) {
+      document.getElementById('gif-emoji-panel').classList.remove('show');
+      if (!currentUser) return;
+      const text = `![gif](${url})`;
+      await db.from('messages').insert([{ channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text }]);
+    }
+
+    function renderMessageContent(text) {
+      const imgMatch = text.match(/^!\[.*?\]\((https?:\/\/[^\s)]+\.(?:png|jpg|jpeg|gif|webp|svg)[^\s)]*)\)$/i);
+      if (imgMatch) {
+        const src = imgMatch[1];
+        return `<img src="${src}" class="msg-image" onclick="openImageModal('${src}')" alt="shared image" loading="lazy">`;
+      }
+
+      const plainImgMatch = text.match(/^(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp|svg)(\?[^\s]*)?)$/i);
+      if (plainImgMatch) {
+        const src = plainImgMatch[1];
+        return `<img src="${src}" class="msg-image" onclick="openImageModal('${src}')" alt="shared image" loading="lazy">`;
+      }
+
+      const urlRegex = /(https?:\/\/[^\s<]+)/g;
+      let safeText = text.replace(/[&<>"]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        if (m === '"') return '&quot;';
+        return m;
+      });
+      safeText = safeText.replace(urlRegex, function(url) {
+        let cleanUrl = url;
+        let trailing = '';
+        const match = url.match(/^(.*?)([.,;:!?)]*)$/);
+        if (match) {
+          cleanUrl = match[1];
+          trailing = match[2];
+        }
+        return `<a href="${cleanUrl}" target="_blank" rel="noopener noreferrer" class="msg-link">${cleanUrl}</a>${trailing}`;
+      });
+      return safeText;
+    }
+
+    function openImageModal(src) {
+      document.getElementById('image-modal-img').src = src;
+      document.getElementById('image-modal').classList.add('show');
+    }
+    function closeImageModal() {
+      document.getElementById('image-modal').classList.remove('show');
+      document.getElementById('image-modal-img').src = '';
+    }
+
+    // ================================================================
+    //  MESSAGE CONTEXT MENU (three dots)
+    // ================================================================
+    function openMsgContextMenu(e, msgId, msgText, senderId, rowEl) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      // close any open menus
+      closeMsgContextMenu();
+
+      ctxMessageId = msgId;
+      ctxMessageText = msgText;
+      ctxMessageSenderId = senderId;
+      ctxMessageElement = rowEl;
+      rowEl.classList.add('menu-open');
+
+      const menu = document.getElementById('msg-context-menu');
+      const isMine = currentUser && senderId === currentUser.id;
+
+      // Show/hide delete based on ownership
+      document.getElementById('ctx-delete-btn').style.display = isMine ? 'flex' : 'none';
+      document.getElementById('ctx-delete-divider').style.display = isMine ? 'block' : 'none';
+
+      // Position menu near the dots button
+      const btn = e.currentTarget;
+      const rect = btn.getBoundingClientRect();
+      menu.classList.add('show');
+
+      const menuW = 150;
+      const menuH = isMine ? 100 : 50;
+      let left = rect.left + rect.width / 2 - menuW / 2;
+      let top = rect.bottom + 6;
+
+      if (left < 8) left = 8;
+      if (left + menuW > window.innerWidth - 8) left = window.innerWidth - menuW - 8;
+      if (top + menuH > window.innerHeight - 8) top = rect.top - menuH - 6;
+
+      menu.style.left = left + 'px';
+      menu.style.top = top + 'px';
+    }
+
+    function closeMsgContextMenu() {
+      document.getElementById('msg-context-menu').classList.remove('show');
+      if (ctxMessageElement) ctxMessageElement.classList.remove('menu-open');
+      ctxMessageId = null;
+      ctxMessageText = null;
+      ctxMessageSenderId = null;
+      ctxMessageElement = null;
+    }
+
+    async function ctxCopyMessage() {
+      if (!ctxMessageText) return;
+      try {
+        await navigator.clipboard.writeText(ctxMessageText);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = ctxMessageText;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e2) {}
+        document.body.removeChild(ta);
+      }
+      // visual feedback
+      const btn = document.getElementById('ctx-copy-btn');
+      const orig = btn.innerHTML;
+      btn.innerHTML = '<span class="ctx-icon">✓</span> Copied!';
+      btn.style.color = '#00a884';
+      setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 1000);
+      closeMsgContextMenu();
+    }
+
+    async function ctxDeleteMessage() {
+      if (!ctxMessageId || !currentUser) return;
+      if (ctxMessageSenderId !== currentUser.id) return;
+
+      const deletedId = ctxMessageId;
+      const rowEl = ctxMessageElement;
+
+      // Optimistically remove from UI
+      if (rowEl) {
+        rowEl.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        rowEl.style.opacity = '0';
+        rowEl.style.transform = 'scale(0.95)';
+        setTimeout(() => rowEl.remove(), 200);
+      }
+
+      closeMsgContextMenu();
+
+      // Delete from DB
+      try {
+        const { error } = await db.from('messages').delete().eq('id', deletedId).eq('sender_id', currentUser.id);
+        if (error) {
+          console.warn('Delete failed:', error);
+          // Reload messages to restore if failed
+          loadMessages();
+        }
+      } catch (e) {
+        console.warn('Delete error:', e);
+        loadMessages();
+      }
+    }
+
+    // Close context menu on outside click / escape / scroll
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('msg-context-menu');
+      if (menu.classList.contains('show') && !menu.contains(e.target)) {
+        closeMsgContextMenu();
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMsgContextMenu();
+    });
+    document.getElementById('messages-container').addEventListener('scroll', () => {
+      closeMsgContextMenu();
+    }, { passive: true });
+
+    // ================================================================
+    //  GUEST / SIGNUP / LOGIN
+    // ================================================================
     function openGuestModal() {
       document.getElementById('guest-modal').classList.remove('hidden');
       document.getElementById('guest-username-input').value = GUEST_PREFIX + Math.floor(100 + Math.random() * 900);
@@ -745,6 +1223,9 @@
       }
     });
 
+    // ================================================================
+    //  PRESENCE
+    // ================================================================
     function setupPresence() {
       if (presenceChannel) db.removeChannel(presenceChannel);
       presenceChannel = db.channel('online-presence', { config: { presence: { key: currentUser.id } } });
@@ -760,6 +1241,9 @@
       });
     }
 
+    // ================================================================
+    //  RENDER UI
+    // ================================================================
     function renderUI() {
       const sidebarList = document.getElementById('users-sidebar-list');
       const activeList = document.getElementById('active-members-list');
@@ -768,7 +1252,6 @@
       document.getElementById('active-count').textContent = onlineUsersMap.size;
       document.getElementById('active-count-mobile').textContent = onlineUsersMap.size;
 
-      // RIGHT DRAWER (Online Users)
       let onlineOthers = 0;
       onlineUsersMap.forEach((name, id) => {
         if (id !== currentUser.id) {
@@ -785,7 +1268,6 @@
       });
       if (onlineOthers === 0) activeList.innerHTML = `<p class="text-xs text-[#94a3b8] p-2 text-center">You are the only one online</p>`;
 
-      // LEFT SIDEBAR (Recent DMs)
       let dmCount = 0;
       activeDMUsers.forEach(id => {
         let name = knownUserNames.get(id);
@@ -817,6 +1299,9 @@
       updateUnreadBadges();
     }
 
+    // ================================================================
+    //  LOAD / SUBSCRIBE
+    // ================================================================
     async function loadMessages() {
       const { data, error } = await db.from('messages').select('*')
         .eq('channel_id', currentChannel).order('created_at', { ascending: true });
@@ -842,7 +1327,6 @@
 
         if (msg.sender_id && msg.sender_name) knownUserNames.set(msg.sender_id, msg.sender_name);
 
-        // Add new messages to recent DMs
         if (msg.channel_id.startsWith('dm-') && !isMe) {
           const otherId = getDmPartnerId(msg.channel_id);
           if (otherId && !activeDMUsers.has(otherId) && msg.sender_name && msg.sender_name !== 'User' && msg.sender_name !== 'Chat') {
@@ -868,7 +1352,8 @@
         if (!isMe) {
           playNotificationSound();
           if (document.hidden || window.innerWidth < 768 || msg.channel_id !== currentChannel) {
-            showNotificationToast(msg.channel_id.startsWith('dm-') ? msg.sender_name : `#${msg.channel_id}`, msg.text, msg.channel_id);
+            const preview = msg.text.length > 60 ? msg.text.slice(0, 60) + '…' : msg.text;
+            showNotificationToast(msg.channel_id.startsWith('dm-') ? msg.sender_name : `#${msg.channel_id}`, preview, msg.channel_id);
           }
         }
       }).subscribe();
@@ -887,11 +1372,29 @@
       });
     }
 
+    // ================================================================
+    //  SEND MESSAGE
+    // ================================================================
     async function handleSendMessage(e) {
       e.preventDefault();
+      if (!currentUser) return;
+
       const input = document.getElementById('message-input');
-      if (!input.value.trim() || !currentUser) return;
-      const text = input.value.trim(); input.value = '';
+      const text = input.value.trim();
+
+      if (pendingImageDataUrl) {
+        const imageMarkdown = `![image](${pendingImageDataUrl})`;
+        await db.from('messages').insert([{ channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text: imageMarkdown }]);
+        clearImagePreview();
+        if (text) {
+          await db.from('messages').insert([{ channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text }]);
+        }
+        input.value = '';
+        return;
+      }
+
+      if (!text) return;
+      input.value = '';
       await db.from('messages').insert([{ channel_id: currentChannel, sender_id: currentUser.id, sender_name: currentDisplayName, text }]);
     }
 
@@ -909,19 +1412,67 @@
       unreadCounts.delete(channel); updateUnreadBadges(); loadMessages(); showChatOnMobile();
     }
 
+    // ================================================================
+    //  RENDER MESSAGE (with three-dot menu)
+    // ================================================================
     function renderMessage(msg) {
       const isMe = currentUser && msg.sender_id === currentUser.id;
       const timeStr = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      document.getElementById('messages-container').insertAdjacentHTML('beforeend', `
-        <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-1.5 message-in">
-          <div class="flex items-center gap-2 mb-1 px-2"><span class="text-[10px] text-[#5e6f82]">${msg.sender_name}</span></div>
-          <div class="max-w-[85%] sm:max-w-md px-4 py-2.5 text-sm relative ${isMe ? 'bubble-me' : 'bubble-other'}">
-            <p class="break-words">${msg.text}</p>
-            <div class="flex items-center justify-end gap-1.5 mt-1.5 text-[9px] text-[#5e6f82] opacity-80"><span>${timeStr}</span>${isMe ? '<span class="text-[#53bdeb] font-bold">✓✓</span>' : ''}</div>
+
+      const imgMarkdownMatch = msg.text.match(/^!\[.*?\]\((data:image\/[^;]+;base64,[^)]+)\)$/);
+      let contentHtml = '';
+      let isImage = false;
+
+      if (imgMarkdownMatch) {
+        isImage = true;
+        const src = imgMarkdownMatch[1];
+        contentHtml = `<img src="${src}" class="msg-image" onclick="openImageModal('${src}')" alt="shared image">`;
+      } else {
+        contentHtml = renderMessageContent(msg.text);
+        if (contentHtml.includes('class="msg-image"')) isImage = true;
+      }
+
+      // Plain text for copy (strip markdown image syntax)
+      const plainText = isImage ? '[image]' : msg.text;
+
+      const container = document.getElementById('messages-container');
+      const wrapper = document.createElement('div');
+      wrapper.className = `msg-row flex flex-col ${isMe ? 'items-end me' : 'items-start other'} mb-1.5 message-in`;
+      wrapper.dataset.msgId = msg.id;
+
+      // Escape for HTML attribute
+      const safeMsgText = plainText.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      wrapper.innerHTML = `
+        <div class="flex items-center gap-2 mb-1 px-2">
+          <span class="text-[10px] text-[#5e6f82]">${msg.sender_name}</span>
+        </div>
+        <div class="relative max-w-[85%] sm:max-w-md">
+          <div class="msg-actions">
+            <button class="dots-btn" title="More options"
+              onclick="openMsgContextMenu(event, '${msg.id}', this.closest('.msg-row').querySelector('.msg-copy-src').textContent, '${msg.sender_id}', this.closest('.msg-row'))">⋯</button>
+          </div>
+          <div class="px-4 py-2.5 text-sm relative ${isMe ? 'bubble-me' : 'bubble-other'}">
+            ${contentHtml}
+            <div class="flex items-center justify-end gap-1.5 mt-1.5 text-[9px] text-[#5e6f82] opacity-80">
+              <span>${timeStr}</span>
+              ${isMe ? '<span class="text-[#53bdeb] font-bold">✓✓</span>' : ''}
+            </div>
+            <div class="msg-copy-src" style="display:none;">${safeMsgText}</div>
           </div>
         </div>
-      `);
+      `;
+      container.appendChild(wrapper);
     }
+
+    // close gif panel when clicking elsewhere
+    document.addEventListener('click', (e) => {
+      const panel = document.getElementById('gif-emoji-panel');
+      const btn = e.target.closest('button[onclick="toggleGifEmojiPanel()"]');
+      if (panel && panel.classList.contains('show') && !btn && !panel.contains(e.target)) {
+        panel.classList.remove('show');
+      }
+    });
   </script>
 </body>
 </html>
