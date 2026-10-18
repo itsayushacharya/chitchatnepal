@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Chitchat Nepal · modern social</title>
+  <title>Chitchat Nepal-Connect·Chat·Belong</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -474,7 +474,18 @@
       toastTimer = setTimeout(() => { document.getElementById('notification-toast').classList.remove('show'); }, 4000);
     }
 
-    // --- THE FINAL FIX: Strict ID extraction, bypassing name lookups for the channel ---
+    // --- SAFELY EXTRACT THE OTHER USER'S ID FROM A DM CHANNEL ID ---
+    function getDmPartnerId(channelId) {
+      if (!channelId || !channelId.startsWith('dm-') || !currentUser) return null;
+      const rest = channelId.slice(3); // remove "dm-"
+      if (rest.includes(currentUser.id)) {
+        const cleaned = rest.replace(currentUser.id, '').replace(/^-+|-+$/g, '');
+        return cleaned || null;
+      }
+      // Fallback: first UUID chunk is 36 chars
+      return rest.slice(0, 36) || null;
+    }
+
     function handleToastClick() {
       if (!toastTargetChannel) return;
       const channelId = toastTargetChannel;
@@ -485,13 +496,9 @@
       if (channelId === currentChannel) { showChatOnMobile(); loadMessages(); return; }
 
       if (channelId.startsWith('dm-')) {
-        // Force the extraction of the real ID parts from the DM string
-        const parts = channelId.split('-');
-        const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
-        
-        // If we know their name, use it. Otherwise, fallback to "Chat" (but it will still open the correct chat history)
+        const otherId = getDmPartnerId(channelId);
+        if (!otherId) return;
         const otherName = knownUserNames.get(otherId) || 'Chat';
-        
         openExactDM(otherId, otherName);
       } else {
         let emoji = '💬';
@@ -501,37 +508,44 @@
       }
     }
 
-    function openExactDM(recipientId, recipientName) {
-      // Force the channel ID to be exactly this, guaranteeing it matches the real messages
-      const ids = [currentUser.id, recipientId].sort();
-      const dmChannel = `dm-${ids[0]}-${ids[1]}`;
+    async function openExactDM(recipientId, recipientName) {
+      // Try both possible orderings, then pick whichever actually has messages
+      const a = `dm-${currentUser.id}-${recipientId}`;
+      const b = `dm-${recipientId}-${currentUser.id}`;
+
+      let dmChannel = a;
+      try {
+        const { data } = await db.from('messages')
+          .select('channel_id')
+          .in('channel_id', [a, b])
+          .limit(1);
+        if (data && data.length > 0) dmChannel = data[0].channel_id;
+      } catch (e) {}
+
       currentChannel = dmChannel;
-      
+
       let displayName = recipientName;
       if (!displayName || displayName === 'User' || displayName === 'Chat') {
-          displayName = knownUserNames.get(recipientId) || 'Chat';
+        displayName = knownUserNames.get(recipientId) || 'Chat';
       }
-      
+      knownUserNames.set(recipientId, displayName); // cache so it never falls back again
+
       document.getElementById('channel-name').textContent = `💬 @${displayName}`;
       document.getElementById('channel-status').textContent = 'Direct message';
-      
+
       document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('bg-[#f1f5f9]'));
       const activeBtn = document.querySelector(`[data-id="dm-${recipientId}"]`);
       if (activeBtn) activeBtn.classList.add('bg-[#f1f5f9]');
 
-      // Add to recent DMs if not there
       if (!activeDMUsers.has(recipientId)) {
-         activeDMUsers.add(recipientId);
-         if (displayName !== 'Chat') knownUserNames.set(recipientId, displayName);
-         renderUI();
+        activeDMUsers.add(recipientId);
+        renderUI();
       }
 
       closeSidebarOnMobile();
       closeDirectoryOnMobile();
       unreadCounts.delete(dmChannel);
       updateUnreadBadges();
-      
-      // Fetch the actual messages for this channel
       loadMessages();
       showChatOnMobile();
     }
@@ -696,10 +710,7 @@
           
           data.forEach(msg => {
             if (msg.channel_id.startsWith('dm-')) {
-              const parts = msg.channel_id.split('-');
-              if (parts.length < 3) return;
-              
-              const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
+              const otherId = getDmPartnerId(msg.channel_id);
               if (otherId && otherId !== currentUser.id) {
                 if (msg.sender_id === otherId && msg.sender_name) {
                   knownUserNames.set(otherId, msg.sender_name);
@@ -807,12 +818,17 @@
     }
 
     async function loadMessages() {
-      const { data, error } = await db.from('messages').select('*').eq('channel_id', currentChannel).order('created_at', { ascending: true });
+      const { data, error } = await db.from('messages').select('*')
+        .eq('channel_id', currentChannel).order('created_at', { ascending: true });
       if (error) return;
       const container = document.getElementById('messages-container');
       container.innerHTML = '';
-      (data || []).forEach(renderMessage);
-      container.scrollTop = container.scrollHeight;
+      if (!data || data.length === 0) {
+        container.innerHTML = `<p class="text-center text-xs text-[#94a3b8] py-10">No messages yet. Say hi 👋</p>`;
+      } else {
+        data.forEach(renderMessage);
+        container.scrollTop = container.scrollHeight;
+      }
       unreadCounts.delete(currentChannel);
       updateUnreadBadges();
     }
@@ -828,17 +844,18 @@
 
         // Add new messages to recent DMs
         if (msg.channel_id.startsWith('dm-') && !isMe) {
-          const parts = msg.channel_id.split('-');
-          const otherId = parts[1] === currentUser.id ? parts[2] : parts[1];
-          if (!activeDMUsers.has(otherId) && msg.sender_name && msg.sender_name !== 'User' && msg.sender_name !== 'Chat') {
+          const otherId = getDmPartnerId(msg.channel_id);
+          if (otherId && !activeDMUsers.has(otherId) && msg.sender_name && msg.sender_name !== 'User' && msg.sender_name !== 'Chat') {
             activeDMUsers.add(otherId);
             renderUI();
           }
         }
 
         if (msg.channel_id === currentChannel) {
+          const container = document.getElementById('messages-container');
+          if (container.querySelector('p.text-center')) container.innerHTML = '';
           renderMessage(msg);
-          document.getElementById('messages-container').scrollTop = 999999;
+          container.scrollTop = 999999;
         } else if (!isMe) {
           unreadCounts.set(msg.channel_id, (unreadCounts.get(msg.channel_id) || 0) + 1);
           updateUnreadBadges();
@@ -906,5 +923,6 @@
       `);
     }
   </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"87327fcf53be41f08c37151b64e8f4d9","r":1,"spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
