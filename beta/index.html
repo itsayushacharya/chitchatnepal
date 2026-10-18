@@ -126,6 +126,12 @@
     }
     .message-in { animation: messageIn 0.25s ease-out; }
 
+    @keyframes messageOut {
+      from { opacity: 1; transform: scale(1); max-height: 200px; }
+      to { opacity: 0; transform: scale(0.9); max-height: 0; margin: 0; padding: 0; }
+    }
+    .message-out { animation: messageOut 0.25s ease-in forwards; overflow: hidden; }
+
     @keyframes pulseSoft {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
@@ -284,7 +290,7 @@
 
     .emoji-gif-panel {
       position: absolute;
-      bottom: 70px;
+      bottom: 76px;
       left: 8px;
       background: white;
       border: 1px solid #e2e8f0;
@@ -423,6 +429,28 @@
       background: #f1f5f9;
       margin: 4px 6px;
     }
+
+    /* ---- INPUT ACTION BUTTONS ---- */
+    .input-action-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #5e6f82;
+      flex-shrink: 0;
+    }
+    .input-action-btn:hover {
+      background: #f1f5f9;
+      color: #00a884;
+      border-color: #a7f3d0;
+    }
+    .input-action-btn:active { transform: scale(0.94); }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -574,9 +602,9 @@
 
       <div id="messages-container" class="flex-1 overflow-y-auto p-3 md:p-4 lg:p-6 space-y-3 pb-32 md:pb-6"></div>
 
-      <!-- IMAGE / EMOJI / GIF QUICK BAR -->
+      <!-- CHAT INPUT AREA -->
       <div class="shrink-0 bg-white/80 backdrop-blur-xl border-t border-[#e9eef3] z-20 relative">
-        <!-- image preview (hidden by default) -->
+        <!-- image preview -->
         <div id="image-preview-container" class="image-preview-bar hidden">
           <img id="image-preview-thumb" src="" alt="preview">
           <span class="text-xs text-[#5e6f82] flex-1">Image ready to send</span>
@@ -613,15 +641,20 @@
           <button onclick="sendQuickMessage('Namaste 🙏')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Namaste 🙏</button>
           <button onclick="sendQuickMessage('Hello')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Hello</button>
           <button onclick="sendQuickMessage('Hi')" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0">Hi</button>
-          <!-- gif/emoji toggle -->
-          <button onclick="toggleGifEmojiPanel()" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0 flex items-center gap-1"><span>🎨</span> GIF/Emoji</button>
-          <!-- image upload button -->
-          <button onclick="document.getElementById('image-upload-input').click()" class="px-3.5 py-1.5 bg-white border rounded-full text-xs shrink-0 flex items-center gap-1"><span>🖼️</span> Image</button>
-          <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
         </div>
 
-        <!-- message form -->
+        <!-- message form with left-side action buttons -->
         <form onsubmit="handleSendMessage(event)" class="p-2.5 md:p-4 flex items-center gap-2">
+          <!-- GIF/Emoji button (left) -->
+          <button type="button" onclick="toggleGifEmojiPanel()" class="input-action-btn" title="GIF & Emoji">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </button>
+          <!-- Image upload button (left) -->
+          <button type="button" onclick="document.getElementById('image-upload-input').click()" class="input-action-btn" title="Send Image">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </button>
+          <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+
           <input id="message-input" type="text" placeholder="Type a message or paste a link..." class="flex-1 bg-white border border-[#e2e8f0] rounded-full px-4 py-3 text-sm transition-soft focus:bg-white">
           <button type="submit" class="bg-gradient-to-r from-[#00a884] to-[#018f70] text-white px-5 md:px-8 py-3 rounded-full font-semibold text-sm">Send</button>
         </form>
@@ -971,7 +1004,6 @@
       e.stopPropagation();
       e.preventDefault();
 
-      // close any open menus
       closeMsgContextMenu();
 
       ctxMessageId = msgId;
@@ -983,11 +1015,9 @@
       const menu = document.getElementById('msg-context-menu');
       const isMine = currentUser && senderId === currentUser.id;
 
-      // Show/hide delete based on ownership
       document.getElementById('ctx-delete-btn').style.display = isMine ? 'flex' : 'none';
       document.getElementById('ctx-delete-divider').style.display = isMine ? 'block' : 'none';
 
-      // Position menu near the dots button
       const btn = e.currentTarget;
       const rect = btn.getBoundingClientRect();
       menu.classList.add('show');
@@ -1026,7 +1056,6 @@
         try { document.execCommand('copy'); } catch (e2) {}
         document.body.removeChild(ta);
       }
-      // visual feedback
       const btn = document.getElementById('ctx-copy-btn');
       const orig = btn.innerHTML;
       btn.innerHTML = '<span class="ctx-icon">✓</span> Copied!';
@@ -1042,22 +1071,18 @@
       const deletedId = ctxMessageId;
       const rowEl = ctxMessageElement;
 
-      // Optimistically remove from UI
+      // Optimistically animate & remove from UI (both local + realtime will remove)
       if (rowEl) {
-        rowEl.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-        rowEl.style.opacity = '0';
-        rowEl.style.transform = 'scale(0.95)';
-        setTimeout(() => rowEl.remove(), 200);
+        rowEl.classList.add('message-out');
+        setTimeout(() => rowEl.remove(), 260);
       }
 
       closeMsgContextMenu();
 
-      // Delete from DB
       try {
         const { error } = await db.from('messages').delete().eq('id', deletedId).eq('sender_id', currentUser.id);
         if (error) {
           console.warn('Delete failed:', error);
-          // Reload messages to restore if failed
           loadMessages();
         }
       } catch (e) {
@@ -1320,43 +1345,55 @@
 
     function subscribeToAllMessages() {
       if (globalMessagesSub) db.removeChannel(globalMessagesSub);
-      globalMessagesSub = db.channel('public:all-messages').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-        const msg = payload.new;
-        if (!msg || !currentUser) return;
-        const isMe = msg.sender_id === currentUser.id;
+      globalMessagesSub = db.channel('public:all-messages')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+          const msg = payload.new;
+          if (!msg || !currentUser) return;
+          const isMe = msg.sender_id === currentUser.id;
 
-        if (msg.sender_id && msg.sender_name) knownUserNames.set(msg.sender_id, msg.sender_name);
+          if (msg.sender_id && msg.sender_name) knownUserNames.set(msg.sender_id, msg.sender_name);
 
-        if (msg.channel_id.startsWith('dm-') && !isMe) {
-          const otherId = getDmPartnerId(msg.channel_id);
-          if (otherId && !activeDMUsers.has(otherId) && msg.sender_name && msg.sender_name !== 'User' && msg.sender_name !== 'Chat') {
-            activeDMUsers.add(otherId);
-            renderUI();
+          if (msg.channel_id.startsWith('dm-') && !isMe) {
+            const otherId = getDmPartnerId(msg.channel_id);
+            if (otherId && !activeDMUsers.has(otherId) && msg.sender_name && msg.sender_name !== 'User' && msg.sender_name !== 'Chat') {
+              activeDMUsers.add(otherId);
+              renderUI();
+            }
           }
-        }
 
-        if (msg.channel_id === currentChannel) {
-          const container = document.getElementById('messages-container');
-          if (container.querySelector('p.text-center')) container.innerHTML = '';
-          renderMessage(msg);
-          container.scrollTop = 999999;
-        } else if (!isMe) {
-          unreadCounts.set(msg.channel_id, (unreadCounts.get(msg.channel_id) || 0) + 1);
-          updateUnreadBadges();
-          
-          if (window.innerWidth < 768) {
-            document.getElementById('menu-notification-dot').style.display = 'block';
+          if (msg.channel_id === currentChannel) {
+            const container = document.getElementById('messages-container');
+            if (container.querySelector('p.text-center')) container.innerHTML = '';
+            renderMessage(msg);
+            container.scrollTop = 999999;
+          } else if (!isMe) {
+            unreadCounts.set(msg.channel_id, (unreadCounts.get(msg.channel_id) || 0) + 1);
+            updateUnreadBadges();
+            
+            if (window.innerWidth < 768) {
+              document.getElementById('menu-notification-dot').style.display = 'block';
+            }
           }
-        }
 
-        if (!isMe) {
-          playNotificationSound();
-          if (document.hidden || window.innerWidth < 768 || msg.channel_id !== currentChannel) {
-            const preview = msg.text.length > 60 ? msg.text.slice(0, 60) + '…' : msg.text;
-            showNotificationToast(msg.channel_id.startsWith('dm-') ? msg.sender_name : `#${msg.channel_id}`, preview, msg.channel_id);
+          if (!isMe) {
+            playNotificationSound();
+            if (document.hidden || window.innerWidth < 768 || msg.channel_id !== currentChannel) {
+              const preview = msg.text.length > 60 ? msg.text.slice(0, 60) + '…' : msg.text;
+              showNotificationToast(msg.channel_id.startsWith('dm-') ? msg.sender_name : `#${msg.channel_id}`, preview, msg.channel_id);
+            }
           }
-        }
-      }).subscribe();
+        })
+        .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'messages' }, payload => {
+          // Real-time deletion: remove message from ALL clients (both sender & receiver)
+          const old = payload.old;
+          if (!old || !old.id) return;
+          const row = document.querySelector(`[data-msg-id="${old.id}"]`);
+          if (row) {
+            row.classList.add('message-out');
+            setTimeout(() => row.remove(), 260);
+          }
+        })
+        .subscribe();
     }
 
     function updateUnreadBadges() {
@@ -1413,7 +1450,7 @@
     }
 
     // ================================================================
-    //  RENDER MESSAGE (with three-dot menu)
+    //  RENDER MESSAGE (with three-dot menu + delete sync)
     // ================================================================
     function renderMessage(msg) {
       const isMe = currentUser && msg.sender_id === currentUser.id;
@@ -1432,7 +1469,6 @@
         if (contentHtml.includes('class="msg-image"')) isImage = true;
       }
 
-      // Plain text for copy (strip markdown image syntax)
       const plainText = isImage ? '[image]' : msg.text;
 
       const container = document.getElementById('messages-container');
@@ -1440,7 +1476,6 @@
       wrapper.className = `msg-row flex flex-col ${isMe ? 'items-end me' : 'items-start other'} mb-1.5 message-in`;
       wrapper.dataset.msgId = msg.id;
 
-      // Escape for HTML attribute
       const safeMsgText = plainText.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
       wrapper.innerHTML = `
