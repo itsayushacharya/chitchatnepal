@@ -603,6 +603,77 @@
       margin: 0 12px 8px;
       animation: slideDown 0.25s ease-out;
     }
+
+    /* ---- SIDE AD / APP DOWNLOAD BANNER ---- */
+    .app-download-banner {
+      background: linear-gradient(135deg, #ffffff 0%, #f0f9f6 100%);
+      border: 1px solid #d1fae5;
+      border-radius: 20px;
+      padding: 12px;
+      margin: 8px;
+      box-shadow: 0 4px 16px rgba(0,168,132,0.08);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-download-banner::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, rgba(0,168,132,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .app-download-banner .ad-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      margin: 0 auto 6px;
+      display: block;
+      box-shadow: 0 3px 10px rgba(0,168,132,0.2);
+    }
+    .app-download-banner .ad-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #0b1a2b;
+      margin-bottom: 2px;
+    }
+    .app-download-banner .ad-sub {
+      font-size: 10px;
+      color: #5e6f82;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .app-download-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      background: linear-gradient(135deg, #00a884, #018f70);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 3px 10px rgba(0,168,132,0.25);
+    }
+    .app-download-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(0,168,132,0.35);
+    }
+    .app-download-btn:active {
+      transform: scale(0.97);
+    }
+    .app-download-btn svg {
+      width: 13px;
+      height: 13px;
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -720,6 +791,18 @@
             <button class="lounge-option" data-channel="Gaff-Saff" onclick="selectLounge('Gaff-Saff', '☕', 'Gaff-Saff')"><span class="emoji">☕</span><div><div>#Gaff-Saff</div></div></button>
           </div>
         </div>
+
+        <!-- Side Ad / App Download -->
+        <div class="app-download-banner">
+          <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="App" class="ad-icon">
+          <div class="ad-title">Get the Chitchat Nepal App</div>
+          <div class="ad-sub">Download the Android app for a faster, smoother chat experience.</div>
+          <a href="https://github.com/itsayushacharya/chitchatnepal/raw/refs/heads/main/app/Chitchat%20Nepal.apk" target="_blank" rel="noopener noreferrer" class="app-download-btn" download>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Download APK
+          </a>
+        </div>
+
         <!-- Recent DMs -->
         <div class="p-3 pt-1 space-y-1">
           <p class="text-[10px] font-bold text-[#94a3b8] uppercase px-2 mb-1">Direct Messages</p>
@@ -1957,5 +2040,6 @@
       }
     });
   </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"87327fcf53be41f08c37151b64e8f4d9","r":1,"spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
