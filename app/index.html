@@ -9,75 +9,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* ---- SPLASH SCREEN ---- */
-    #splash-screen {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(145deg, #f7f9fc 0%, #eef3f9 100%);
-      transition: opacity 0.6s cubic-bezier(0.2, 0.9, 0.4, 1), visibility 0.6s;
-      opacity: 1;
-      visibility: visible;
-      pointer-events: none;
-    }
-    #splash-screen.fade-out {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-    #splash-screen .splash-logo {
-      width: 96px;
-      height: 96px;
-      border-radius: 28px;
-      object-fit: cover;
-      box-shadow: 0 20px 50px rgba(0, 168, 132, 0.2), 0 8px 20px rgba(0, 0, 0, 0.06);
-      animation: splashPulse 1.8s ease-in-out infinite;
-    }
-    @keyframes splashPulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 20px 50px rgba(0,168,132,0.2), 0 8px 20px rgba(0,0,0,0.06); }
-      50% { transform: scale(1.04); box-shadow: 0 24px 60px rgba(0,168,132,0.28), 0 10px 24px rgba(0,0,0,0.08); }
-    }
-    #splash-screen .splash-title {
-      margin-top: 28px;
-      font-size: 28px;
-      font-weight: 800;
-      color: #0b1a2b;
-      letter-spacing: -0.02em;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    }
-    #splash-screen .splash-tagline {
-      margin-top: 6px;
-      font-size: 13px;
-      font-weight: 500;
-      color: #5e6f82;
-      letter-spacing: 0.04em;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    }
-    #splash-screen .splash-loader {
-      margin-top: 40px;
-      width: 32px;
-      height: 32px;
-      border: 3px solid rgba(0, 168, 132, 0.15);
-      border-top-color: #00a884;
-      border-radius: 50%;
-      animation: splashSpin 0.8s linear infinite;
-    }
-    @keyframes splashSpin {
-      to { transform: rotate(360deg); }
-    }
-    #splash-screen .splash-sub {
-      margin-top: 14px;
-      font-size: 10px;
-      color: #94a3b8;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
     /* ---- ORIGINAL STYLES (unchanged) ---- */
     html, body {
       height: 100%;
@@ -678,17 +609,6 @@
 </head>
 <body class="h-[100dvh] w-screen flex flex-col overflow-hidden select-none">
 
-  <!-- ============================================================ -->
-  <!-- SPLASH SCREEN                                                -->
-  <!-- ============================================================ -->
-  <div id="splash-screen">
-    <img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Chitchat Nepal" class="splash-logo">
-    <div class="splash-title">Chitchat Nepal</div>
-    <div class="splash-tagline">Connect · Chat · Belong</div>
-    <div class="splash-loader"></div>
-    <div class="splash-sub">Loading experience</div>
-  </div>
-
   <!-- TOAST -->
   <div id="notification-toast" class="notification-toast" onclick="handleToastClick()">
     <div class="toast-icon"><img src="https://raw.githubusercontent.com/itsayushacharya/chitchatnepal/refs/heads/main/images/icon.png" alt="Icon"></div>
@@ -935,44 +855,8 @@
 
   <script>
     // ================================================================
-    //  SPLASH SCREEN (hide after short delay / app ready)
+    //  SPLASH SCREEN REMOVED — no splash script
     // ================================================================
-    (function hideSplash() {
-      const splash = document.getElementById('splash-screen');
-      if (!splash) return;
-      // Minimum splash display time: 1.4s, then fade out
-      const MIN_SPLASH_MS = 1400;
-      const start = Date.now();
-
-      function fadeOutAndRemove() {
-        splash.classList.add('fade-out');
-        // After transition completes (600ms), remove from DOM entirely
-        setTimeout(() => {
-          if (splash.parentNode) splash.remove();
-        }, 700);
-      }
-
-      function scheduleHide() {
-        const elapsed = Date.now() - start;
-        const remaining = Math.max(0, MIN_SPLASH_MS - elapsed);
-        setTimeout(fadeOutAndRemove, remaining);
-      }
-
-      // If the page is already loaded, hide after minimum time
-      if (document.readyState === 'complete') {
-        scheduleHide();
-      } else {
-        window.addEventListener('load', scheduleHide);
-        // Fallback: never show splash longer than 4s
-        setTimeout(fadeOutAndRemove, 4000);
-      }
-
-      // Also hide when the user starts interacting (click, touch, keydown) — safety
-      const dismiss = () => { fadeOutAndRemove(); document.removeEventListener('click', dismiss); document.removeEventListener('touchstart', dismiss); document.removeEventListener('keydown', dismiss); };
-      document.addEventListener('click', dismiss, { once: true });
-      document.addEventListener('touchstart', dismiss, { once: true });
-      document.addEventListener('keydown', dismiss, { once: true });
-    })();
 
     // ================================================================
     //  SUPABASE CONFIG
